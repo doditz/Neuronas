@@ -2,6 +2,83 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
+<style>
+  /* Ajouts pour le Prime Directive Core */
+  .prime-directive {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(52, 152, 219, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+  }
+  
+  .prime-core {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(52, 152, 219, 0.8), rgba(155, 89, 182, 0.8));
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.8), 0 0 20px rgba(155, 89, 182, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    animation: core-pulse 2s infinite;
+  }
+  
+  @keyframes core-pulse {
+    0% { transform: scale(1); box-shadow: 0 0 10px rgba(52, 152, 219, 0.8), 0 0 20px rgba(155, 89, 182, 0.4); }
+    50% { transform: scale(1.1); box-shadow: 0 0 15px rgba(52, 152, 219, 0.9), 0 0 30px rgba(155, 89, 182, 0.5); }
+    100% { transform: scale(1); box-shadow: 0 0 10px rgba(52, 152, 219, 0.8), 0 0 20px rgba(155, 89, 182, 0.4); }
+  }
+  
+  .quantum-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  
+  .quantum-particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background-color: rgba(52, 152, 219, 0.6);
+    border-radius: 50%;
+  }
+  
+  .ethical-validation {
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 2px 6px;
+    font-size: 8px;
+    color: rgba(255, 255, 255, 0.8);
+  }
+  
+  .ethical-score {
+    color: #2ecc71;
+    font-weight: bold;
+  }
+  
+  .ethical-alert {
+    color: #e74c3c;
+    font-weight: bold;
+  }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -33,6 +110,15 @@
     <div class="cognitive-interactions">
       <div class="neural-connections" id="neural-viz">
         <!-- Canvas pour les visualisations d3.js -->
+        <div class="quantum-particles" id="quantum-particles"></div>
+        
+        <!-- Prime Directive Core au centre -->
+        <div class="prime-directive">
+          <div class="prime-core" id="prime-core">PD</div>
+          <div class="ethical-validation">
+            <span>🔒 Éthique: </span><span class="ethical-score" id="ethical-score">99.2%</span>
+          </div>
+        </div>
       </div>
       
       <!-- Statistiques de probabilité entre hémisphères -->
@@ -49,9 +135,11 @@
       
       <!-- Journal des événements cognitifs -->
       <div class="cognitive-events" id="cognitive-log">
-        <div class="event-entry"><span class="event-time">14:32:15</span> Activation D2Stim (0.67)</div>
-        <div class="event-entry"><span class="event-time">14:32:12</span> Interaction hemispherique (P=0.82)</div>
-        <div class="event-entry"><span class="event-time">14:32:08</span> Synchronisation QRONAS complète</div>
+        <div class="event-entry"><span class="event-time">14:32:15</span> <span class="ethical-score">✓</span> Prime Directive validation (99.2%)</div>
+        <div class="event-entry"><span class="event-time">14:32:14</span> QRONAS: 128 scénarios quantiques générés</div>
+        <div class="event-entry"><span class="event-time">14:32:13</span> BRONAS: Filtrage éthique (37 vetos)</div>
+        <div class="event-entry"><span class="event-time">14:32:12</span> D2Stim: Optimisation poids moraux (ISO 7000)</div>
+        <div class="event-entry"><span class="event-time">14:32:10</span> Latence décisionnelle: 83ms</div>
       </div>
       
       <!-- Modules actifs -->
@@ -60,6 +148,9 @@
         <div class="module-chip">QRONAS</div>
         <div class="module-chip">BRONAS</div>
         <div class="module-chip">QuAC</div>
+        <div class="module-chip">D2Spin</div>
+        <div class="module-chip">QkISM</div>
+        <div class="module-chip">SMAS</div>
       </div>
     </div>
     
@@ -108,8 +199,14 @@
     // Initialiser les compteurs
     updateCounters();
     
+    // Créer les particules quantiques
+    createQuantumParticles();
+    
     // Simulation des événements en temps réel
     startCognitiveSimulation();
+    
+    // Initialiser la Prime Directive Core
+    initPrimeDirective();
     
     // Gestionnaires d'événements pour les boutons de mode
     document.getElementById('d2pin-btn').addEventListener('click', function() {
@@ -198,22 +295,106 @@
       document.getElementById('r3-count').textContent = Math.floor(Math.random() * 100);
     }
     
+    // Fonction pour créer les particules quantiques
+    function createQuantumParticles() {
+      const container = document.getElementById('quantum-particles');
+      const containerRect = container.getBoundingClientRect();
+      const width = containerRect.width;
+      const height = containerRect.height;
+      
+      // Créer des particules quantiques qui se déplacent entre les hémisphères
+      for (let i = 0; i < 30; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'quantum-particle';
+        
+        // Position initiale aléatoire
+        const x = Math.random() * width;
+        const y = Math.random() * height;
+        
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        
+        // Ajouter une animation CSS personnalisée pour chaque particule
+        const animDuration = 3 + Math.random() * 4;
+        const targetX = Math.random() * width;
+        const targetY = Math.random() * height;
+        
+        particle.style.transition = `all ${animDuration}s ease-in-out`;
+        
+        container.appendChild(particle);
+        
+        // Animer la particule
+        setTimeout(() => {
+          particle.style.left = `${targetX}px`;
+          particle.style.top = `${targetY}px`;
+          
+          // Créer une nouvelle animation après la fin de la précédente
+          setInterval(() => {
+            const newX = Math.random() * width;
+            const newY = Math.random() * height;
+            particle.style.left = `${newX}px`;
+            particle.style.top = `${newY}px`;
+          }, animDuration * 1000);
+        }, 100);
+      }
+    }
+    
+    // Fonction pour initialiser le Prime Directive Core
+    function initPrimeDirective() {
+      const primeCore = document.getElementById('prime-core');
+      const ethicalScore = document.getElementById('ethical-score');
+      
+      // Animation de pulsation du core
+      setInterval(() => {
+        // Mettre à jour le score éthique périodiquement
+        const newScore = (98 + Math.random() * 1.9).toFixed(1);
+        ethicalScore.textContent = `${newScore}%`;
+        
+        // Simuler des validations éthiques dans le log
+        if (Math.random() > 0.8) {
+          const cogLog = document.getElementById('cognitive-log');
+          const now = new Date();
+          const timeStr = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+          
+          const validationEvent = document.createElement('div');
+          validationEvent.className = 'event-entry';
+          
+          if (Math.random() > 0.1) {
+            // Validation normale (90% du temps)
+            validationEvent.innerHTML = `<span class="event-time">${timeStr}</span> <span class="ethical-score">✓</span> Validation Prime Directive (${newScore}%)`;
+          } else {
+            // Alerte éthique (10% du temps)
+            const alertScore = (90 + Math.random() * 5).toFixed(1);
+            validationEvent.innerHTML = `<span class="event-time">${timeStr}</span> <span class="ethical-alert">⚠</span> Veto éthique BRONAS (${alertScore}%)`;
+          }
+          
+          cogLog.insertBefore(validationEvent, cogLog.firstChild);
+          
+          // Limiter à 5 événements
+          if (cogLog.children.length > 5) {
+            cogLog.removeChild(cogLog.lastChild);
+          }
+        }
+      }, 5000);
+    }
+    
     // Fonction pour simuler l'activité cognitive
     function startCognitiveSimulation() {
       const cogLog = document.getElementById('cognitive-log');
       const events = [
-        "Activation D2Stim (0.72)",
-        "Synchronisation hémisphérique",
-        "Accès cache L2 (hit: 92%)",
-        "Modulation QRONAS complète",
-        "Optimisation BRONAS (P=0.83)",
-        "Injection dopaminergique D2",
-        "Transfert L1→L2 (15 entrées)",
-        "Rotation quantum QuAC",
-        "Intégration Qkism (vect=257)",
-        "Reconnaissance de patron",
-        "Analyse sémantique de concept",
-        "Évaluation hypothèse: 84%"
+        "QRONAS: 128 scénarios quantiques générés",
+        "BRONAS: Filtrage éthique (41 vetos)",
+        "D2Stim: Optimisation poids moraux (ISO 7000)",
+        "Latence décisionnelle: 76ms",
+        "Synchronisation hémisphérique (P=0.92)",
+        "Réduction d'entropie morale: 35%",
+        "D2Spin: Stabilisation neurosymbolique",
+        "QuAC: Compression adaptative (ratio: 0.7)",
+        "BRONAS: Cohérence éthique 99.3%",
+        "QRONAS: Collapse quantique optimal",
+        "D2Pin: Inhibition cognitive (biais détecté)",
+        "SMAS: Validation ISO 24089 complète",
+        "Intégration QkISM (vect=317)"
       ];
       
       // Mettre à jour les statistiques toutes les 2 secondes
