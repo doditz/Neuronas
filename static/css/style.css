@@ -1,190 +1,112 @@
-/* Neuronas X v3.0 - Core Styling */
+/* Styles personnalisés pour le moteur cérébral Neuronas */
 
-/* General styling */
-:root {
-    --primary-color: #3498db;
-    --secondary-color: #2c3e50;
-    --accent-color: #9b59b6;
-    --success-color: #2ecc71;
-    --warning-color: #f39c12;
-    --danger-color: #e74c3c;
-    --dark-bg: #1e1e2f;
-    --card-bg: #252538;
-    --light-text: #ecf0f1;
-}
-
-body {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-main {
-    flex: 1;
-}
-
-/* Header and navigation */
-.navbar {
-    background-color: var(--card-bg);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-}
-
-.navbar-brand {
-    font-weight: 700;
-}
-
-/* Badges and indicators */
-.d2-indicator, .hemisphere-indicator {
-    padding: 0.4rem 0.6rem;
-    font-size: 0.8rem;
-    border-radius: 5px;
-}
-
-/* Cards */
-.card {
-    border: none;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    margin-bottom: 1.5rem;
-    background-color: var(--card-bg);
-}
-
-.card-header {
-    background-color: rgba(0, 0, 0, 0.15);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Form elements */
-.form-control, .form-select {
-    background-color: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--light-text);
-}
-
-.form-control:focus, .form-select:focus {
-    background-color: rgba(0, 0, 0, 0.3);
-    border-color: var(--primary-color);
-    color: var(--light-text);
-}
-
-.form-range::-webkit-slider-thumb {
-    background: var(--primary-color);
-}
-
-.form-range::-moz-range-thumb {
-    background: var(--primary-color);
-}
-
-/* Buttons */
-.btn-info {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-}
-
-.btn-info:hover {
-    background-color: #2980b9;
-    border-color: #2980b9;
-}
-
-.btn-outline-info {
-    border-color: var(--primary-color);
-    color: var(--primary-color);
-}
-
-.btn-outline-info:hover {
-    background-color: var(--primary-color);
-    color: white;
-}
-
-/* Footer */
-.footer {
-    background-color: var(--card-bg);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    margin-top: 2rem;
-}
-
-/* Utility classes */
-.feather-sm {
-    width: 18px;
-    height: 18px;
-    vertical-align: text-bottom;
-}
-
-.smaller {
-    font-size: 0.8rem;
-}
-
-/* Animation for hemisphere visualization */
-@keyframes pulse {
-    0% { opacity: 0.7; }
-    50% { opacity: 1; }
-    100% { opacity: 0.7; }
-}
-
-.hemisphere-left, .hemisphere-right {
-    animation: pulse 3s infinite ease-in-out;
-    animation-delay: 0s, 1.5s;
-}
-
-/* Loading spinner */
-.spinner-border {
-    width: 2rem;
-    height: 2rem;
-}
-
-/* Charts and visualization styles */
-.chart-container {
-    position: relative;
-    height: 100%;
-    width: 100%;
-}
-
-.hemisphere-visualization, .memory-visualization {
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-}
-
-/* Tier indicators styling */
-.tier-indicator {
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-    padding: 0.5rem;
-}
-
-/* Memory tier styling */
-.memory-tier {
+/* Indicateurs d'état système */
+.d2-indicator {
     transition: all 0.3s ease;
-    border-radius: 5px;
-    padding: 0.5rem;
-    margin-bottom: 0.5rem;
 }
 
-.memory-tier-l1, .memory-tier-r1 {
+.hemisphere-indicator {
+    transition: all 0.3s ease;
+}
+
+/* Interface de requête cognitive */
+.query-container {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* Visualisation hémisphérique */
+.brain-visualization {
+    min-height: 300px;
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+/* Styles d'affichage des modules */
+.module-card {
+    transition: all 0.3s ease;
+    border: 1px solid rgba(52, 152, 219, 0.2);
+    margin-bottom: 1rem;
+}
+
+.module-card:hover {
+    box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+}
+
+.module-card.active {
+    border-color: rgba(52, 152, 219, 0.6);
+}
+
+/* Notifications et alertes */
+.neuronas-alert {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.3s ease;
+}
+
+.neuronas-alert.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Animations pour le traitement */
+@keyframes neuronalPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(52, 152, 219, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(52, 152, 219, 0);
+    }
+}
+
+.processing-indicator {
+    animation: neuronalPulse 1.5s infinite;
+}
+
+/* Override de thème pour les contrôles cognitifs */
+.cognitive-slider .form-range::-webkit-slider-thumb {
+    background: #3498db;
+}
+
+.cognitive-slider .form-range::-moz-range-thumb {
+    background: #3498db;
+}
+
+.cognitive-slider .form-range::-ms-thumb {
+    background: #3498db;
+}
+
+/* Badges des modèles */
+.model-badge {
+    font-size: 0.7em;
+    padding: 0.2em 0.5em;
+    border-radius: 3px;
+    margin-left: 0.5em;
     background-color: rgba(52, 152, 219, 0.2);
-    border-left: 3px solid #3498db;
 }
 
-.memory-tier-l2, .memory-tier-r2 {
-    background-color: rgba(155, 89, 182, 0.2);
-    border-left: 3px solid #9b59b6;
+/* Section utilisateur */
+.user-profile {
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(44, 62, 80, 0.7), rgba(25, 91, 140, 0.7));
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
 }
 
-.memory-tier-l3, .memory-tier-r3 {
-    background-color: rgba(46, 204, 113, 0.2);
-    border-left: 3px solid #2ecc71;
-}
-
-/* Responsive adjustments */
+/* Styles responsive */
 @media (max-width: 768px) {
-    .hemisphere {
-        height: 200px;
+    .brain-visualization {
+        min-height: 200px;
     }
     
-    .metric-chart, .memory-visualization {
-        height: 250px;
-    }
-    
-    .cognitive-metric {
-        min-width: 120px;
+    .hemisphere-container {
+        flex-direction: column;
     }
 }

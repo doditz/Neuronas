@@ -2,62 +2,25 @@
     "core": {
         "activation_threshold": 0.5,
         "entropy_baseline": 0.2,
-        "d2_baseline": 0.5,
-        "system_name": "NeuronasX",
-        "version": "3.0",
-        "initialized": false
+        "d2_baseline": 0.5
     },
     "memory": {
         "l1_retention": 20,
         "l2_retention": 50,
         "l3_retention": 100,
-        "r1_retention": 20,
-        "r2_retention": 50,
-        "r3_retention": 100,
-        "compression_ratio": 0.7,
-        "hemispheric_balance": 0.5
+        "compression_ratio": 0.7
     },
     "neural": {
         "pathway_count": 5,
         "d2stim_intensity": 0.3,
-        "d2pin_intensity": 0.2,
-        "synaptic_decay": 0.95,
-        "learning_rate": 0.2
+        "d2pin_intensity": 0.2
     },
     "quantum": {
         "entanglement_depth": 3,
-        "collapse_threshold": 0.7,
-        "superposition_limit": 10,
-        "quantum_state_vector_size": 64
+        "collapse_threshold": 0.7
     },
     "ethical": {
         "bronas_threshold": 0.8,
-        "perspective_count": 3,
-        "ethics_priority": "high",
-        "bias_attenuation": true
-    },
-    "hebden": {
-        "fibonacci_depth": 8,
-        "pattern_threshold": 0.7,
-        "hebbian_learning_rate": 0.2,
-        "golden_ratio": 1.618
-    },
-    "optimization": {
-        "qronas_depth": 5,
-        "bronas_confidence": 0.7,
-        "symbolic_coherence": 0.6,
-        "memory_consolidation_interval": 10
-    },
-    "interface": {
-        "memory_visualization_limit": 50,
-        "metrics_history_limit": 100,
-        "dashboard_refresh_interval": 5000,
-        "enable_advanced_features": true
-    },
-    "logging": {
-        "level": "DEBUG",
-        "file_logging": false,
-        "console_logging": true,
-        "log_metrics": true
+        "perspective_count": 3
     }
 }
