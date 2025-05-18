@@ -1,0 +1,253 @@
+/* Styles spécifiques pour la vue mobile duplex */
+
+/* Conteneur principal en flexbox vertical */
+.duplex-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Zone supérieure avec les hémisphères en côte à côte */
+.hemispheres-container {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Styles des hémisphères */
+.hemisphere-box {
+  flex: 1;
+  margin: 5px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hemisphere-left {
+  background: linear-gradient(135deg, rgba(25, 91, 140, 0.7), rgba(44, 62, 80, 0.7));
+  border: 1px solid rgba(52, 152, 219, 0.4);
+}
+
+.hemisphere-right {
+  background: linear-gradient(135deg, rgba(142, 68, 173, 0.7), rgba(44, 62, 80, 0.7));
+  border: 1px solid rgba(155, 89, 182, 0.4);
+}
+
+/* Titre de l'hémisphère */
+.hemisphere-title {
+  font-size: 0.9rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+/* Badge de type de traitement */
+.process-badge {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  font-size: 0.6rem;
+  padding: 2px 5px;
+}
+
+/* Indicateurs de niveaux */
+.tier-badge {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  padding: 2px 4px;
+  margin: 2px;
+  font-size: 0.65rem;
+  text-align: center;
+}
+
+/* Zone inférieure pour les contrôles et visualisations */
+.interaction-zone {
+  height: 35vh;
+  background: rgba(20, 30, 40, 0.7);
+  border-top: 1px solid rgba(52, 152, 219, 0.3);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Zone de visualisation des interactions cognitives */
+.cognitive-interactions {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Visualisation des connexions neuronales */
+.neural-connections {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Zone des contrôles */
+.control-panel {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 10px;
+  gap: 10px;
+  border-top: 1px solid rgba(52, 152, 219, 0.2);
+}
+
+/* Boutons de contrôle */
+.mode-button {
+  flex: 1;
+  padding: 8px 5px;
+  font-size: 0.75rem;
+  border-radius: 5px;
+  text-align: center;
+}
+
+/* Animation des particules neuronales */
+@keyframes neural-pulse {
+  0% { opacity: 0.3; transform: scale(0.95); }
+  50% { opacity: 0.8; transform: scale(1.05); }
+  100% { opacity: 0.3; transform: scale(0.95); }
+}
+
+.neural-node {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: rgba(52, 152, 219, 0.8);
+  animation: neural-pulse 3s infinite;
+}
+
+.neural-connection {
+  position: absolute;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(25, 91, 140, 0.7), rgba(142, 68, 173, 0.7));
+  transform-origin: 0 0;
+}
+
+/* Zone d'entrée de requête */
+.query-input-zone {
+  padding: 8px;
+  border-top: 1px solid rgba(52, 152, 219, 0.2);
+}
+
+.query-input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  background: rgba(30, 40, 50, 0.8);
+  border: 1px solid rgba(52, 152, 219, 0.3);
+  color: white;
+  font-size: 0.9rem;
+}
+
+/* Indicateurs de performance */
+.performance-indicators {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  margin-top: 5px;
+}
+
+.indicator {
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.indicator-value {
+  margin-left: 5px;
+  font-weight: bold;
+  color: rgba(52, 152, 219, 0.9);
+}
+
+/* Animation de flux de données */
+@keyframes data-flow {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  50% { opacity: 0.8; }
+  100% { transform: translateY(-50px) translateX(50px); opacity: 0; }
+}
+
+.data-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background-color: rgba(52, 152, 219, 0.8);
+  border-radius: 50%;
+  animation: data-flow 3s infinite;
+}
+
+/* Statistiques de probabilité */
+.probability-stats {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60px;
+  margin-top: 5px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  padding: 5px;
+  font-size: 0.7rem;
+}
+
+.stats-label {
+  margin-right: 5px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.stats-value {
+  font-weight: bold;
+  color: rgba(52, 152, 219, 1);
+}
+
+/* Affichage des événements cognitifs */
+.cognitive-events {
+  height: 60px;
+  overflow-y: auto;
+  font-size: 0.65rem;
+  margin-top: 5px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.event-entry {
+  margin-bottom: 2px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.event-time {
+  color: rgba(52, 152, 219, 0.8);
+  margin-right: 5px;
+}
+
+/* Modules actifs */
+.active-modules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.module-chip {
+  font-size: 0.6rem;
+  background: rgba(30, 40, 50, 0.8);
+  border: 1px solid rgba(52, 152, 219, 0.3);
+  border-radius: 10px;
+  padding: 2px 6px;
+  white-space: nowrap;
+}

@@ -17,7 +17,22 @@ def register_routes(app):
     @app.route('/')
     def index():
         """Main application page"""
-        return render_template('index.html')
+        # Détecter les appareils mobiles
+        user_agent = request.headers.get('User-Agent', '').lower()
+        mobile_agents = ['iphone', 'android', 'mobile', 'samsung', 'lg', 'sony', 'nokia']
+        
+        # Rediriger vers l'interface mobile si c'est un appareil mobile
+        is_mobile = any(agent in user_agent for agent in mobile_agents)
+        
+        if is_mobile:
+            return render_template('mobile.html')
+        else:
+            return render_template('index.html')
+            
+    @app.route('/mobile')
+    def mobile():
+        """Interface mobile duplex"""
+        return render_template('mobile.html')
     
     @app.route('/dashboard')
     @login_required
