@@ -173,7 +173,7 @@ class UserSetting(db.Model):
 
 class OAuth(OAuthConsumerMixin, db.Model):
     """Stores OAuth tokens for authentication with various providers"""
-    user_id = db.Column(db.String(255), db.ForeignKey(User.id))
+    user_id = db.Column(db.Integer, db.ForeignKey(User.id))
     browser_session_key = db.Column(db.String(255), nullable=False)
     user = db.relationship(User)
 
