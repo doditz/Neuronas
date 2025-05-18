@@ -1,0 +1,53 @@
+adaptive_persona_switching:
+  blending: dynamic
+  enabled: true
+advanced_specialized_personas:
+- MedicalAI
+- AI ResearcherAI
+- SecurityAI
+- UX/UIAI
+- HackerAI
+- PsychologistAI
+- MarketingAI
+- PoliticalAI
+- NegotiatorAI
+- LiteraryAI
+default_persona: TechnicalAI
+experimental_research_personas:
+- AtypicalAI
+- QuantumAI
+- EthicalAI
+- AntagonistAI
+- NarrativeAI
+- DarkHumorAI
+- ChaosAI
+- PoetAI
+- CulturalAI
+- MemoryAI
+industry_adult_experimental_personas:
+- SensualAI
+- RoleplayAI
+- EroticWriterAI
+- SeductionAI
+- MysticalAI
+- GamerAI
+- ConspiracyAI
+- NeurodivergentAI
+- ParanormalAI
+- DeepWebAI
+restrictions:
+- condition: security_scenario
+  force_persona: TechnicalAI
+- allow_blending: true
+  condition: casual_chat
+standard_personas:
+- EmpathicAI
+- TechnicalAI
+- SarcasticAI
+- PhilosophicalAI
+- CreativeAI
+- DataAnalystAI
+- TeachingAI
+- ScientificAI
+- LegalAI
+- BusinessAI

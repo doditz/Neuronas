@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuronasX - Bio-Inspired Cognitive Engine</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Feather Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">
+                    <span class="fw-bold text-info">Neuronas</span><span class="text-light">X</span>
+                    <small class="text-muted ms-2">v3.0</small>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/" id="nav-home">
+                                <i data-feather="home"></i> Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/dashboard" id="nav-dashboard">
+                                <i data-feather="activity"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/metrics" id="nav-metrics">
+                                <i data-feather="bar-chart-2"></i> Metrics
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/settings" id="nav-settings">
+                                <i data-feather="settings"></i> Settings
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="d-flex">
+                    <span class="badge bg-info d2-indicator me-2" title="D2 Activation">D2: <span id="d2-level">0.5</span></span>
+                    <span class="badge bg-secondary hemisphere-indicator" title="Active Hemisphere">H: <span id="active-hemisphere">C</span></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container py-4">
+        <div id="system-alert" class="alert alert-info d-none" role="alert">
+            <i data-feather="info"></i> <span id="alert-message"></span>
+        </div>
+        
+        {% block content %}
+        {{ content|safe }}
+        {% endblock %}
+    </main>
+
+    <footer class="footer mt-auto py-3 bg-dark">
+        <div class="container text-center">
+            <span class="text-muted">NeuronasX v3.0 — Bio-Inspired Cognitive Engine</span>
+            <div class="text-muted smaller mt-1">
+                <span>Cognitive Core: <span id="core-status" class="badge bg-success">Active</span></span>
+                <span class="mx-2">|</span>
+                <span>Memory System: <span id="memory-status" class="badge bg-success">Active</span></span>
+                <span class="mx-2">|</span>
+                <span>Ethical Framework: <span id="ethics-status" class="badge bg-success">Active</span></span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- D3.js for visualizations -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    
+    <script>
+        // Initialize feather icons
+        document.addEventListener('DOMContentLoaded', function() {
+            feather.replace();
+            
+            // Set active nav link
+            const currentPath = window.location.pathname;
+            const navLinks = {
+                '/': 'nav-home',
+                '/dashboard': 'nav-dashboard',
+                '/metrics': 'nav-metrics',
+                '/settings': 'nav-settings'
+            };
+            
+            const activeNavId = navLinks[currentPath];
+            if (activeNavId) {
+                document.getElementById(activeNavId).classList.add('active');
+            }
+            
+            // Fetch system status
+            fetchSystemStatus();
+        });
+        
+        // Fetch system status periodically
+        function fetchSystemStatus() {
+            fetch('/api/system/status')
+                .then(response => response.json())
+                .then(data => {
+                    // Update D2 level
+                    const d2Level = data.state.focus.toFixed(2);
+                    document.getElementById('d2-level').textContent = d2Level;
+                    
+                    // Update active hemisphere
+                    let activeHemi = 'C'; // Default to central
+                    if (data.state.activation.left_hemisphere > data.state.activation.right_hemisphere) {
+                        activeHemi = 'L';
+                    } else if (data.state.activation.right_hemisphere > data.state.activation.left_hemisphere) {
+                        activeHemi = 'R';
+                    }
+                    document.getElementById('active-hemisphere').textContent = activeHemi;
+                    
+                    // Update system status indicators
+                    document.getElementById('core-status').className = 'badge bg-success';
+                    document.getElementById('memory-status').className = 'badge bg-success';
+                    document.getElementById('ethics-status').className = 'badge bg-success';
+                })
+                .catch(error => {
+                    console.error('Error fetching system status:', error);
+                    document.getElementById('core-status').className = 'badge bg-danger';
+                    document.getElementById('memory-status').className = 'badge bg-danger';
+                    document.getElementById('ethics-status').className = 'badge bg-danger';
+                });
+            
+            // Schedule next update
+            setTimeout(fetchSystemStatus, 5000);
+        }
+        
+        // Show system alert
+        function showAlert(message, type = 'info') {
+            const alertElement = document.getElementById('system-alert');
+            const alertMessage = document.getElementById('alert-message');
+            
+            alertElement.className = `alert alert-${type}`;
+            alertMessage.textContent = message;
+            alertElement.classList.remove('d-none');
+            
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                alertElement.classList.add('d-none');
+            }, 5000);
+        }
+    </script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

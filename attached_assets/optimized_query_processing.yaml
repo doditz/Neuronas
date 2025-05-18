@@ -1,0 +1,11 @@
+query_templates:
+- fallback: use_default_prefs
+  name: fetch_user_prefs
+  query: SELECT preferences FROM session_memory WHERE user_id = ?
+- fallback: use_summary
+  name: get_recent_interactions
+  query: SELECT * FROM recent_interactions WHERE user_id = ? ORDER BY timestamp DESC
+    LIMIT 10
+- action: if query fails, retry with closest match
+  enabled: true
+  name: auto_correct_query

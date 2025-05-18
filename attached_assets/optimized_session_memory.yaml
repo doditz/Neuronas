@@ -1,0 +1,9 @@
+active_sessions: {}
+last_updated: timestamp_placeholder
+preferences:
+  language: auto
+  response_style: adaptive
+security:
+  encryption: AES-256
+  session_timeout: 30m
+session_limit: 50

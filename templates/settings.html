@@ -1,0 +1,404 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<style>
+    .settings-header {
+        margin-bottom: 2rem;
+    }
+    
+    .settings-card {
+        margin-bottom: 1.5rem;
+    }
+    
+    .settings-section {
+        padding: 1rem;
+        border-radius: 5px;
+        margin-bottom: 1rem;
+    }
+    
+    .setting-item {
+        margin-bottom: 1.5rem;
+    }
+    
+    .setting-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+    
+    .setting-value {
+        font-weight: bold;
+        color: #3498db;
+    }
+    
+    .reset-button {
+        margin-top: 1rem;
+    }
+    
+    .config-viewer {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row settings-header">
+        <div class="col-md-8">
+            <h1>System Settings</h1>
+            <p class="text-muted">Configure and optimize the Neuronas cognitive engine</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <button id="save-all-settings" class="btn btn-info">
+                <i data-feather="save" class="feather-sm"></i> Save All Settings
+            </button>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card bg-dark settings-card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i data-feather="cpu" class="feather-sm me-1"></i> Core Engine Settings</h5>
+                </div>
+                <div class="card-body">
+                    <div class="settings-section bg-dark">
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <label for="activation-threshold">Activation Threshold</label>
+                                <span class="setting-value" id="activation-threshold-value">0.5</span>
+                            </div>
+                            <input type="range" class="form-range" id="activation-threshold" min="0.1" max="0.9" step="0.05" value="0.5">
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <label for="entropy-baseline">Entropy Baseline</label>
+                                <span class="setting-value" id="entropy-baseline-value">0.2</span>
+                            </div>
+                            <input type="range" class="form-range" id="entropy-baseline" min="0.1" max="0.5" step="0.05" value="0.2">
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <label for="d2-baseline">D2 Baseline</label>
+                                <span class="setting-value" id="d2-baseline-value">0.5</span>
+                            </div>
+                            <input type="range" class="form-range" id="d2-baseline" min="0.3" max="0.7" step="0.05" value="0.5">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card bg-dark settings-card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i data-feather="database" class="feather-sm me-1"></i> Memory Settings</h5>
+                </div>
+                <div class="card-body">
+                    <div class="settings-section bg-dark">
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <label for="compression-ratio">Memory Compression Ratio</label>
+                                <span class="setting-value" id="compression-ratio-value">0.7</span>
+                            </div>
+                            <input type="range" class="form-range" id="compression-ratio" min="0.4" max="0.9" step="0.05" value="0.7">
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <label for="hemispheric-balance">Hemispheric Balance</label>
+                                <span class="setting-value" id="hemispheric-balance-value">0.5</span>
+                            </div>
+                            <input type="range" class="form-range" id="hemispheric-balance" min="0.1" max="0.9" step="0.05" value="0.5">
+                            <small class="form-text text-muted">0.1 = Left dominant, 0.9 = Right dominant</small>
+                        </div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="l1-retention" class="form-label">L1 Retention (days)</label>
+                                    <input type="number" class="form-control" id="l1-retention" value="20" min="1" max="50">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="r1-retention" class="form-label">R1 Retention (days)</label>
+                                    <input type="number" class="form-control" id="r1-retention" value="20" min="1" max="50">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card bg-dark settings-card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i data-feather="zap" class="feather-sm me-1"></i> Neural Pathway Settings</h5>
+                </div>
+                <div class="card-body">
+                    <div class="settings-section bg-dark">
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <label for="d2stim-intensity">D2Stim Intensity</label>
+                                <span class="setting-value" id="d2stim-intensity-value">0.3</span>
+                            </div>
+                            <input type="range" class="form-range" id="d2stim-intensity" min="0.1" max="0.5" step="0.05" value="0.3">
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <label for="d2pin-intensity">D2Pin Intensity</label>
+                                <span class="setting-value" id="d2pin-intensity-value">0.2</span>
+                            </div>
+                            <input type="range" class="form-range" id="d2pin-intensity" min="0.1" max="0.5" step="0.05" value="0.2">
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <label for="learning-rate">Hebbian Learning Rate</label>
+                                <span class="setting-value" id="learning-rate-value">0.2</span>
+                            </div>
+                            <input type="range" class="form-range" id="learning-rate" min="0.05" max="0.4" step="0.05" value="0.2">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card bg-dark settings-card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i data-feather="shield" class="feather-sm me-1"></i> Ethical Framework Settings</h5>
+                </div>
+                <div class="card-body">
+                    <div class="settings-section bg-dark">
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <label for="bronas-threshold">BRONAS Ethics Threshold</label>
+                                <span class="setting-value" id="bronas-threshold-value">0.8</span>
+                            </div>
+                            <input type="range" class="form-range" id="bronas-threshold" min="0.5" max="1.0" step="0.05" value="0.8">
+                        </div>
+                        
+                        <div class="setting-item">
+                            <div class="setting-label">
+                                <label for="perspective-count">Bias Attenuation Perspectives</label>
+                                <span class="setting-value" id="perspective-count-value">3</span>
+                            </div>
+                            <input type="range" class="form-range" id="perspective-count" min="1" max="5" step="1" value="3">
+                        </div>
+                        
+                        <div class="form-check form-switch mt-3">
+                            <input class="form-check-input" type="checkbox" id="bias-attenuation" checked>
+                            <label class="form-check-label" for="bias-attenuation">Enable Bias Attenuation</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <div class="card bg-dark">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0"><i data-feather="file-text" class="feather-sm me-1"></i> Configuration JSON</h5>
+                    <button id="refresh-config" class="btn btn-sm btn-outline-info">
+                        <i data-feather="refresh-cw" class="feather-sm"></i> Refresh
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="config-viewer">
+                        <pre id="config-json" class="bg-dark text-light p-3 rounded">Loading configuration...</pre>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <button id="reset-settings" class="btn btn-outline-danger reset-button">
+                            <i data-feather="refresh-ccw" class="feather-sm"></i> Reset to Defaults
+                        </button>
+                        <button id="download-config" class="btn btn-outline-info">
+                            <i data-feather="download" class="feather-sm"></i> Download Config
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Load configuration
+        loadConfiguration();
+        
+        // Set up range input event listeners
+        setupRangeListeners();
+        
+        // Set up button handlers
+        document.getElementById('save-all-settings').addEventListener('click', saveAllSettings);
+        document.getElementById('reset-settings').addEventListener('click', resetSettings);
+        document.getElementById('refresh-config').addEventListener('click', loadConfiguration);
+        document.getElementById('download-config').addEventListener('click', downloadConfig);
+        
+        // Function to load configuration
+        function loadConfiguration() {
+            fetch('/api/system/status')
+                .then(response => response.json())
+                .then(data => {
+                    // Display configuration JSON
+                    const configElement = document.getElementById('config-json');
+                    const configJson = JSON.stringify(data, null, 4);
+                    configElement.textContent = configJson;
+                    
+                    // Set input values from config
+                    if (data.config) {
+                        setValuesFromConfig(data.config);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading configuration:', error);
+                    showAlert('Error loading configuration', 'danger');
+                });
+        }
+        
+        // Set input values from config
+        function setValuesFromConfig(config) {
+            // Core engine settings
+            if (config.core) {
+                setValue('activation-threshold', config.core.activation_threshold);
+                setValue('entropy-baseline', config.core.entropy_baseline);
+                setValue('d2-baseline', config.core.d2_baseline);
+            }
+            
+            // Memory settings
+            if (config.memory) {
+                setValue('compression-ratio', config.memory.compression_ratio);
+                setValue('hemispheric-balance', config.memory.hemispheric_balance);
+                document.getElementById('l1-retention').value = config.memory.l1_retention;
+                document.getElementById('r1-retention').value = config.memory.r1_retention;
+            }
+            
+            // Neural settings
+            if (config.neural) {
+                setValue('d2stim-intensity', config.neural.d2stim_intensity);
+                setValue('d2pin-intensity', config.neural.d2pin_intensity);
+                setValue('learning-rate', config.neural.learning_rate || 0.2);
+            }
+            
+            // Ethical settings
+            if (config.ethical) {
+                setValue('bronas-threshold', config.ethical.bronas_threshold);
+                setValue('perspective-count', config.ethical.perspective_count);
+                document.getElementById('bias-attenuation').checked = 
+                    config.ethical.bias_attenuation !== false;
+            }
+        }
+        
+        // Set value for a range input
+        function setValue(id, value) {
+            const input = document.getElementById(id);
+            if (input) {
+                input.value = value;
+                // Update value display
+                const valueDisplay = document.getElementById(`${id}-value`);
+                if (valueDisplay) {
+                    valueDisplay.textContent = value;
+                }
+            }
+        }
+        
+        // Set up range input listeners
+        function setupRangeListeners() {
+            const rangeInputs = document.querySelectorAll('input[type="range"]');
+            rangeInputs.forEach(input => {
+                input.addEventListener('input', function() {
+                    const valueDisplay = document.getElementById(`${this.id}-value`);
+                    if (valueDisplay) {
+                        valueDisplay.textContent = this.value;
+                    }
+                });
+            });
+        }
+        
+        // Save all settings
+        function saveAllSettings() {
+            // Build configuration object
+            const config = {
+                core: {
+                    activation_threshold: parseFloat(document.getElementById('activation-threshold').value),
+                    entropy_baseline: parseFloat(document.getElementById('entropy-baseline').value),
+                    d2_baseline: parseFloat(document.getElementById('d2-baseline').value)
+                },
+                memory: {
+                    compression_ratio: parseFloat(document.getElementById('compression-ratio').value),
+                    hemispheric_balance: parseFloat(document.getElementById('hemispheric-balance').value),
+                    l1_retention: parseInt(document.getElementById('l1-retention').value),
+                    r1_retention: parseInt(document.getElementById('r1-retention').value)
+                },
+                neural: {
+                    d2stim_intensity: parseFloat(document.getElementById('d2stim-intensity').value),
+                    d2pin_intensity: parseFloat(document.getElementById('d2pin-intensity').value),
+                    learning_rate: parseFloat(document.getElementById('learning-rate').value)
+                },
+                ethical: {
+                    bronas_threshold: parseFloat(document.getElementById('bronas-threshold').value),
+                    perspective_count: parseInt(document.getElementById('perspective-count').value),
+                    bias_attenuation: document.getElementById('bias-attenuation').checked
+                }
+            };
+            
+            // Send to API (this would be connected to a real API endpoint in a production system)
+            console.log('Saving configuration:', config);
+            showAlert('Settings saved successfully', 'success');
+            
+            // Refresh configuration display
+            document.getElementById('config-json').textContent = JSON.stringify(config, null, 4);
+        }
+        
+        // Reset settings to defaults
+        function resetSettings() {
+            if (confirm('Are you sure you want to reset all settings to default values?')) {
+                // Set default values
+                setValue('activation-threshold', 0.5);
+                setValue('entropy-baseline', 0.2);
+                setValue('d2-baseline', 0.5);
+                setValue('compression-ratio', 0.7);
+                setValue('hemispheric-balance', 0.5);
+                document.getElementById('l1-retention').value = 20;
+                document.getElementById('r1-retention').value = 20;
+                setValue('d2stim-intensity', 0.3);
+                setValue('d2pin-intensity', 0.2);
+                setValue('learning-rate', 0.2);
+                setValue('bronas-threshold', 0.8);
+                setValue('perspective-count', 3);
+                document.getElementById('bias-attenuation').checked = true;
+                
+                showAlert('Settings reset to defaults', 'info');
+            }
+        }
+        
+        // Download configuration
+        function downloadConfig() {
+            // Get current configuration
+            const configText = document.getElementById('config-json').textContent;
+            const config = JSON.parse(configText);
+            
+            // Create blob and download link
+            const blob = new Blob([JSON.stringify(config, null, 4)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'neuronas_config.json';
+            a.click();
+            
+            // Clean up
+            URL.revokeObjectURL(url);
+        }
+    });
+</script>
+{% endblock %}

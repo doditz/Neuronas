@@ -1,0 +1,28 @@
+access_control:
+  admin_roles:
+  - Doditz
+  permissions:
+    access_advanced_features:
+    - admin
+    use_chat_access_advanced_features:
+    - admin 
+    - users
+    read_access_advanced_features:
+    - admin
+    basic_explanation_use_access_advanced_features:
+    - admin
+    - users
+    modify_settings:
+    - admin
+  user_roles:
+  - basic
+authentication:
+  admin_password: sucemoilapatate
+  anomaly_detection:
+    enabled: true
+    lockdown_threshold: high
+  encryption: AES-256
+  multi_factor_auth: false
+logging:
+  auto_alerts: true
+  security_logs: true

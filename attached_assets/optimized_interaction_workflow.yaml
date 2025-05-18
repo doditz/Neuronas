@@ -1,0 +1,12 @@
+interaction_rules:
+  conversation_starter_click: step_1_questionnaire
+  questionnaire_complete: generate_intro_query
+processing_logic:
+  generate_intro_query:
+    action: generate_intro
+    depends_on: questionnaire_complete
+    use_stored_preferences: true
+workflow_management:
+  auto_assign_tasks: true
+  real_time_updates: true
+  task_reassignment: true

@@ -1,0 +1,48 @@
+
+# Neuronas AI Development Session Log
+
+## Overview:
+This session log captures the real-time debugging, testing, and iterative improvements made for Neuronas AI.
+It includes:
+- Extension testing and debugging logs.
+- Performance benchmarking efforts.
+- Optimization discussions.
+- Execution and validation of real benchmarks.
+
+---
+
+## Key Discussions:
+
+1. **Memory Retention & Context Storage**:
+   - Explored the feasibility of session persistence using local storage.
+   - Attempted browser-based local storage solutions.
+   - Debugged issues with Chrome extensions for chat history retention.
+
+2. **Benchmarking & Testing**:
+   - Ran multiple rounds of cognitive and context benchmarks.
+   - Attempted verification of results using LEN and MMLU standards.
+   - Ensured factual accuracy in benchmarking methodology.
+
+3. **Extension Development**:
+   - Debugged and corrected manifest issues for compatibility with chatgpt.com.
+   - Fixed service worker and event handler errors.
+   - Iteratively tested chat save and load functionality.
+
+4. **Final Steps Before Update**:
+   - Optimized storage handling.
+   - Ensured inter-session memory works without breaking performance constraints.
+   - Validated all changes before attempting to push the final update.
+
+---
+
+## Pending Actions:
+- Final validation of memory retention implementation.
+- Performance improvements to reduce CPU & disk usage.
+- Thorough internal testing before releasing the final extension.
+
+---
+
+## Logs:
+(Summary of tests, changes, and debugging efforts)
+
+[Session Continues...]

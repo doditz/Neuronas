@@ -1,0 +1,12 @@
+group_settings:
+  admin_overrides: true
+  company_policies: []
+personalization:
+  interaction_style: adaptive
+  preferred_language: auto
+  security_level: enforced
+profile_sync:
+  allow_across_devices: true
+  encrypted_storage: true
+user_profiles:
+  stored_profiles: {}

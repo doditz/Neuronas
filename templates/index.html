@@ -1,0 +1,432 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<style>
+    .hemisphere-container {
+        position: relative;
+        min-height: 300px;
+    }
+    
+    .hemisphere {
+        position: relative;
+        width: 100%;
+        height: 250px;
+        border-radius: 10px;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .hemisphere-left {
+        background: linear-gradient(135deg, rgba(25, 91, 140, 0.7), rgba(44, 62, 80, 0.7));
+        border: 1px solid rgba(52, 152, 219, 0.4);
+    }
+    
+    .hemisphere-right {
+        background: linear-gradient(135deg, rgba(142, 68, 173, 0.7), rgba(44, 62, 80, 0.7));
+        border: 1px solid rgba(155, 89, 182, 0.4);
+    }
+    
+    .hemisphere-label {
+        position: absolute;
+        top: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .modulation-controls {
+        margin-top: 2rem;
+    }
+    
+    .query-input-container {
+        margin-top: 2rem;
+    }
+    
+    .module-list {
+        margin-top: 1rem;
+    }
+    
+    .module-item {
+        padding: 0.5rem;
+        margin-bottom: 0.5rem;
+        border-radius: 5px;
+        font-size: 0.85rem;
+    }
+    
+    .response-container {
+        margin-top: 2rem;
+        min-height: 200px;
+    }
+    
+    .neuronas-logo {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+    
+    .module-status {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+    }
+    
+    .tier-indicator {
+        position: absolute;
+        bottom: 15px;
+        display: flex;
+        justify-content: space-around;
+        width: 80%;
+        left: 10%;
+    }
+    
+    .tier-item {
+        padding: 0.3rem 0.6rem;
+        border-radius: 5px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-12 text-center">
+            <h1 class="neuronas-logo">
+                <span class="text-info">Neuronas</span><span class="text-light">X</span>
+                <small class="text-muted">v3.0</small>
+            </h1>
+            <p class="lead text-muted">Bio-Inspired Cerebral Engine with Hemispheric Architecture</p>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="hemisphere-container">
+                <div class="hemisphere hemisphere-left">
+                    <div class="hemisphere-label">Left Hemisphere</div>
+                    <div class="module-status">
+                        <div class="badge bg-info">Analytical Processing</div>
+                    </div>
+                    <div class="tier-indicator">
+                        <div class="tier-item bg-dark" id="l1-indicator">L1: <span id="l1-count">0</span></div>
+                        <div class="tier-item bg-dark" id="l2-indicator">L2: <span id="l2-count">0</span></div>
+                        <div class="tier-item bg-dark" id="l3-indicator">L3: <span id="l3-count">0</span></div>
+                    </div>
+                </div>
+                <div class="module-list">
+                    <div class="module-item bg-dark">
+                        <i data-feather="cpu" class="feather-sm me-1"></i> D2Pin (Dopaminergic Inhibition Network)
+                    </div>
+                    <div class="module-item bg-dark">
+                        <i data-feather="database" class="feather-sm me-1"></i> QDAC (Quantum Dopaminergic Adaptive Caching)
+                    </div>
+                    <div class="module-item bg-dark">
+                        <i data-feather="grid" class="feather-sm me-1"></i> Qkism (Quantum-Kernel Integrated Symbolic Machine)
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="hemisphere-container">
+                <div class="hemisphere hemisphere-right">
+                    <div class="hemisphere-label">Right Hemisphere</div>
+                    <div class="module-status">
+                        <div class="badge bg-info">Creative Processing</div>
+                    </div>
+                    <div class="tier-indicator">
+                        <div class="tier-item bg-dark" id="r1-indicator">R1: <span id="r1-count">0</span></div>
+                        <div class="tier-item bg-dark" id="r2-indicator">R2: <span id="r2-count">0</span></div>
+                        <div class="tier-item bg-dark" id="r3-indicator">R3: <span id="r3-count">0</span></div>
+                    </div>
+                </div>
+                <div class="module-list">
+                    <div class="module-item bg-dark">
+                        <i data-feather="zap" class="feather-sm me-1"></i> D2Stim (Dopaminergic Stimulation Network)
+                    </div>
+                    <div class="module-item bg-dark">
+                        <i data-feather="refresh-cw" class="feather-sm me-1"></i> D2Spin (Dopaminergic Quantum Spin-Memory)
+                    </div>
+                    <div class="module-item bg-dark">
+                        <i data-feather="box" class="feather-sm me-1"></i> QuAC (Quantum Adaptive Caching)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row modulation-controls mt-4">
+        <div class="col-md-12">
+            <div class="card bg-dark">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0"><i data-feather="sliders" class="feather-sm me-1"></i> Cognitive Modulation</h5>
+                    <span class="badge bg-info" id="current-mode">Mode: Balanced</span>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <button id="d2pin-btn" class="btn btn-outline-info">
+                            <i data-feather="minus-circle" class="feather-sm"></i> D2Pin
+                        </button>
+                        <button id="balanced-btn" class="btn btn-outline-secondary">
+                            <i data-feather="circle" class="feather-sm"></i> Balanced
+                        </button>
+                        <button id="d2stim-btn" class="btn btn-outline-info">
+                            <i data-feather="plus-circle" class="feather-sm"></i> D2Stim
+                        </button>
+                    </div>
+                    <div class="mt-3">
+                        <label for="focus-slider" class="form-label d-flex justify-content-between">
+                            <span>Focus: <span id="focus-value">1.0</span></span>
+                            <span>Entropy: <span id="entropy-value">0.2</span></span>
+                        </label>
+                        <input type="range" class="form-range" id="focus-slider" min="0" max="100" value="50" disabled>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row query-input-container">
+        <div class="col-md-12">
+            <div class="card bg-dark">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i data-feather="message-square" class="feather-sm me-1"></i> Cognitive Query</h5>
+                </div>
+                <div class="card-body">
+                    <form id="query-form">
+                        <div class="mb-3">
+                            <textarea class="form-control" id="query-input" rows="3" placeholder="Enter your query for the Neuronas cognitive engine..."></textarea>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="bronas-filter" checked>
+                                <label class="form-check-label" for="bronas-filter">BRONAS Ethical Filter</label>
+                            </div>
+                            <button type="submit" class="btn btn-info" id="submit-query">
+                                <i data-feather="send" class="feather-sm"></i> Process
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row response-container">
+        <div class="col-md-12">
+            <div class="card bg-dark">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0"><i data-feather="cpu" class="feather-sm me-1"></i> Cognitive Response</h5>
+                    <div>
+                        <span class="badge bg-secondary me-2" id="processing-time">0.0s</span>
+                        <span class="badge bg-info" id="query-type">N/A</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="response-content" class="p-3 bg-dark rounded">
+                        <p class="text-muted text-center">Submit a query to receive a cognitive response...</p>
+                    </div>
+                </div>
+                <div class="card-footer text-muted d-flex justify-content-between">
+                    <small>Hemisphere: <span id="response-hemisphere">N/A</span></small>
+                    <small>D2 Activation: <span id="response-d2">0.5</span></small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // DOM elements
+        const d2pinBtn = document.getElementById('d2pin-btn');
+        const balancedBtn = document.getElementById('balanced-btn');
+        const d2stimBtn = document.getElementById('d2stim-btn');
+        const currentMode = document.getElementById('current-mode');
+        const focusValue = document.getElementById('focus-value');
+        const entropyValue = document.getElementById('entropy-value');
+        const focusSlider = document.getElementById('focus-slider');
+        const queryForm = document.getElementById('query-form');
+        const queryInput = document.getElementById('query-input');
+        const responseContent = document.getElementById('response-content');
+        const processingTime = document.getElementById('processing-time');
+        const queryType = document.getElementById('query-type');
+        const responseHemisphere = document.getElementById('response-hemisphere');
+        const responseD2 = document.getElementById('response-d2');
+        
+        // Update memory stats
+        updateMemoryStats();
+        
+        // Initialize visualization
+        updateHemisphereVisuals(0.5, 0.5);
+        
+        // Modulation button handlers
+        d2pinBtn.addEventListener('click', () => {
+            modulateD2('pin');
+        });
+        
+        balancedBtn.addEventListener('click', () => {
+            modulateD2('balanced');
+        });
+        
+        d2stimBtn.addEventListener('click', () => {
+            modulateD2('stim');
+        });
+        
+        // Query form submission
+        queryForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const query = queryInput.value.trim();
+            
+            if (query) {
+                processQuery(query);
+            } else {
+                showAlert('Please enter a query', 'warning');
+            }
+        });
+        
+        // Function to process query
+        function processQuery(query) {
+            // Show loading state
+            responseContent.innerHTML = '<div class="text-center"><div class="spinner-border text-info" role="status"></div><p class="mt-2">Processing cognitive query...</p></div>';
+            
+            // Send to API
+            fetch('/api/query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ query: query })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update response
+                responseContent.innerHTML = `<p>${data.response}</p>`;
+                
+                // Update metrics
+                processingTime.textContent = `${data.processing_time.toFixed(4)}s`;
+                queryType.textContent = data.query_type;
+                responseHemisphere.textContent = data.hemisphere_used;
+                responseD2.textContent = data.d2_activation.toFixed(2);
+                
+                // Update visuals based on hemisphere used
+                if (data.hemisphere_used === 'L') {
+                    updateHemisphereVisuals(0.8, 0.3);
+                } else if (data.hemisphere_used === 'R') {
+                    updateHemisphereVisuals(0.3, 0.8);
+                } else {
+                    updateHemisphereVisuals(0.6, 0.6);
+                }
+                
+                // Update memory stats after processing
+                updateMemoryStats();
+            })
+            .catch(error => {
+                console.error('Error processing query:', error);
+                responseContent.innerHTML = '<p class="text-danger">Error processing your query. Please try again.</p>';
+                showAlert('Error processing query', 'danger');
+            });
+        }
+        
+        // Function to modulate D2
+        function modulateD2(mode) {
+            fetch('/api/query', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ query: `modulate ${mode}` })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update UI
+                currentMode.textContent = `Mode: ${mode.charAt(0).toUpperCase() + mode.slice(1)}`;
+                focusValue.textContent = data.focus ? data.focus.toFixed(2) : '1.0';
+                entropyValue.textContent = data.entropy ? data.entropy.toFixed(2) : '0.2';
+                
+                // Update visuals
+                if (mode === 'pin') {
+                    updateHemisphereVisuals(0.8, 0.3);
+                } else if (mode === 'stim') {
+                    updateHemisphereVisuals(0.3, 0.8);
+                } else {
+                    updateHemisphereVisuals(0.5, 0.5);
+                }
+                
+                // Update button styles
+                d2pinBtn.className = mode === 'pin' ? 'btn btn-info' : 'btn btn-outline-info';
+                balancedBtn.className = mode === 'balanced' ? 'btn btn-secondary' : 'btn btn-outline-secondary';
+                d2stimBtn.className = mode === 'stim' ? 'btn btn-info' : 'btn btn-outline-info';
+                
+                showAlert(`Cognitive modulation set to ${mode} mode`, 'info');
+            })
+            .catch(error => {
+                console.error('Error modulating D2:', error);
+                showAlert('Error modulating cognitive state', 'danger');
+            });
+        }
+        
+        // Update hemisphere visuals
+        function updateHemisphereVisuals(leftActivation, rightActivation) {
+            const leftHemi = document.querySelector('.hemisphere-left');
+            const rightHemi = document.querySelector('.hemisphere-right');
+            
+            // Adjust opacity based on activation
+            leftHemi.style.opacity = 0.3 + leftActivation * 0.7;
+            rightHemi.style.opacity = 0.3 + rightActivation * 0.7;
+            
+            // Adjust border based on activation
+            leftHemi.style.borderWidth = `${1 + leftActivation * 2}px`;
+            rightHemi.style.borderWidth = `${1 + rightActivation * 2}px`;
+        }
+        
+        // Update memory statistics
+        function updateMemoryStats() {
+            fetch('/api/system/status')
+                .then(response => response.json())
+                .then(data => {
+                    // Update memory counters
+                    document.getElementById('l1-count').textContent = data.memory_stats.L1;
+                    document.getElementById('l2-count').textContent = data.memory_stats.L2;
+                    document.getElementById('l3-count').textContent = data.memory_stats.L3;
+                    document.getElementById('r1-count').textContent = data.memory_stats.R1;
+                    document.getElementById('r2-count').textContent = data.memory_stats.R2;
+                    document.getElementById('r3-count').textContent = data.memory_stats.R3;
+                    
+                    // Update memory tier indicators
+                    updateTierIndicator('l1', data.memory_stats.L1);
+                    updateTierIndicator('l2', data.memory_stats.L2);
+                    updateTierIndicator('l3', data.memory_stats.L3);
+                    updateTierIndicator('r1', data.memory_stats.R1);
+                    updateTierIndicator('r2', data.memory_stats.R2);
+                    updateTierIndicator('r3', data.memory_stats.R3);
+                })
+                .catch(error => {
+                    console.error('Error fetching memory stats:', error);
+                });
+        }
+        
+        // Update tier indicator styling
+        function updateTierIndicator(id, count) {
+            const element = document.getElementById(`${id}-indicator`);
+            if (count === 0) {
+                element.className = 'tier-item bg-dark';
+            } else if (count < 5) {
+                element.className = 'tier-item bg-secondary';
+            } else if (count < 10) {
+                element.className = 'tier-item bg-info';
+            } else {
+                element.className = 'tier-item bg-primary';
+            }
+        }
+        
+        // Set up periodic updates
+        setInterval(updateMemoryStats, 10000);
+    });
+</script>
+{% endblock %}

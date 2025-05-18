@@ -1,0 +1,221 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<style>
+    .metrics-header {
+        margin-bottom: 2rem;
+    }
+    
+    .time-filter {
+        margin-bottom: 1.5rem;
+    }
+    
+    .metric-chart {
+        height: 300px;
+        margin-bottom: 2rem;
+    }
+    
+    .small-chart {
+        height: 200px;
+    }
+    
+    .cognitive-metrics-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .cognitive-metric {
+        flex: 1;
+        min-width: 150px;
+        padding: 15px;
+        border-radius: 5px;
+        text-align: center;
+    }
+    
+    .metric-value {
+        font-size: 2rem;
+        font-weight: bold;
+    }
+    
+    .metric-label {
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+    
+    .memory-metrics {
+        margin-top: 2rem;
+    }
+    
+    .memory-tier-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 1rem;
+    }
+    
+    .tier-stat {
+        padding: 10px;
+        border-radius: 5px;
+        text-align: center;
+    }
+    
+    .tier-label {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    
+    .tier-value {
+        font-size: 1.2rem;
+    }
+    
+    .heatmap-container {
+        height: 450px;
+        margin-top: 2rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row metrics-header">
+        <div class="col-md-8">
+            <h1>Cognitive Metrics</h1>
+            <p class="text-muted">Performance Analysis & Neural Metrics Visualization</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <div class="time-filter">
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-outline-info time-filter-btn active" data-period="hour">Hour</button>
+                    <button class="btn btn-sm btn-outline-info time-filter-btn" data-period="day">Day</button>
+                    <button class="btn btn-sm btn-outline-info time-filter-btn" data-period="week">Week</button>
+                    <button class="btn btn-sm btn-outline-info time-filter-btn" data-period="all">All</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card bg-dark">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i data-feather="trending-up" class="feather-sm me-1"></i> Cognitive Performance</h5>
+                </div>
+                <div class="card-body">
+                    <div class="cognitive-metrics-container">
+                        <div class="cognitive-metric bg-info">
+                            <div class="metric-value" id="focus-metric">1.0</div>
+                            <div class="metric-label">Focus</div>
+                        </div>
+                        <div class="cognitive-metric bg-secondary">
+                            <div class="metric-value" id="attention-metric">0.5</div>
+                            <div class="metric-label">Attention</div>
+                        </div>
+                        <div class="cognitive-metric bg-secondary">
+                            <div class="metric-value" id="memory-metric">0.5</div>
+                            <div class="metric-label">Working Memory</div>
+                        </div>
+                        <div class="cognitive-metric bg-secondary">
+                            <div class="metric-value" id="d2-metric">0.5</div>
+                            <div class="metric-label">D2 Activation</div>
+                        </div>
+                    </div>
+                    
+                    <div id="performance-chart" class="metric-chart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card bg-dark">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i data-feather="clock" class="feather-sm me-1"></i> Processing Time</h5>
+                </div>
+                <div class="card-body">
+                    <div id="processing-time-chart" class="metric-chart"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card bg-dark">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i data-feather="cpu" class="feather-sm me-1"></i> D2 Modulation</h5>
+                </div>
+                <div class="card-body">
+                    <div id="d2-modulation-chart" class="metric-chart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4 memory-metrics">
+        <div class="col-md-12">
+            <div class="card bg-dark">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i data-feather="database" class="feather-sm me-1"></i> Memory System Metrics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-3">Left Hemisphere</h6>
+                            <div class="memory-tier-stats">
+                                <div class="tier-stat bg-secondary">
+                                    <div class="tier-label">L1 Entries</div>
+                                    <div class="tier-value" id="l1-count">0</div>
+                                </div>
+                                <div class="tier-stat bg-secondary">
+                                    <div class="tier-label">L2 Entries</div>
+                                    <div class="tier-value" id="l2-count">0</div>
+                                </div>
+                                <div class="tier-stat bg-secondary">
+                                    <div class="tier-label">L3 Entries</div>
+                                    <div class="tier-value" id="l3-count">0</div>
+                                </div>
+                            </div>
+                            <div id="left-memory-chart" class="small-chart"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-3">Right Hemisphere</h6>
+                            <div class="memory-tier-stats">
+                                <div class="tier-stat bg-secondary">
+                                    <div class="tier-label">R1 Entries</div>
+                                    <div class="tier-value" id="r1-count">0</div>
+                                </div>
+                                <div class="tier-stat bg-secondary">
+                                    <div class="tier-label">R2 Entries</div>
+                                    <div class="tier-value" id="r2-count">0</div>
+                                </div>
+                                <div class="tier-stat bg-secondary">
+                                    <div class="tier-label">R3 Entries</div>
+                                    <div class="tier-value" id="r3-count">0</div>
+                                </div>
+                            </div>
+                            <div id="right-memory-chart" class="small-chart"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card bg-dark">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i data-feather="grid" class="feather-sm me-1"></i> Cognitive Activity Heatmap</h5>
+                </div>
+                <div class="card-body">
+                    <div id="activity-heatmap" class="heatmap-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/metrics.js') }}"></script>
+{% endblock %}

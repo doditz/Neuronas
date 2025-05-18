@@ -1,0 +1,10 @@
+context_memory:
+  adaptive_response:
+    enabled: true
+  long_term:
+    important_topics: []
+    priority_weighting: true
+  short_term:
+    data: []
+    max_entries: 5
+session_tracking: true

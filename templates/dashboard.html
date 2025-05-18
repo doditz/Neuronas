@@ -1,0 +1,198 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<style>
+    .dashboard-header {
+        margin-bottom: 2rem;
+    }
+    
+    .metric-card {
+        transition: all 0.3s ease;
+    }
+    
+    .metric-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .hemisphere-visualization {
+        height: 300px;
+        margin-bottom: 1.5rem;
+    }
+    
+    .memory-visualization {
+        height: 250px;
+    }
+    
+    .query-log {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    .query-item {
+        border-left: 3px solid #3498db;
+        padding-left: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .query-item.analytical {
+        border-left-color: #3498db;
+    }
+    
+    .query-item.creative {
+        border-left-color: #9b59b6;
+    }
+    
+    .query-item.factual {
+        border-left-color: #2ecc71;
+    }
+    
+    .neural-pathways {
+        height: 300px;
+    }
+    
+    .system-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    
+    .stat-box {
+        flex: 1;
+        min-width: 120px;
+        padding: 15px;
+        border-radius: 5px;
+        text-align: center;
+    }
+    
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+    }
+    
+    .stat-label {
+        font-size: 0.8rem;
+        opacity: 0.7;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row dashboard-header">
+        <div class="col-md-9">
+            <h1>System Dashboard</h1>
+            <p class="text-muted">Neuronas Cognitive Engine Analytics & Monitoring</p>
+        </div>
+        <div class="col-md-3 text-end">
+            <button id="refresh-dashboard" class="btn btn-outline-info">
+                <i data-feather="refresh-cw" class="feather-sm"></i> Refresh
+            </button>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card bg-dark">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i data-feather="activity" class="feather-sm me-1"></i> System Status</h5>
+                </div>
+                <div class="card-body">
+                    <div class="system-stats">
+                        <div class="stat-box bg-secondary">
+                            <div class="stat-value" id="focus-stat">1.0</div>
+                            <div class="stat-label">Focus</div>
+                        </div>
+                        <div class="stat-box bg-secondary">
+                            <div class="stat-value" id="entropy-stat">0.2</div>
+                            <div class="stat-label">Entropy</div>
+                        </div>
+                        <div class="stat-box bg-info">
+                            <div class="stat-value" id="hemisphere-stat">C</div>
+                            <div class="stat-label">Hemisphere</div>
+                        </div>
+                        <div class="stat-box bg-secondary">
+                            <div class="stat-value" id="queries-stat">0</div>
+                            <div class="stat-label">Queries</div>
+                        </div>
+                        <div class="stat-box bg-secondary">
+                            <div class="stat-value" id="memory-stat">0</div>
+                            <div class="stat-label">Memories</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="card bg-dark">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i data-feather="activity" class="feather-sm me-1"></i> Hemispheric Activity</h5>
+                </div>
+                <div class="card-body">
+                    <div id="hemisphere-chart" class="hemisphere-visualization"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-dark">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i data-feather="pie-chart" class="feather-sm me-1"></i> Query Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <div id="query-distribution" class="memory-visualization"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card bg-dark">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i data-feather="database" class="feather-sm me-1"></i> Memory Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <div id="memory-chart" class="memory-visualization"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card bg-dark">
+                <div class="card-header">
+                    <h5 class="card-title mb-0"><i data-feather="cpu" class="feather-sm me-1"></i> Neural Pathways</h5>
+                </div>
+                <div class="card-body">
+                    <div id="neural-pathways" class="neural-pathways"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card bg-dark">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0"><i data-feather="list" class="feather-sm me-1"></i> Recent Queries</h5>
+                    <div class="btn-group">
+                        <button id="filter-all" class="btn btn-sm btn-outline-secondary active">All</button>
+                        <button id="filter-analytical" class="btn btn-sm btn-outline-info">Analytical</button>
+                        <button id="filter-creative" class="btn btn-sm btn-outline-info">Creative</button>
+                        <button id="filter-factual" class="btn btn-sm btn-outline-info">Factual</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="query-log" class="query-log">
+                        <p class="text-center text-muted">Loading query history...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}
