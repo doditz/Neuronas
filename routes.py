@@ -84,6 +84,12 @@ def register_routes(app):
         """Cognitive personas visualization page"""
         return render_template('persona_display.html')
         
+    @app.route('/dual-llm')
+    @login_required
+    def dual_llm_page():
+        """Dual hemispheric LLM system page"""
+        return render_template('dual_llm.html')
+        
     @app.route('/profile/update', methods=['POST'])
     @login_required
     def update_profile():

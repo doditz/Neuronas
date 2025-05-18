@@ -3,6 +3,7 @@ Dual LLM System for NeuronasX
 
 This module implements a system that uses two language models in parallel to represent the
 left (analytical) and right (creative) hemispheres of the cognitive system.
+Supports both Anthropic API and local Ollama models.
 """
 
 import os
@@ -10,6 +11,7 @@ import json
 import logging
 import time
 import random
+import requests
 from datetime import datetime
 import anthropic
 from flask import current_app
@@ -21,7 +23,7 @@ logger = logging.getLogger(__name__)
 class HemisphericLLM:
     """Base class for hemispheric language model processing"""
     
-    def __init__(self, name, hemisphere_type, temperature_range, model_name=None):
+    def __init__(self, name, hemisphere_type, temperature_range, model_name=None, model_provider='ollama'):
         """
         Initialize a hemispheric language model
         
@@ -30,34 +32,50 @@ class HemisphericLLM:
             hemisphere_type (str): 'left' or 'right'
             temperature_range (tuple): Min and max temperature range
             model_name (str, optional): Specific model to use
+            model_provider (str): 'anthropic' or 'ollama'
         """
         self.name = name
         self.hemisphere_type = hemisphere_type
         self.temp_min, self.temp_max = temperature_range
+        self.model_provider = model_provider
         self.model_name = model_name or self._get_default_model()
         self.client = self._initialize_client()
         self.specialties = []
         self.d2_influence = 0.5  # D2 receptor influence (0.0-1.0)
+        self.ollama_url = os.environ.get("OLLAMA_URL", "http://localhost:11434")
         
     def _get_default_model(self):
         """Get default model for this hemisphere"""
-        if self.hemisphere_type == 'left':
-            return "claude-3-haiku-20240307"  # Fast, analytical
-        else:
-            return "claude-3-opus-20240229"  # Creative, high capability
+        if self.model_provider == 'anthropic':
+            if self.hemisphere_type == 'left':
+                return "claude-3-haiku-20240307"  # Fast, analytical
+            else:
+                return "claude-3-opus-20240229"  # Creative, high capability
+        else:  # ollama
+            if self.hemisphere_type == 'left':
+                return "llama3:8b"  # Fast, efficient, analytical model
+            elif self.hemisphere_type == 'right':
+                return "mistral:7b"  # More creative model
+            else:  # central/integration
+                return "gemma:7b"  # Balanced model for integration
         
     def _initialize_client(self):
         """Initialize the appropriate client for the LLM"""
-        api_key = os.environ.get("ANTHROPIC_API_KEY")
-        if not api_key:
-            logger.warning(f"No API key found for {self.name} ({self.hemisphere_type} hemisphere)")
-            return None
-            
-        try:
-            return anthropic.Anthropic(api_key=api_key)
-        except Exception as e:
-            logger.error(f"Error initializing client for {self.name}: {e}")
-            return None
+        if self.model_provider == 'anthropic':
+            api_key = os.environ.get("ANTHROPIC_API_KEY")
+            if not api_key:
+                logger.warning(f"No Anthropic API key found for {self.name} ({self.hemisphere_type} hemisphere)")
+                return None
+                
+            try:
+                return anthropic.Anthropic(api_key=api_key)
+            except Exception as e:
+                logger.error(f"Error initializing Anthropic client for {self.name}: {e}")
+                return None
+        else:
+            # For Ollama, we don't need to initialize a client here
+            # We'll use requests directly in the process_prompt method
+            return "ollama"
             
     def set_d2_influence(self, value):
         """Set the D2 receptor modulation influence (0.0-1.0)"""
@@ -87,7 +105,7 @@ class HemisphericLLM:
         Returns:
             dict: Processing results including response and metadata
         """
-        if not self.client:
+        if not self.client and self.model_provider == 'anthropic':
             return {
                 'success': False,
                 'error': f"No valid client for {self.name}",
@@ -118,28 +136,80 @@ class HemisphericLLM:
         try:
             start_time = time.time()
             
-            # Make the API call
-            response = self.client.messages.create(
-                model=self.model_name,
-                max_tokens=1000,
-                temperature=temperature,
-                system=system_prompt,
-                messages=[
-                    {"role": "user", "content": prompt}
-                ]
-            )
+            if self.model_provider == 'anthropic':
+                # Make the Anthropic API call
+                response = self.client.messages.create(
+                    model=self.model_name,
+                    max_tokens=1000,
+                    temperature=temperature,
+                    system=system_prompt,
+                    messages=[
+                        {"role": "user", "content": prompt}
+                    ]
+                )
+                
+                response_text = response.content[0].text
+                
+            else:  # Ollama
+                # Prepare the Ollama request
+                ollama_data = {
+                    "model": self.model_name,
+                    "prompt": prompt,
+                    "system": system_prompt,
+                    "stream": False,
+                    "options": {
+                        "temperature": temperature,
+                        "num_predict": 1000
+                    }
+                }
+                
+                # Send request to Ollama API
+                try:
+                    ollama_response = requests.post(
+                        f"{self.ollama_url}/api/generate",
+                        json=ollama_data,
+                        timeout=60
+                    )
+                    
+                    if ollama_response.status_code == 200:
+                        response_json = ollama_response.json()
+                        response_text = response_json.get('response', '')
+                    else:
+                        # Try fallback model if primary fails
+                        fallback_model = "llama3" if self.model_name != "llama3" else "mistral"
+                        logger.warning(f"Ollama model {self.model_name} failed, trying fallback model {fallback_model}")
+                        
+                        ollama_data["model"] = fallback_model
+                        ollama_response = requests.post(
+                            f"{self.ollama_url}/api/generate",
+                            json=ollama_data,
+                            timeout=60
+                        )
+                        
+                        if ollama_response.status_code == 200:
+                            response_json = ollama_response.json()
+                            response_text = response_json.get('response', '')
+                        else:
+                            logger.error(f"Ollama fallback model also failed: {ollama_response.status_code}")
+                            raise Exception(f"Ollama API error: {ollama_response.status_code}")
+                
+                except requests.exceptions.ConnectionError:
+                    # If we can't connect to Ollama, use a simple response
+                    logger.error(f"Cannot connect to Ollama server at {self.ollama_url}")
+                    response_text = f"[Simulated {self.hemisphere_type} hemisphere response due to Ollama connection issue] Analysis of: {prompt[:50]}..."
             
             processing_time = time.time() - start_time
             
             # Return structured response
             return {
                 'success': True,
-                'response': response.content[0].text,
+                'response': response_text,
                 'hemisphere': self.hemisphere_type,
                 'temperature': temperature,
                 'd2_influence': self.d2_influence,
                 'processing_time': processing_time,
                 'model': self.model_name,
+                'model_provider': self.model_provider,
                 'timestamp': datetime.utcnow().isoformat()
             }
             
@@ -149,6 +219,7 @@ class HemisphericLLM:
                 'success': False,
                 'error': str(e),
                 'hemisphere': self.hemisphere_type,
+                'model_provider': self.model_provider,
                 'timestamp': datetime.utcnow().isoformat()
             }
             
@@ -156,12 +227,13 @@ class HemisphericLLM:
 class LeftHemisphereLLM(HemisphericLLM):
     """Left hemisphere specialized LLM (analytical processing)"""
     
-    def __init__(self, name="Analytica", model_name=None):
+    def __init__(self, name="Analytica", model_name=None, model_provider='ollama'):
         super().__init__(
             name=name,
             hemisphere_type='left',
             temperature_range=(0.1, 0.7),
-            model_name=model_name
+            model_name=model_name,
+            model_provider=model_provider
         )
         self.specialties = [
             "logical analysis",
@@ -175,12 +247,13 @@ class LeftHemisphereLLM(HemisphericLLM):
 class RightHemisphereLLM(HemisphericLLM):
     """Right hemisphere specialized LLM (creative processing)"""
     
-    def __init__(self, name="Creativa", model_name=None):
+    def __init__(self, name="Creativa", model_name=None, model_provider='ollama'):
         super().__init__(
             name=name,
             hemisphere_type='right',
             temperature_range=(0.6, 1.0),
-            model_name=model_name
+            model_name=model_name,
+            model_provider=model_provider
         )
         self.specialties = [
             "metaphorical thinking",
@@ -194,12 +267,13 @@ class RightHemisphereLLM(HemisphericLLM):
 class IntegrationLLM(HemisphericLLM):
     """Integration model for combining hemispheric outputs"""
     
-    def __init__(self, name="Integra", model_name=None):
+    def __init__(self, name="Integra", model_name=None, model_provider='ollama'):
         super().__init__(
             name=name,
             hemisphere_type='central',
             temperature_range=(0.3, 0.7),
-            model_name=model_name or "claude-3-sonnet-20240229"  # Balanced model
+            model_name=model_name,
+            model_provider=model_provider
         )
         self.specialties = [
             "perspective integration",
@@ -345,20 +419,47 @@ class DualLLMSystem:
     
     def __init__(self):
         """Initialize the dual LLM system"""
-        self.personas = {
-            # Left hemisphere personas
-            'analytica': LeftHemisphereLLM(name="Analytica"),
-            'ethica': LeftHemisphereLLM(name="Ethica"),
-            'cognitiva': LeftHemisphereLLM(name="Cognitiva"),
-            
-            # Right hemisphere personas
-            'creativa': RightHemisphereLLM(name="Creativa"),
-            'metaphysica': RightHemisphereLLM(name="Metaphysica"),
-            'quantica': RightHemisphereLLM(name="Quantica"),
+        
+        # Configure Ollama models based on size, speed, and capabilities
+        left_models = {
+            'llama3:8b': 'Analytica',       # Fast, efficient analytical processing
+            'phi3:3b': 'Ethica',           # Small model for ethical reasoning
+            'nous-hermes2:7b': 'Cognitiva'  # Knowledge-focused model for cognitive processing
+        }
+        
+        right_models = {
+            'mistral:7b': 'Creativa',       # Creative model with good divergent thinking
+            'llava:7b': 'Metaphysica',      # Multimodal model for visual/metaphorical thinking
+            'solar:10.7b': 'Quantica'       # Larger model for complex creative tasks
         }
         
         # Integration model
-        self.integration = IntegrationLLM(name="Sociologica")
+        integration_model = 'gemma:7b'      # Balanced model for integration
+        
+        self.personas = {}
+        
+        # Initialize left hemisphere personas with Ollama models
+        for model, name in left_models.items():
+            self.personas[name.lower()] = LeftHemisphereLLM(
+                name=name,
+                model_name=model,
+                model_provider='ollama'
+            )
+            
+        # Initialize right hemisphere personas with Ollama models
+        for model, name in right_models.items():
+            self.personas[name.lower()] = RightHemisphereLLM(
+                name=name,
+                model_name=model,
+                model_provider='ollama'
+            )
+        
+        # Integration model
+        self.integration = IntegrationLLM(
+            name="Sociologica",
+            model_name=integration_model,
+            model_provider='ollama'
+        )
         
         # Default settings
         self.default_left_persona = 'analytica'
