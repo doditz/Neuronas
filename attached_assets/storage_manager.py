@@ -64,10 +64,17 @@ class TieredStorageManager:
             self._cleanup_cache()
 
     def retrieve_all(self, tier, table):
+        # Validate table name against a whitelist to prevent SQL injection
+        valid_tables = ["memory", "knowledge", "metrics", "settings", "hypotheses"]
+        if table not in valid_tables:
+            raise ValueError(f"Invalid table name: {table}")
+            
         compression_algo = self.config["storage"]["compression"][tier]["algorithm"]
         conn = self.connections[tier]
         cursor = conn.cursor()
-        cursor.execute(f"SELECT data FROM {table}")
+        # Table names cannot be parameterized, but we've validated against a whitelist above
+        query = f"SELECT data FROM {table}"
+        cursor.execute(query)
         results = []
         for (data,) in cursor.fetchall():
             try:
