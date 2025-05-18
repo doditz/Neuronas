@@ -145,8 +145,19 @@ def logged_in(blueprint, token):
     if blueprint.name != 'replit_auth':
         return
         
-    user_claims = jwt.decode(token['id_token'],
-                             options={"verify_signature": False})
+    # Get JWT public key from Replit's JWKS endpoint
+    issuer_url = os.environ.get('ISSUER_URL', "https://replit.com/oidc")
+    jwks_url = f"{issuer_url}/.well-known/jwks.json"
+    jwks_client = jwt.PyJWKClient(jwks_url)
+    signing_key = jwks_client.get_signing_key_from_jwt(token['id_token'])
+    
+    # Properly verify the JWT token
+    user_claims = jwt.decode(
+        token['id_token'],
+        signing_key.key,
+        algorithms=["RS256"],
+        audience=os.environ.get('REPL_ID')
+    )
     user = save_user(user_claims)
     login_user(user)
     blueprint.token = token
