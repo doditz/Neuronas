@@ -8,6 +8,10 @@ from models import User, UserSetting, QueryLog, CognitiveMemory, CognitiveMetric
 def register_routes(app):
     """Register all application routes"""
     
+    # Import SMS service
+    from sms_service import send_sms
+    from models import SMSNotification
+    
     # Ensure session is created for each user
     @app.before_request
     def create_session():
@@ -237,5 +241,62 @@ def register_routes(app):
             'memory_stats': memory_stats,
             'timestamp': datetime.utcnow().isoformat()
         })
+        
+    @app.route('/api/sms/send', methods=['POST'])
+    @login_required
+    def send_sms_message():
+        """Send SMS notification"""
+        data = request.json
+        phone_number = data.get('phone_number')
+        message = data.get('message')
+        
+        # Validate input
+        if not phone_number:
+            return jsonify({'success': False, 'error': 'Phone number is required'}), 400
+        if not message:
+            return jsonify({'success': False, 'error': 'Message content is required'}), 400
+            
+        # Validate phone number format (basic E.164 format validation)
+        if not phone_number.startswith('+') or not phone_number[1:].isdigit():
+            return jsonify({'success': False, 'error': 'Phone number must be in E.164 format (e.g., +15551234567)'}), 400
+            
+        # Send SMS via Twilio
+        result = send_sms(phone_number, message)
+        
+        # Store notification in database
+        notification = SMSNotification(
+            phone_number=phone_number,
+            message=message,
+            status='sent' if result.get('success') else 'failed',
+            message_sid=result.get('message_sid'),
+            error_message=result.get('error'),
+            user_id=current_user.id if current_user.is_authenticated else None
+        )
+        db.session.add(notification)
+        db.session.commit()
+        
+        if not result.get('success'):
+            return jsonify({'success': False, 'error': result.get('error')}), 500
+            
+        return jsonify({'success': True, 'message_sid': result.get('message_sid')})
+        
+    @app.route('/api/sms/history', methods=['GET'])
+    @login_required
+    def get_sms_history():
+        """Get SMS notification history for the current user"""
+        # Get history for current user
+        notifications = SMSNotification.query.filter_by(user_id=current_user.id).order_by(
+            SMSNotification.created_at.desc()
+        ).limit(50).all()
+        
+        return jsonify({
+            'notifications': [notification.to_dict() for notification in notifications]
+        })
+        
+    @app.route('/notifications', methods=['GET'])
+    @login_required
+    def notifications_page():
+        """SMS Notifications management page"""
+        return render_template('notifications.html')
     
     return app

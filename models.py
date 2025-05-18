@@ -210,3 +210,26 @@ class QueryLog(db.Model):
             'session_id': self.session_id,
             'user_id': self.user_id
         }
+        
+class SMSNotification(db.Model):
+    """Tracks SMS notifications sent through the system"""
+    id = db.Column(db.Integer, primary_key=True)
+    phone_number = db.Column(db.String(20))  # Recipient phone number
+    message = db.Column(db.Text)  # Message content
+    status = db.Column(db.String(50))  # Delivery status
+    message_sid = db.Column(db.String(50), nullable=True)  # Twilio message SID
+    error_message = db.Column(db.Text, nullable=True)  # Error message if sending failed
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'phone_number': self.phone_number,
+            'message': self.message,
+            'status': self.status,
+            'message_sid': self.message_sid,
+            'error_message': self.error_message,
+            'created_at': self.created_at.isoformat(),
+            'user_id': self.user_id
+        }

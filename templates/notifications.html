@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+
+{% block title %}SMS Notifications{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>SMS Notifications</h1>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Send SMS Message</h5>
+                </div>
+                <div class="card-body">
+                    <form id="sms-form">
+                        <div class="form-group mb-3">
+                            <label for="phone-number">Phone Number (E.164 format)</label>
+                            <input type="text" class="form-control" id="phone-number" 
+                                   placeholder="+15551234567" required>
+                            <small class="form-text text-muted">
+                                Enter phone number in E.164 format (e.g., +15551234567)
+                            </small>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="message-content">Message</label>
+                            <textarea class="form-control" id="message-content" rows="4" 
+                                      placeholder="Enter your message here..." required></textarea>
+                            <div class="d-flex justify-content-between mt-1">
+                                <small class="form-text text-muted">
+                                    Character count: <span id="char-count">0</span>
+                                </small>
+                                <small class="form-text text-muted">
+                                    Messages: <span id="sms-count">1</span>
+                                </small>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0">Message Status</h5>
+                </div>
+                <div class="card-body">
+                    <div id="status-container">
+                        <div class="alert alert-info">
+                            Enter phone number and message to send an SMS
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card mt-4">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Message History</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped" id="history-table">
+                    <thead>
+                        <tr>
+                            <th>Date/Time</th>
+                            <th>Phone Number</th>
+                            <th>Message</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-body">
+                        <tr>
+                            <td colspan="4" class="text-center">Loading message history...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Character counter
+    document.getElementById('message-content').addEventListener('input', function() {
+        const text = this.value;
+        const charCount = text.length;
+        const smsCount = Math.ceil(charCount / 160);
+        
+        document.getElementById('char-count').textContent = charCount;
+        document.getElementById('sms-count').textContent = smsCount;
+    });
+    
+    // Form submission
+    document.getElementById('sms-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const phone = document.getElementById('phone-number').value;
+        const message = document.getElementById('message-content').value;
+        
+        // Show sending status
+        document.getElementById('status-container').innerHTML = `
+            <div class="alert alert-info">
+                <div class="d-flex align-items-center">
+                    <div class="spinner-border spinner-border-sm me-2" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <span>Sending message to ${phone}...</span>
+                </div>
+            </div>
+        `;
+        
+        // Send AJAX request
+        fetch('/api/sms/send', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                phone_number: phone,
+                message: message
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('status-container').innerHTML = `
+                    <div class="alert alert-success">
+                        <strong>Success!</strong> Message sent successfully.
+                        <br>Message ID: ${data.message_sid}
+                    </div>
+                `;
+                // Clear form
+                document.getElementById('message-content').value = '';
+                document.getElementById('char-count').textContent = '0';
+                document.getElementById('sms-count').textContent = '1';
+                
+                // Refresh history
+                loadMessageHistory();
+            } else {
+                document.getElementById('status-container').innerHTML = `
+                    <div class="alert alert-danger">
+                        <strong>Error!</strong> ${data.error}
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            document.getElementById('status-container').innerHTML = `
+                <div class="alert alert-danger">
+                    <strong>Error!</strong> An unexpected error occurred.
+                    <br>${error.message}
+                </div>
+            `;
+        });
+    });
+    
+    // Load message history
+    function loadMessageHistory() {
+        fetch('/api/sms/history')
+            .then(response => response.json())
+            .then(data => {
+                const historyBody = document.getElementById('history-body');
+                
+                if (data.notifications.length === 0) {
+                    historyBody.innerHTML = `
+                        <tr>
+                            <td colspan="4" class="text-center">No messages sent yet</td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                historyBody.innerHTML = '';
+                
+                data.notifications.forEach(notification => {
+                    // Format date
+                    const date = new Date(notification.created_at);
+                    const formattedDate = date.toLocaleString();
+                    
+                    // Format status with badge
+                    let statusBadge = '';
+                    if (notification.status === 'sent') {
+                        statusBadge = '<span class="badge bg-success">Sent</span>';
+                    } else if (notification.status === 'delivered') {
+                        statusBadge = '<span class="badge bg-primary">Delivered</span>';
+                    } else if (notification.status === 'failed') {
+                        statusBadge = '<span class="badge bg-danger">Failed</span>';
+                    } else {
+                        statusBadge = `<span class="badge bg-secondary">${notification.status}</span>`;
+                    }
+                    
+                    // Truncate message if too long
+                    let message = notification.message;
+                    if (message.length > 50) {
+                        message = message.substring(0, 47) + '...';
+                    }
+                    
+                    historyBody.innerHTML += `
+                        <tr>
+                            <td>${formattedDate}</td>
+                            <td>${notification.phone_number}</td>
+                            <td title="${notification.message}">${message}</td>
+                            <td>${statusBadge}</td>
+                        </tr>
+                    `;
+                });
+            })
+            .catch(error => {
+                document.getElementById('history-body').innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center text-danger">
+                            Error loading message history: ${error.message}
+                        </td>
+                    </tr>
+                `;
+            });
+    }
+    
+    // Load history on page load
+    document.addEventListener('DOMContentLoaded', loadMessageHistory);
+</script>
+{% endblock %}
