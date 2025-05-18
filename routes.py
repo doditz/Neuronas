@@ -65,6 +65,12 @@ def register_routes(app):
         """System settings page"""
         return render_template('settings.html')
         
+    @app.route('/tiered-memory')
+    @login_required
+    def tiered_memory_page():
+        """Tiered memory system visualization and management"""
+        return render_template('tiered_memory.html')
+        
     @app.route('/profile/update', methods=['POST'])
     @login_required
     def update_profile():
