@@ -1,0 +1,180 @@
+{% extends "layout.html" %}
+
+{% block title %}SMS Test{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">Test SMS Messaging Service</h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <i data-feather="info"></i> This page allows you to test the SMS messaging functionality.
+                        <p class="mt-2 mb-0">To send actual SMS messages, you need to configure your Twilio credentials.</p>
+                    </div>
+
+                    <form id="sms-test-form" class="mt-4">
+                        <div class="form-group mb-3">
+                            <label for="phone-number"><i data-feather="phone"></i> Phone Number (E.164 format)</label>
+                            <input type="text" class="form-control" id="phone-number" placeholder="+15551234567" required>
+                            <small class="form-text text-muted">Enter in international format (e.g., +15551234567)</small>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="message"><i data-feather="message-square"></i> Message</label>
+                            <textarea class="form-control" id="message" rows="4" placeholder="Enter your message here..." required></textarea>
+                            <div class="d-flex justify-content-between">
+                                <small class="form-text text-muted">Character count: <span id="char-count">0</span>/160</small>
+                                <small class="form-text text-muted">Messages: <span id="msg-count">1</span></small>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">
+                            <i data-feather="send"></i> Send Test Message
+                        </button>
+                    </form>
+                    
+                    <div id="result" class="mt-4 d-none">
+                        <!-- Result will be displayed here -->
+                    </div>
+                    
+                    <div class="mt-4 pt-3 border-top">
+                        <h5>SMS Integration Status</h5>
+                        <ul class="list-group">
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                TWILIO_ACCOUNT_SID
+                                <span id="account-sid-status" class="badge bg-secondary">Not Configured</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                TWILIO_AUTH_TOKEN
+                                <span id="auth-token-status" class="badge bg-secondary">Not Configured</span>
+                            </li>
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                TWILIO_PHONE_NUMBER
+                                <span id="phone-number-status" class="badge bg-secondary">Not Configured</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Initialize feather icons
+    document.addEventListener('DOMContentLoaded', function() {
+        feather.replace();
+        checkCredentials();
+    });
+    
+    // Character counter
+    document.getElementById('message').addEventListener('input', function() {
+        const messageText = this.value;
+        const charCount = messageText.length;
+        document.getElementById('char-count').textContent = charCount;
+        
+        // Calculate number of SMS messages
+        const msgCount = Math.ceil(charCount / 160);
+        document.getElementById('msg-count').textContent = msgCount;
+    });
+    
+    // Check Twilio credentials
+    function checkCredentials() {
+        fetch('/api/sms/check-credentials')
+            .then(response => response.json())
+            .then(data => {
+                if (data.account_sid) {
+                    document.getElementById('account-sid-status').textContent = 'Configured';
+                    document.getElementById('account-sid-status').className = 'badge bg-success';
+                }
+                
+                if (data.auth_token) {
+                    document.getElementById('auth-token-status').textContent = 'Configured';
+                    document.getElementById('auth-token-status').className = 'badge bg-success';
+                }
+                
+                if (data.phone_number) {
+                    document.getElementById('phone-number-status').textContent = 'Configured';
+                    document.getElementById('phone-number-status').className = 'badge bg-success';
+                }
+            })
+            .catch(error => {
+                console.error('Error checking credentials:', error);
+            });
+    }
+    
+    // Form submission
+    document.getElementById('sms-test-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        
+        const phoneNumber = document.getElementById('phone-number').value;
+        const message = document.getElementById('message').value;
+        
+        // Display loading state
+        const resultDiv = document.getElementById('result');
+        resultDiv.innerHTML = `
+            <div class="alert alert-info">
+                <div class="d-flex align-items-center">
+                    <div class="spinner-border spinner-border-sm me-2" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <span>Sending message to ${phoneNumber}...</span>
+                </div>
+            </div>
+        `;
+        resultDiv.classList.remove('d-none');
+        
+        // Send request
+        fetch('/api/sms/send', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                phone_number: phoneNumber,
+                message: message
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                resultDiv.innerHTML = `
+                    <div class="alert alert-success">
+                        <i data-feather="check-circle"></i> Message sent successfully!
+                        <div class="mt-2">
+                            <strong>Message SID:</strong> ${data.message_sid}
+                        </div>
+                    </div>
+                `;
+            } else {
+                resultDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i data-feather="alert-circle"></i> Error sending message
+                        <div class="mt-2">
+                            <strong>Error:</strong> ${data.error}
+                        </div>
+                    </div>
+                `;
+            }
+            feather.replace();
+        })
+        .catch(error => {
+            resultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <i data-feather="alert-triangle"></i> Network error
+                    <div class="mt-2">
+                        <strong>Error:</strong> ${error.message}
+                    </div>
+                </div>
+            `;
+            feather.replace();
+        });
+    });
+</script>
+{% endblock %}
