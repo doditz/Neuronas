@@ -71,6 +71,12 @@ def register_routes(app):
         """Tiered memory system visualization and management"""
         return render_template('tiered_memory.html')
         
+    @app.route('/personas')
+    @login_required
+    def personas_page():
+        """Cognitive personas visualization page"""
+        return render_template('persona_display.html')
+        
     @app.route('/profile/update', methods=['POST'])
     @login_required
     def update_profile():

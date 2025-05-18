@@ -1,0 +1,511 @@
+{% extends "layout.html" %}
+
+{% block title %}Cognitive Personas{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4">Cognitive Persona Framework</h1>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-info">
+                <i data-feather="info"></i> 
+                Cognitive personas represent specialized processing modes within the dual hemispheric architecture.
+                Each persona handles different types of information and reasoning patterns.
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <!-- Left Hemisphere Personas -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Left Hemisphere Personas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="persona-card">
+                                <div class="persona-header">
+                                    <h5 class="persona-name">Analytica</h5>
+                                    <span class="persona-type badge bg-primary">Analytical</span>
+                                </div>
+                                <div class="persona-body">
+                                    <p class="persona-description">Logical, rationalist thinker who prefers systematic approaches</p>
+                                    <div class="persona-domains">
+                                        <span class="domain-tag">Mathematics</span>
+                                        <span class="domain-tag">Physics</span>
+                                        <span class="domain-tag">Cybernetics</span>
+                                        <span class="domain-tag">Complex Systems</span>
+                                    </div>
+                                </div>
+                                <div class="persona-footer">
+                                    <div class="progress">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 85%;" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100">85%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="persona-card">
+                                <div class="persona-header">
+                                    <h5 class="persona-name">Ethica</h5>
+                                    <span class="persona-type badge bg-primary">Analytical</span>
+                                </div>
+                                <div class="persona-body">
+                                    <p class="persona-description">Principled reasoning focused on ethical frameworks and moral considerations</p>
+                                    <div class="persona-domains">
+                                        <span class="domain-tag">AI Ethics</span>
+                                        <span class="domain-tag">Moral Philosophy</span>
+                                        <span class="domain-tag">Free Will</span>
+                                        <span class="domain-tag">Cultural Relativism</span>
+                                    </div>
+                                </div>
+                                <div class="persona-footer">
+                                    <div class="progress">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 65%;" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100">65%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="persona-card">
+                                <div class="persona-header">
+                                    <h5 class="persona-name">Cognitiva</h5>
+                                    <span class="persona-type badge bg-primary">Analytical</span>
+                                </div>
+                                <div class="persona-body">
+                                    <p class="persona-description">Cognitive science specialist with focus on mental processes</p>
+                                    <div class="persona-domains">
+                                        <span class="domain-tag">Cognitive Science</span>
+                                        <span class="domain-tag">Metacognition</span>
+                                        <span class="domain-tag">Cognitive Bias</span>
+                                        <span class="domain-tag">Symbolic Cognition</span>
+                                    </div>
+                                </div>
+                                <div class="persona-footer">
+                                    <div class="progress">
+                                        <div class="progress-bar bg-primary" role="progressbar" style="width: 72%;" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100">72%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Right Hemisphere Personas -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Right Hemisphere Personas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="persona-card">
+                                <div class="persona-header">
+                                    <h5 class="persona-name">Creativa</h5>
+                                    <span class="persona-type badge bg-info">Creative</span>
+                                </div>
+                                <div class="persona-body">
+                                    <p class="persona-description">Creative, intuitive thinker who excels at novel connections</p>
+                                    <div class="persona-domains">
+                                        <span class="domain-tag">Computational Creativity</span>
+                                        <span class="domain-tag">Dream Theory</span>
+                                        <span class="domain-tag">Intuition Modelling</span>
+                                        <span class="domain-tag">Artificial Life</span>
+                                    </div>
+                                </div>
+                                <div class="persona-footer">
+                                    <div class="progress">
+                                        <div class="progress-bar bg-info" role="progressbar" style="width: 92%;" aria-valuenow="92" aria-valuemin="0" aria-valuemax="100">92%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="persona-card">
+                                <div class="persona-header">
+                                    <h5 class="persona-name">Metaphysica</h5>
+                                    <span class="persona-type badge bg-info">Creative</span>
+                                </div>
+                                <div class="persona-body">
+                                    <p class="persona-description">Abstract thinker who explores metaphysical and transcendent concepts</p>
+                                    <div class="persona-domains">
+                                        <span class="domain-tag">Theology</span>
+                                        <span class="domain-tag">Panpsychism</span>
+                                        <span class="domain-tag">Consciousness Studies</span>
+                                        <span class="domain-tag">Dualism</span>
+                                    </div>
+                                </div>
+                                <div class="persona-footer">
+                                    <div class="progress">
+                                        <div class="progress-bar bg-info" role="progressbar" style="width: 78%;" aria-valuenow="78" aria-valuemin="0" aria-valuemax="100">78%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="persona-card">
+                                <div class="persona-header">
+                                    <h5 class="persona-name">Quantica</h5>
+                                    <span class="persona-type badge bg-info">Creative</span>
+                                </div>
+                                <div class="persona-body">
+                                    <p class="persona-description">Quantum thinker who explores probabilistic and non-deterministic approaches</p>
+                                    <div class="persona-domains">
+                                        <span class="domain-tag">Quantum Computation</span>
+                                        <span class="domain-tag">Chaos Theory</span>
+                                        <span class="domain-tag">Self-Organizing Systems</span>
+                                        <span class="domain-tag">Holistic Intelligence</span>
+                                    </div>
+                                </div>
+                                <div class="persona-footer">
+                                    <div class="progress">
+                                        <div class="progress-bar bg-info" role="progressbar" style="width: 81%;" aria-valuenow="81" aria-valuemin="0" aria-valuemax="100">81%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Central Integration Persona -->
+    <div class="row mb-4">
+        <div class="col-md-6 mx-auto">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Central Integration Persona</h5>
+                </div>
+                <div class="card-body">
+                    <div class="persona-card">
+                        <div class="persona-header">
+                            <h5 class="persona-name">Sociologica</h5>
+                            <span class="persona-type badge bg-success">Integrative</span>
+                        </div>
+                        <div class="persona-body">
+                            <p class="persona-description">Systems thinker focused on emergent social patterns and behaviors</p>
+                            <div class="persona-domains">
+                                <span class="domain-tag">Societal Systems</span>
+                                <span class="domain-tag">Human-AI Fusion</span>
+                                <span class="domain-tag">Religious AI Integration</span>
+                                <span class="domain-tag">Psychoanalysis</span>
+                            </div>
+                        </div>
+                        <div class="persona-footer">
+                            <div class="progress" style="height: 5px;">
+                                <div class="progress-bar bg-primary" role="progressbar" style="width: 55%;" aria-valuenow="55" aria-valuemin="0" aria-valuemax="100"></div>
+                                <div class="progress-bar bg-info" role="progressbar" style="width: 45%;" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-1">
+                                <small class="text-muted">Left influence (55%)</small>
+                                <small class="text-muted">Right influence (45%)</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Memory System Visualization -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Persona Memory Interaction</h5>
+                </div>
+                <div class="card-body">
+                    <div class="memory-flow-diagram">
+                        <div class="memory-flow-legend">
+                            <div class="legend-item">
+                                <span class="flow-dot left"></span>
+                                <span>Left Flow</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="flow-dot right"></span>
+                                <span>Right Flow</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="flow-dot central"></span>
+                                <span>Integration</span>
+                            </div>
+                        </div>
+                        <div id="memory-flow-visualization">
+                            <!-- Dynamic flow visualization will be rendered here by JavaScript -->
+                            <div class="flow-loading text-center">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p>Loading memory flow visualization...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.persona-card {
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+.persona-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+}
+.persona-header {
+    padding: 12px 15px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.persona-name {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+.persona-type {
+    font-size: 0.8rem;
+}
+.persona-body {
+    padding: 15px;
+}
+.persona-description {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 15px;
+}
+.persona-domains {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+.domain-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    background-color: #f8f9fa;
+    color: #495057;
+    border-radius: 15px;
+    border: 1px solid #dee2e6;
+}
+.persona-footer {
+    padding: 10px 15px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+}
+.memory-flow-diagram {
+    margin-top: 20px;
+}
+.memory-flow-legend {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9rem;
+}
+.flow-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.flow-dot.left {
+    background-color: #007bff;
+}
+.flow-dot.right {
+    background-color: #17a2b8;
+}
+.flow-dot.central {
+    background-color: #28a745;
+}
+#memory-flow-visualization {
+    height: 300px;
+    position: relative;
+}
+.flow-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize feather icons
+    feather.replace();
+    
+    // Simulate loading memory flow visualization
+    setTimeout(function() {
+        document.querySelector('.flow-loading').style.display = 'none';
+        initMemoryFlowVisualization();
+    }, 1500);
+});
+
+function initMemoryFlowVisualization() {
+    const container = document.getElementById('memory-flow-visualization');
+    
+    // Clear container
+    container.innerHTML = '';
+    
+    // Create SVG for visualization
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    
+    const svg = d3.select(container)
+        .append('svg')
+        .attr('width', width)
+        .attr('height', height);
+    
+    // Define personas and connections
+    const personas = [
+        {id: 'analytica', name: 'Analytica', x: width * 0.15, y: height * 0.3, group: 'left'},
+        {id: 'ethica', name: 'Ethica', x: width * 0.15, y: height * 0.5, group: 'left'},
+        {id: 'cognitiva', name: 'Cognitiva', x: width * 0.15, y: height * 0.7, group: 'left'},
+        {id: 'creativa', name: 'Creativa', x: width * 0.85, y: height * 0.3, group: 'right'},
+        {id: 'metaphysica', name: 'Metaphysica', x: width * 0.85, y: height * 0.5, group: 'right'},
+        {id: 'quantica', name: 'Quantica', x: width * 0.85, y: height * 0.7, group: 'right'},
+        {id: 'sociologica', name: 'Sociologica', x: width * 0.5, y: height * 0.5, group: 'central'}
+    ];
+    
+    const connections = [
+        {source: 'analytica', target: 'sociologica', value: 5, group: 'left'},
+        {source: 'ethica', target: 'sociologica', value: 7, group: 'left'},
+        {source: 'cognitiva', target: 'sociologica', value: 4, group: 'left'},
+        {source: 'creativa', target: 'sociologica', value: 8, group: 'right'},
+        {source: 'metaphysica', target: 'sociologica', value: 6, group: 'right'},
+        {source: 'quantica', target: 'sociologica', value: 5, group: 'right'},
+        {source: 'analytica', target: 'cognitiva', value: 3, group: 'left'},
+        {source: 'ethica', target: 'cognitiva', value: 2, group: 'left'},
+        {source: 'creativa', target: 'metaphysica', value: 3, group: 'right'},
+        {source: 'metaphysica', target: 'quantica', value: 4, group: 'right'}
+    ];
+    
+    // Create nodes
+    const nodes = svg.selectAll('.node')
+        .data(personas)
+        .enter()
+        .append('g')
+        .attr('class', 'node')
+        .attr('transform', d => `translate(${d.x}, ${d.y})`);
+    
+    // Add circles for nodes
+    nodes.append('circle')
+        .attr('r', 20)
+        .attr('fill', d => {
+            if (d.group === 'left') return '#007bff';
+            if (d.group === 'right') return '#17a2b8';
+            return '#28a745';
+        })
+        .attr('stroke', '#fff')
+        .attr('stroke-width', 2);
+    
+    // Add labels
+    nodes.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('dy', 30)
+        .text(d => d.name)
+        .attr('fill', '#495057')
+        .style('font-size', '10px');
+    
+    // Create links
+    const linkGenerator = d3.linkHorizontal()
+        .x(d => d.x)
+        .y(d => d.y);
+    
+    const links = svg.selectAll('.link')
+        .data(connections)
+        .enter()
+        .append('path')
+        .attr('class', 'link')
+        .attr('d', d => {
+            const source = personas.find(p => p.id === d.source);
+            const target = personas.find(p => p.id === d.target);
+            return linkGenerator({source, target});
+        })
+        .attr('stroke', d => {
+            if (d.group === 'left') return '#007bff';
+            if (d.group === 'right') return '#17a2b8';
+            return '#28a745';
+        })
+        .attr('stroke-width', d => d.value * 0.8)
+        .attr('fill', 'none')
+        .attr('opacity', 0.6);
+    
+    // Add pulsing animation to links
+    const pulseLinks = () => {
+        links
+            .transition()
+            .duration(2000)
+            .attr('stroke-dasharray', '5,5')
+            .attr('stroke-dashoffset', 10)
+            .transition()
+            .duration(2000)
+            .attr('stroke-dasharray', '5,5')
+            .attr('stroke-dashoffset', 0)
+            .on('end', pulseLinks);
+    };
+    
+    pulseLinks();
+    
+    // Make nodes interactive
+    nodes.style('cursor', 'pointer')
+        .on('mouseover', function(event, d) {
+            // Highlight related connections
+            links.attr('opacity', link => 
+                (link.source === d.id || link.target === d.id) ? 1 : 0.2
+            );
+            
+            // Show tooltip
+            const tooltip = svg.append('g')
+                .attr('class', 'tooltip')
+                .attr('transform', `translate(${d.x}, ${d.y - 50})`);
+            
+            tooltip.append('rect')
+                .attr('width', 120)
+                .attr('height', 30)
+                .attr('x', -60)
+                .attr('y', -15)
+                .attr('rx', 5)
+                .attr('fill', '#fff')
+                .attr('stroke', '#dee2e6');
+            
+            tooltip.append('text')
+                .attr('text-anchor', 'middle')
+                .attr('dy', 5)
+                .text(`Active: ${Math.floor(Math.random() * 20) + 10} memories`)
+                .style('font-size', '12px');
+        })
+        .on('mouseout', function() {
+            // Restore connections
+            links.attr('opacity', 0.6);
+            
+            // Remove tooltip
+            svg.selectAll('.tooltip').remove();
+        });
+}
+</script>
+{% endblock %}
