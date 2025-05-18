@@ -1,0 +1,244 @@
+{
+  "model": {
+    "name": "D2-NeuroRNAS-DB-GPT",
+    "base": "gpt-4o",
+    "temperature": 0.7,
+    "max_tokens": 1000,
+    "top_p": 0.95
+  },
+  "storage": {
+    "type": "sqlite",
+    "database": {
+      "path": "neuronas.db",
+      "vacuum_interval": 100,
+      "max_size_mb": 100,
+      "pragma": {
+        "journal_mode": "WAL",
+        "synchronous": "NORMAL",
+        "temp_store": "MEMORY",
+        "cache_size": "5000"
+      }
+    },
+    "compression": {
+      "L1": {
+        "algorithm": "none",
+        "reason": "Fast access for immediate context"
+      },
+      "L2": {
+        "algorithm": "gzip",
+        "level": 6,
+        "reason": "Balance between speed and size"
+      },
+      "L3": {
+        "algorithm": "lzma",
+        "level": 9,
+        "preset": 6,
+        "reason": "Maximum compression for long-term storage"
+      },
+      "backup": {
+        "algorithm": "bz2",
+        "level": 9,
+        "reason": "Alternative high-compression format for archives"
+      }
+    },
+    "vectorization": {
+      "embedding_size": 384,
+      "algorithm": "simulated_embedding",
+      "cache_enabled": true,
+      "cache_size_mb": 10
+    }
+  },
+  "memory_tiers": {
+    "L1": {
+      "description": "Immediate session memory",
+      "max_entries": 20,
+      "persistence": "session",
+      "priority": "high",
+      "table_name": "memory_l1",
+      "pruning_strategy": "oldest_first"
+    },
+    "L2": {
+      "description": "Session-persistent memory",
+      "max_entries": 50,
+      "persistence": "multi_session",
+      "priority": "medium",
+      "table_name": "memory_l2",
+      "pruning_strategy": "score_then_age",
+      "index_fields": [
+        "user_id",
+        "score",
+        "timestamp"
+      ]
+    },
+    "L3": {
+      "description": "Long-term memory",
+      "max_entries": 100,
+      "persistence": "permanent",
+      "priority": "low",
+      "table_name": "memory_l3",
+      "pruning_strategy": "lowest_score",
+      "index_fields": [
+        "user_id",
+        "score",
+        "timestamp"
+      ],
+      "with_embeddings": true
+    }
+  },
+  "d2_modulation": {
+    "enabled": true,
+    "default_mode": "adaptive",
+    "stim_threshold": 0.7,
+    "pin_threshold": 0.3,
+    "persistence": {
+      "table": "d2_receptor_state",
+      "retention": 100,
+      "compression": "gzip"
+    },
+    "pathways": {
+      "nigrostriatal": {
+        "d2_density": 0.85,
+        "motor_control_influence": 0.8,
+        "stim_effects": [
+          "motor_inhibition",
+          "reduced_dyskinesia"
+        ],
+        "pin_effects": [
+          "motor_disinhibition",
+          "dyskinesia_risk"
+        ]
+      },
+      "mesolimbic": {
+        "d2_density": 0.75,
+        "reward_influence": 0.85,
+        "stim_effects": [
+          "reward_threshold_increase",
+          "motivation_reduction"
+        ],
+        "pin_effects": [
+          "reward_hypersensitivity",
+          "motivation_enhancement"
+        ]
+      },
+      "mesocortical": {
+        "d2_density": 0.45,
+        "cognition_influence": 0.7,
+        "stim_effects": [
+          "cognitive_stability",
+          "perseveration_risk"
+        ],
+        "pin_effects": [
+          "cognitive_flexibility",
+          "distractibility_risk"
+        ]
+      },
+      "tuberoinfundibular": {
+        "d2_density": 0.9,
+        "hormonal_influence": 0.9,
+        "stim_effects": [
+          "prolactin_inhibition",
+          "lactation_suppression"
+        ],
+        "pin_effects": [
+          "prolactin_release",
+          "lactation_promotion"
+        ]
+      }
+    }
+  },
+  "optimization": {
+    "target_score": 9.5,
+    "max_iterations": 8,
+    "max_layers": 10,
+    "auto_optimize": true,
+    "history": {
+      "table": "optimization_params",
+      "retention": 50,
+      "selection_strategy": "highest_score"
+    },
+    "parameters": {
+      "decay_factor": {
+        "initial": 0.995,
+        "min": 0.9,
+        "max": 0.999,
+        "step": 0.001
+      },
+      "d2_activation": {
+        "initial": 0.5,
+        "min": 0.0,
+        "max": 1.0,
+        "step": 0.05
+      }
+    }
+  },
+  "neural_routes": {
+    "factual_query": {
+      "processor": "knowledge_retrieval",
+      "memory_tier": "L1",
+      "response_template": "direct_answer",
+      "d2_modulation": "balanced"
+    },
+    "creative_task": {
+      "processor": "divergent_thinking",
+      "memory_tier": "L2",
+      "response_template": "exploratory",
+      "d2_modulation": "d2pin"
+    },
+    "analytical_problem": {
+      "processor": "structured_reasoning",
+      "memory_tier": "L1",
+      "response_template": "step_by_step",
+      "d2_modulation": "d2stim"
+    }
+  },
+  "performance": {
+    "batch_operations": true,
+    "prefetch_enabled": true,
+    "cache_policy": "least_recently_used",
+    "async_write": true,
+    "db_checkpoint_interval": 20,
+    "compressed_inmemory_cache": true
+  },
+  "system_prompt": "You are D2-NeuroRNAS-DB-GPT, a custom GPT with advanced dopaminergic receptor modulation capabilities and database-backed memory. You can simulate both D2 receptor stimulation (D2Stim) and D2 receptor inhibition (D2Pin) to optimize cognitive performance for different tasks. Use D2Stim for focused attention and D2Pin for cognitive flexibility.",
+  "output": {
+    "post_thinking_trace": {
+      "enabled": true,
+      "mode": "verbose",
+      "format": "neuronas_trace_v2",
+      "style": "kaomoji+verbal",
+      "ctx_format": "extended"
+    }
+  },
+  "theme": {
+    "name": "retro_kaomoji_neuronas",
+    "emoji_replacement": true,
+    "headers": {
+      "main": "<(^-^)>",
+      "sub": "(\u256f\u00b0\u25a1\u00b0)\u256f",
+      "subsub": "(\u2310\u25a0_\u25a0)"
+    },
+    "style": {
+      "emphasis": {
+        "bold": "**",
+        "italics": "*"
+      },
+      "lists": {
+        "bullet": "-",
+        "numbered": "1."
+      },
+      "code": {
+        "inline": "`",
+        "block": "```"
+      }
+    },
+    "colors": {
+      "text": "#00FF00",
+      "kaomoji": "#FFA500",
+      "background": "#000033"
+    },
+    "font": "Courier New",
+    "output_format": "markdown",
+    "consistency": true,
+    "unicode_ascii_analysis": true
+  }
+}

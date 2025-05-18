@@ -1,0 +1,72 @@
+# Architecture des bases de données hémisphériques (NeuronasX v3.0)
+
+## Organisation par hémisphères et couches de mémoire
+
+Dans le cadre de NeuronasX v3.0, les données sont réparties sur deux bases SQLite distinctes représentant les deux hémisphères cognitifs – l’hémisphère gauche (L) et l’hémisphère droit (R) – ainsi qu’une table centrale d’intégration. Chaque hémisphère contient trois couches de traitement/mémoire :
+
+- L1: Mémoire court terme
+- L2: Mémoire moyenne durée
+- L3: Mémoire longue durée
+- R1: Adaptation temps-réel
+- R2: Optimisation contextuelle
+- R3: Synthèse cognitive
+
+(... contenu intégral de l'audit précédemment généré ...)
+
+## Diagramme de flux du système (Mermaid)
+
+```mermaid
+flowchart LR
+    %% Input and classification
+    subgraph Perception Input
+        UI[Nouvelle perception (prompt)]
+    end
+    subgraph " "
+        direction TB
+        C{Classification<br/>(créative<br/>/ analytique<br/>/ factuelle)}
+    end
+    UI --> C
+
+    %% Route decision to hemispheres
+    C -- Créative --> R_path[Route vers Hémisphère Droit]
+    C -- Analytique/Factuelle --> L_path[Route vers Hémisphère Gauche]
+
+    %% Right Hemisphere processing (R1->R3)
+    subgraph "Hémisphère Droit (Créatif)"
+        direction TB
+        R1[R1: Adaptation<br/>temps-réel]
+        R2[R2: Optimisation<br/>contextuelle]
+        R3[R3: Synthèse cognitive]
+        R1 --> R2 --> R3
+    end
+    R_path --> D2_stim[[Modulation D2Stim<br/>(stimulation)]]
+    D2_stim -->|d2_activation ↑<br/>attention ↑| R1
+
+    %% Left Hemisphere processing (L1->L3)
+    subgraph "Hémisphère Gauche (Analytique)"
+        direction TB
+        L1[L1: Mémoire<br/>court terme]
+        L2[L2: Mémoire<br/>moyen terme]
+        L3[L3: Mémoire<br/>long terme]
+        L1 -. expiration/importance .-> L2
+        L2 -. consolidation .-> L3
+        L3 -. rappel .-> L1
+    end
+    L_path --> D2_pin[[Modulation D2Pin<br/>(inhibition/baseline)]]
+    D2_pin -->|d2_activation ↓<br/>focus accru| L1
+
+    %% Memory promotion within Left (push)
+    L1 -->|**Push**:<br/>20 cycles écoulés<br/>ou item important| L2
+    L2 -->|**Push**:<br/>50 cycles écoulés<br/>ou consolidation| L3
+
+    %% Recall (pull) within Left
+    L3 -->|**Pull**:<br/>requête de rappel<br/>contexte pertinent| L1
+
+    %% Cross-hemispheric interactions
+    R3 -. idée novatrice .- C_int[Hémisphère Central<br/>(Intégration)]
+    L3 -. fait pertinent .- C_int
+    C_int -->|fusion dialectique<br/>ou arbitrage| R_dec[Décision/Sortie]
+
+    %% Push from Right to Left memory
+    R3 -->|**Push**:<br/>idée à conserver<br/>(bonus influentiel)| L3
+```
