@@ -16,4 +16,6 @@ dependencies = [
     "numpy>=2.2.6",
     "requests>=2.32.3",
     "anthropic>=0.51.0",
+    "flask-dance>=7.1.0",
+    "pyjwt>=2.10.1",
 ]
