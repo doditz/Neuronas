@@ -1,7 +1,9 @@
-from flask import render_template, request, jsonify, session
+from flask import render_template, request, jsonify, session, redirect, url_for, flash
+from flask_login import login_required, current_user
 import uuid
 import time
 from datetime import datetime
+from models import User, UserSetting, QueryLog, CognitiveMemory, CognitiveMetrics, db
 
 def register_routes(app):
     """Register all application routes"""
@@ -18,19 +20,90 @@ def register_routes(app):
         return render_template('index.html')
     
     @app.route('/dashboard')
+    @login_required
     def dashboard():
         """System dashboard page"""
-        return render_template('dashboard.html')
+        section = request.args.get('section', 'overview')
+        
+        if section == 'profile':
+            # Récupération des paramètres utilisateur
+            user_settings = UserSetting.query.filter_by(user_id=current_user.id).all()
+            return render_template('dashboard.html', section=section, 
+                                  user=current_user, 
+                                  user_settings=user_settings)
+        
+        return render_template('dashboard.html', section=section)
     
     @app.route('/metrics')
+    @login_required
     def metrics():
         """Cognitive metrics visualization page"""
         return render_template('metrics.html')
     
     @app.route('/settings')
+    @login_required
     def settings():
         """System settings page"""
         return render_template('settings.html')
+        
+    @app.route('/profile/update', methods=['POST'])
+    @login_required
+    def update_profile():
+        """Mettre à jour le profil utilisateur et les préférences Neuronas"""
+        # Mise à jour des paramètres Neuronas
+        current_user.d2_temperature = float(request.form.get('d2_temperature', 0.5))
+        current_user.hemisphere_balance = float(request.form.get('hemisphere_balance', 0.5))
+        current_user.creativity_weight = float(request.form.get('creativity_weight', 0.5))
+        current_user.analytical_weight = float(request.form.get('analytical_weight', 0.5))
+        
+        # Mise à jour des modules spéciaux
+        modules = ['QRONAS', 'BRONAS', 'D2Stim', 'D2Pin', 'D2Spin']
+        
+        for module in modules:
+            module_enabled = request.form.get(f'{module}_enabled') == 'on'
+            module_weight = float(request.form.get(f'{module}_weight', 0.5))
+            
+            # Recherche des paramètres existants
+            setting_enabled = UserSetting.query.filter_by(
+                user_id=current_user.id, 
+                module_name=module, 
+                setting_key='enabled'
+            ).first()
+            
+            setting_weight = UserSetting.query.filter_by(
+                user_id=current_user.id, 
+                module_name=module, 
+                setting_key='weight'
+            ).first()
+            
+            # Création ou mise à jour des paramètres
+            if setting_enabled:
+                setting_enabled.setting_value = str(module_enabled)
+            else:
+                setting_enabled = UserSetting(
+                    user_id=current_user.id,
+                    module_name=module,
+                    setting_key='enabled',
+                    setting_value=str(module_enabled)
+                )
+                db.session.add(setting_enabled)
+            
+            if setting_weight:
+                setting_weight.setting_value = str(module_weight)
+            else:
+                setting_weight = UserSetting(
+                    user_id=current_user.id,
+                    module_name=module,
+                    setting_key='weight',
+                    setting_value=str(module_weight)
+                )
+                db.session.add(setting_weight)
+        
+        # Enregistrer les modifications
+        db.session.commit()
+        
+        flash("Vos préférences ont été mises à jour avec succès", "success")
+        return redirect(url_for('dashboard', section='profile'))
     
     @app.route('/api/query', methods=['POST'])
     def process_query():

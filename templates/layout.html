@@ -47,9 +47,26 @@
                         </li>
                     </ul>
                 </div>
-                <div class="d-flex">
+                <div class="d-flex align-items-center">
                     <span class="badge bg-info d2-indicator me-2" title="D2 Activation">D2: <span id="d2-level">0.5</span></span>
-                    <span class="badge bg-secondary hemisphere-indicator" title="Active Hemisphere">H: <span id="active-hemisphere">C</span></span>
+                    <span class="badge bg-secondary hemisphere-indicator me-3" title="Active Hemisphere">H: <span id="active-hemisphere">C</span></span>
+                    
+                    {% if current_user.is_authenticated %}
+                    <div class="dropdown">
+                        <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i data-feather="user"></i> {{ current_user.username }}
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="{{ url_for('auth.profile') }}">Profil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">Déconnexion</a></li>
+                        </ul>
+                    </div>
+                    {% else %}
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light btn-sm">
+                        <i data-feather="log-in"></i> Connexion
+                    </a>
+                    {% endif %}
                 </div>
             </div>
         </nav>

@@ -1,0 +1,217 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<style>
+    .module-card {
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
+    }
+    
+    .module-card:hover {
+        box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+    }
+    
+    .slider-container {
+        margin-top: 10px;
+    }
+    
+    .module-icon {
+        font-size: 2em;
+        margin-bottom: 10px;
+    }
+    
+    .neuronas-settings {
+        background: linear-gradient(135deg, rgba(44, 62, 80, 0.7), rgba(25, 91, 140, 0.7));
+        border-radius: 8px;
+        padding: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="text-info"><i data-feather="user"></i> Profil Utilisateur</h2>
+            <p class="text-muted">Gérez vos préférences pour le moteur cérébral Neuronas</p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card bg-dark mb-4">
+                <div class="card-header">
+                    <h5 class="card-title"><i data-feather="info"></i> Informations</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Nom d'utilisateur:</strong> {{ current_user.username }}</p>
+                    <p><strong>Email:</strong> {{ current_user.email }}</p>
+                    <p><strong>Compte créé le:</strong> {{ current_user.created_at.strftime('%d-%m-%Y') }}</p>
+                    <p><strong>Dernière connexion:</strong> 
+                        {% if current_user.last_login %}
+                            {{ current_user.last_login.strftime('%d-%m-%Y %H:%M') }}
+                        {% else %}
+                            Jamais
+                        {% endif %}
+                    </p>
+                    <p><strong>Méthode d'authentification:</strong> 
+                        {% if current_user.oauth_provider %}
+                            {{ current_user.oauth_provider|capitalize }}
+                        {% else %}
+                            Locale
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <div class="card bg-dark">
+                <div class="card-header">
+                    <h5 class="card-title"><i data-feather="activity"></i> Activité</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Requêtes totales:</strong> {{ current_user.queries.count() }}</p>
+                    <p><strong>Dernière requête:</strong>
+                        {% set last_query = current_user.queries.order_by(QueryLog.created_at.desc()).first() %}
+                        {% if last_query %}
+                            {{ last_query.created_at.strftime('%d-%m-%Y %H:%M') }}
+                        {% else %}
+                            Aucune
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <form action="{{ url_for('update_profile') }}" method="POST">
+                <div class="card bg-dark mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title"><i data-feather="sliders"></i> Paramètres Neuronas</h5>
+                    </div>
+                    <div class="card-body neuronas-settings">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="d2_temperature" class="form-label">Température D2</label>
+                                    <div class="d-flex align-items-center">
+                                        <input type="range" class="form-range flex-grow-1 me-2" id="d2_temperature" name="d2_temperature" min="0" max="1" step="0.01" value="{{ current_user.d2_temperature }}">
+                                        <span class="badge bg-info" id="d2_temperature_value">{{ current_user.d2_temperature }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="hemisphere_balance" class="form-label">Équilibre Hémisphérique</label>
+                                    <div class="d-flex align-items-center">
+                                        <input type="range" class="form-range flex-grow-1 me-2" id="hemisphere_balance" name="hemisphere_balance" min="0" max="1" step="0.01" value="{{ current_user.hemisphere_balance }}">
+                                        <span class="badge bg-info" id="hemisphere_balance_value">{{ current_user.hemisphere_balance }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="creativity_weight" class="form-label">Poids Créativité</label>
+                                    <div class="d-flex align-items-center">
+                                        <input type="range" class="form-range flex-grow-1 me-2" id="creativity_weight" name="creativity_weight" min="0" max="1" step="0.01" value="{{ current_user.creativity_weight }}">
+                                        <span class="badge bg-info" id="creativity_weight_value">{{ current_user.creativity_weight }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label for="analytical_weight" class="form-label">Poids Analytique</label>
+                                    <div class="d-flex align-items-center">
+                                        <input type="range" class="form-range flex-grow-1 me-2" id="analytical_weight" name="analytical_weight" min="0" max="1" step="0.01" value="{{ current_user.analytical_weight }}">
+                                        <span class="badge bg-info" id="analytical_weight_value">{{ current_user.analytical_weight }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card bg-dark">
+                    <div class="card-header">
+                        <h5 class="card-title"><i data-feather="cpu"></i> Modules Spéciaux</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            {% set modules = [
+                                {'name': 'QRONAS', 'icon': 'cpu', 'description': 'Quantum Recursive Optimization Neural Adaptive System', 'color': 'info'},
+                                {'name': 'BRONAS', 'icon': 'shield', 'description': 'Bayesian Reinforcement Optimized Neural Adaptive System', 'color': 'success'},
+                                {'name': 'D2Stim', 'icon': 'zap', 'description': 'Dopaminergic D2-Stimulated AI Learning Network', 'color': 'warning'},
+                                {'name': 'D2Pin', 'icon': 'anchor', 'description': 'Dopaminergic D2 Probabilistic Inhibition Network', 'color': 'danger'},
+                                {'name': 'D2Spin', 'icon': 'refresh-cw', 'description': 'Dopaminergic D2 Quantum Spin-Integrated Memory System', 'color': 'primary'}
+                            ] %}
+                            
+                            {% for module in modules %}
+                                {% set enabled_key = module.name + '_enabled' %}
+                                {% set weight_key = module.name + '_weight' %}
+                                
+                                {% set enabled_setting = user_settings|selectattr('module_name', 'equalto', module.name)|selectattr('setting_key', 'equalto', 'enabled')|first %}
+                                {% set weight_setting = user_settings|selectattr('module_name', 'equalto', module.name)|selectattr('setting_key', 'equalto', 'weight')|first %}
+                                
+                                {% set enabled = enabled_setting.setting_value|lower == 'true' if enabled_setting else true %}
+                                {% set weight = weight_setting.setting_value|float if weight_setting else 0.5 %}
+                                
+                                <div class="col-md-6">
+                                    <div class="card module-card bg-dark">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <h5 class="text-{{ module.color }}">
+                                                    <i data-feather="{{ module.icon }}" class="me-2"></i>
+                                                    {{ module.name }}
+                                                </h5>
+                                                <div class="form-check form-switch">
+                                                    <input class="form-check-input" type="checkbox" id="{{ enabled_key }}" name="{{ enabled_key }}" {% if enabled %}checked{% endif %}>
+                                                </div>
+                                            </div>
+                                            <p class="text-muted small">{{ module.description }}</p>
+                                            <div class="slider-container">
+                                                <label for="{{ weight_key }}" class="form-label d-flex justify-content-between">
+                                                    <span>Poids</span>
+                                                    <span class="badge bg-{{ module.color }}" id="{{ weight_key }}_value">{{ weight }}</span>
+                                                </label>
+                                                <input type="range" class="form-range" id="{{ weight_key }}" name="{{ weight_key }}" min="0" max="1" step="0.01" value="{{ weight }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-info">
+                            <i data-feather="save"></i> Enregistrer les paramètres
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Range input value updates
+        const rangeInputs = document.querySelectorAll('input[type="range"]');
+        
+        rangeInputs.forEach(input => {
+            const valueDisplay = document.getElementById(input.id + '_value');
+            if (valueDisplay) {
+                // Set initial value
+                valueDisplay.textContent = parseFloat(input.value).toFixed(2);
+                
+                // Update on change
+                input.addEventListener('input', function() {
+                    valueDisplay.textContent = parseFloat(this.value).toFixed(2);
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}
