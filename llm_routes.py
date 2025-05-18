@@ -43,12 +43,21 @@ def process_with_dual_llm():
                           user_settings.get('d2_activation', 0.5) if user_settings else 0.5)
     hemisphere_balance = data.get('hemisphere_balance', 
                                user_settings.get('hemisphere_balance', 0.5) if user_settings else 0.5)
+    simulation_mode = data.get('simulation_mode', True)  # Default to simulation mode enabled
+    ollama_url = data.get('ollama_url', 'http://localhost:11434')
     
     # Process through dual LLM system
     try:
         # Set D2 activation and hemisphere balance
         current_app.dual_llm.set_d2_activation(d2_activation)
         current_app.dual_llm.set_hemisphere_balance(hemisphere_balance)
+        
+        # Update Ollama URL and simulation mode
+        if hasattr(current_app.dual_llm, 'set_simulation_mode'):
+            current_app.dual_llm.set_simulation_mode(simulation_mode)
+            
+        if hasattr(current_app.dual_llm, 'set_ollama_url'):
+            current_app.dual_llm.set_ollama_url(ollama_url)
         
         # Process the query
         result = current_app.dual_llm.process_query(

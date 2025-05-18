@@ -163,6 +163,17 @@ class HemisphericLLM:
                     }
                 }
                 
+                # Check if parent system has simulation mode enabled
+                simulation_mode = False
+                if hasattr(current_app, 'dual_llm') and hasattr(current_app.dual_llm, 'simulation_mode'):
+                    simulation_mode = current_app.dual_llm.simulation_mode
+                
+                # Generate simulated response if simulation mode is enabled
+                if simulation_mode:
+                    logger.info(f"Using simulation mode for {self.name} ({self.hemisphere_type} hemisphere)")
+                    # Skip Ollama server and generate simulated response
+                    raise requests.exceptions.ConnectionError("Simulation mode enabled")
+                    
                 # Send request to Ollama API
                 try:
                     ollama_response = requests.post(
@@ -570,6 +581,10 @@ class DualLLMSystem:
         self.hemisphere_balance = 0.5  # 0.0=left, 1.0=right
         self.d2_activation = 0.5
         
+        # Simulation settings
+        self.simulation_mode = True  # Default to simulation mode enabled
+        self.ollama_url = os.environ.get("OLLAMA_URL", "http://localhost:11434")
+        
     def set_d2_activation(self, value):
         """Set D2 receptor activation level (0.0-1.0)"""
         self.d2_activation = max(0.0, min(1.0, value))
@@ -586,6 +601,23 @@ class DualLLMSystem:
     def set_hemisphere_balance(self, value):
         """Set the hemispheric balance for response integration (0.0=left, 1.0=right)"""
         self.hemisphere_balance = max(0.0, min(1.0, value))
+        
+    def set_simulation_mode(self, enabled=True):
+        """Enable or disable simulation mode"""
+        self.simulation_mode = enabled
+        
+    def set_ollama_url(self, url="http://localhost:11434"):
+        """Set the URL for the Ollama server"""
+        self.ollama_url = url
+        
+        # Update URL for all personas using Ollama
+        for persona in self.personas.values():
+            if persona.model_provider == 'ollama':
+                persona.ollama_url = url
+                
+        # Update integration model URL if using Ollama
+        if self.integration.model_provider == 'ollama':
+            self.integration.ollama_url = url
         
     def select_personas(self, prompt, memory_context=None):
         """

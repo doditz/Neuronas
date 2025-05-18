@@ -74,6 +74,7 @@
                             <div class="persona-info">
                                 <div class="persona-name" id="left-persona-name">Analytica</div>
                                 <div class="persona-type text-muted">Left Hemisphere</div>
+                                <div class="persona-model text-muted small" id="left-model-name">llama3:8b</div>
                             </div>
                         </div>
                         
@@ -82,15 +83,35 @@
                             <div class="persona-info">
                                 <div class="persona-name" id="right-persona-name">Creativa</div>
                                 <div class="persona-type text-muted">Right Hemisphere</div>
+                                <div class="persona-model text-muted small" id="right-model-name">mistral:7b</div>
                             </div>
                         </div>
                         
-                        <div class="d-flex align-items-center">
+                        <div class="d-flex mb-3 align-items-center">
                             <div class="persona-icon central">C</div>
                             <div class="persona-info">
                                 <div class="persona-name">Sociologica</div>
                                 <div class="persona-type text-muted">Integration</div>
+                                <div class="persona-model text-muted small" id="central-model-name">gemma:7b</div>
                             </div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="mt-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="offline-mode" checked>
+                            <label class="form-check-label" for="offline-mode">Simulation Mode (No Ollama Server)</label>
+                        </div>
+                        <small class="text-muted d-block mt-1">
+                            Toggle to use local simulated responses when no Ollama server is available
+                        </small>
+                        
+                        <div class="mt-3">
+                            <label for="ollama-url" class="form-label">Ollama Server URL</label>
+                            <input type="text" class="form-control" id="ollama-url" value="http://localhost:11434" placeholder="http://localhost:11434">
+                            <small class="text-muted">URL where your Ollama server is running</small>
                         </div>
                     </div>
                 </div>
@@ -318,6 +339,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Get current settings
         const d2Activation = parseFloat(d2Slider.value);
         const hemisphereBalance = parseFloat(balanceSlider.value);
+        const simulationMode = document.getElementById('offline-mode').checked;
+        const ollamaUrl = document.getElementById('ollama-url').value;
         
         // Process query
         fetch('/api/llm/process', {
@@ -328,7 +351,9 @@ document.addEventListener('DOMContentLoaded', function() {
             body: JSON.stringify({
                 query: query,
                 d2_activation: d2Activation,
-                hemisphere_balance: hemisphereBalance
+                hemisphere_balance: hemisphereBalance,
+                simulation_mode: simulationMode,
+                ollama_url: ollamaUrl
             })
         })
         .then(response => response.json())
