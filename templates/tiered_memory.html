@@ -81,84 +81,133 @@
         <div class="col-md-12">
             <div class="memory-system-diagram">
                 <div class="row">
-                    <div class="col-md-6">
+                    <!-- Smaller Left Hemisphere Box -->
+                    <div class="col-md-3">
                         <div class="card text-center mb-3">
                             <div class="card-header bg-primary text-white">
                                 Left Hemisphere (Analytical)
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="card memory-tier">
-                                    <div class="card-header">L1: Short-term Memory</div>
-                                    <div class="card-body">
-                                        <div class="memory-count" id="l1-count">0</div>
-                                        <div class="memory-description">
-                                            Fast access, temporary storage
+                            <div class="card-body p-2">
+                                <div class="memory-keywords" id="left-memory-keywords">
+                                    <span class="badge rounded-pill bg-light text-dark">factual recall</span>
+                                    <span class="badge rounded-pill bg-light text-dark">logical analysis</span>
+                                    <span class="badge rounded-pill bg-light text-dark">BRONAS realignment</span>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-4 p-1">
+                                        <div class="card memory-tier-small">
+                                            <div class="card-header p-1">L1</div>
+                                            <div class="card-body p-2">
+                                                <div class="memory-count-small" id="l1-count">0</div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card memory-tier">
-                                    <div class="card-header">L2: Medium-term Memory</div>
-                                    <div class="card-body">
-                                        <div class="memory-count" id="l2-count">0</div>
-                                        <div class="memory-description">
-                                            Intermediate storage
+                                    <div class="col-4 p-1">
+                                        <div class="card memory-tier-small">
+                                            <div class="card-header p-1">L2</div>
+                                            <div class="card-body p-2">
+                                                <div class="memory-count-small" id="l2-count">0</div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card memory-tier">
-                                    <div class="card-header">L3: Long-term Memory</div>
-                                    <div class="card-body">
-                                        <div class="memory-count" id="l3-count">0</div>
-                                        <div class="memory-description">
-                                            Consolidated knowledge
+                                    <div class="col-4 p-1">
+                                        <div class="card memory-tier-small">
+                                            <div class="card-header p-1">L3</div>
+                                            <div class="card-body p-2">
+                                                <div class="memory-count-small" id="l3-count">0</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Larger Central Processing Box -->
                     <div class="col-md-6">
+                        <div class="card mb-3">
+                            <div class="card-header bg-success text-white text-center">
+                                Cognitive Processing (Hemispheric Integration)
+                            </div>
+                            <div class="card-body" id="reasoning-display" style="min-height: 200px; max-height: 350px; overflow-y: auto;">
+                                <div class="processing-stages">
+                                    <div class="stage">
+                                        <h6 class="stage-header"><i class="feather-icon" data-feather="cpu"></i> Pre-LLM Analysis</h6>
+                                        <div class="stage-content" id="pre-llm-analysis">
+                                            <p class="text-muted small">Contextual binding and premise evaluation in progress...</p>
+                                            <div class="d-flex stage-keywords">
+                                                <span class="badge bg-light text-dark me-1">memory retrieval</span>
+                                                <span class="badge bg-light text-dark me-1">context binding</span>
+                                                <span class="badge bg-light text-dark">QRONAS optimization</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="stage mt-3">
+                                        <h6 class="stage-header"><i class="feather-icon" data-feather="activity"></i> Reasoning Pathway</h6>
+                                        <div class="stage-content" id="reasoning-pathway">
+                                            <p class="reasoning-step"><span class="step-number">1.</span> Dopaminergic modulation establishing pathway intensity at 0.67</p>
+                                            <p class="reasoning-step"><span class="step-number">2.</span> Contextual elements identified from memory tier L2 with 89% confidence</p>
+                                            <p class="reasoning-step"><span class="step-number">3.</span> Creative associations activated in R3 (3 elements)</p>
+                                        </div>
+                                    </div>
+                                    <div class="stage mt-3">
+                                        <h6 class="stage-header"><i class="feather-icon" data-feather="zap"></i> Post-LLM Integration</h6>
+                                        <div class="stage-content" id="post-llm-integration">
+                                            <p class="text-muted small">Awaiting response integration...</p>
+                                            <div class="progress" style="height: 5px;">
+                                                <div class="progress-bar" role="progressbar" style="width: 35%;" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-light">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="small text-muted">Processing latency: <span id="processing-latency">47ms</span></div>
+                                    <div>
+                                        <span class="badge bg-secondary me-1">10-bit speed</span>
+                                        <span class="badge bg-info">D2: <span id="d2-level-display">0.68</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Smaller Right Hemisphere Box -->
+                    <div class="col-md-3">
                         <div class="card text-center mb-3">
                             <div class="card-header bg-info text-white">
                                 Right Hemisphere (Creative)
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="card memory-tier">
-                                    <div class="card-header">R1: Real-time Adaptation</div>
-                                    <div class="card-body">
-                                        <div class="memory-count" id="r1-count">0</div>
-                                        <div class="memory-description">
-                                            Novel perceptions
+                            <div class="card-body p-2">
+                                <div class="memory-keywords" id="right-memory-keywords">
+                                    <span class="badge rounded-pill bg-light text-dark">novel connections</span>
+                                    <span class="badge rounded-pill bg-light text-dark">contextual binding</span>
+                                    <span class="badge rounded-pill bg-light text-dark">D2Stim activation</span>
+                                </div>
+                                <div class="row mt-2">
+                                    <div class="col-4 p-1">
+                                        <div class="card memory-tier-small">
+                                            <div class="card-header p-1">R1</div>
+                                            <div class="card-body p-2">
+                                                <div class="memory-count-small" id="r1-count">0</div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card memory-tier">
-                                    <div class="card-header">R2: Contextual Optimization</div>
-                                    <div class="card-body">
-                                        <div class="memory-count" id="r2-count">0</div>
-                                        <div class="memory-description">
-                                            Refined ideas
+                                    <div class="col-4 p-1">
+                                        <div class="card memory-tier-small">
+                                            <div class="card-header p-1">R2</div>
+                                            <div class="card-body p-2">
+                                                <div class="memory-count-small" id="r2-count">0</div>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card memory-tier">
-                                    <div class="card-header">R3: Cognitive Synthesis</div>
-                                    <div class="card-body">
-                                        <div class="memory-count" id="r3-count">0</div>
-                                        <div class="memory-description">
-                                            Creative insights
+                                    <div class="col-4 p-1">
+                                        <div class="card memory-tier-small">
+                                            <div class="card-header p-1">R3</div>
+                                            <div class="card-body p-2">
+                                                <div class="memory-count-small" id="r3-count">0</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -170,13 +219,74 @@
                 <div class="row mt-4">
                     <div class="col-md-12">
                         <div class="card">
-                            <div class="card-header bg-success text-white text-center">
-                                Central Integration (Hemispheric Fusion)
+                            <div class="card-header bg-dark text-white text-center">
+                                Response Generation
                             </div>
-                            <div class="card-body text-center">
-                                <div class="integration-count" id="central-count">0</div>
-                                <div class="integration-description">
-                                    Dialectic synthesis of analytical facts and creative insights
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="card bg-light h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Format Detection</h6>
+                                                <div id="format-detection">
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <div class="format-confidence me-2" style="width: 70%; background-color: #28a745;"></div>
+                                                        <span>Narrative (70%)</span>
+                                                    </div>
+                                                    <div class="d-flex align-items-center mb-2">
+                                                        <div class="format-confidence me-2" style="width: 20%; background-color: #17a2b8;"></div>
+                                                        <span>Technical (20%)</span>
+                                                    </div>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="format-confidence me-2" style="width: 10%; background-color: #6c757d;"></div>
+                                                        <span>Scientific (10%)</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Integration Results</h6>
+                                                <div id="integration-count-display" class="text-center">
+                                                    <div class="integration-count" id="central-count">0</div>
+                                                    <div class="integration-description">
+                                                        Elements from both hemispheres merged
+                                                    </div>
+                                                </div>
+                                                <div class="progress mt-3" style="height: 8px;">
+                                                    <div class="progress-bar" role="progressbar" style="width: 65%; background-color: #28a745;" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    <div class="progress-bar" role="progressbar" style="width: 35%; background-color: #17a2b8;" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
+                                                </div>
+                                                <div class="d-flex justify-content-between mt-1">
+                                                    <small class="text-muted">Left influence (65%)</small>
+                                                    <small class="text-muted">Right influence (35%)</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="card bg-light h-100">
+                                            <div class="card-body">
+                                                <h6 class="card-title">Memory Utilization</h6>
+                                                <div class="memory-metrics">
+                                                    <div class="d-flex justify-content-between mb-2">
+                                                        <span>Analytical:</span>
+                                                        <span class="text-primary fw-bold" id="left-utilization">43%</span>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between mb-2">
+                                                        <span>Creative:</span>
+                                                        <span class="text-info fw-bold" id="right-utilization">27%</span>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between">
+                                                        <span>Central:</span>
+                                                        <span class="text-success fw-bold" id="central-utilization">30%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -262,12 +372,12 @@
 </div>
 
 <style>
-.memory-tier {
+.memory-tier, .memory-tier-small {
     transition: all 0.3s ease;
     height: 100%;
 }
-.memory-tier:hover {
-    transform: translateY(-5px);
+.memory-tier:hover, .memory-tier-small:hover {
+    transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 .memory-count {
@@ -275,9 +385,22 @@
     font-weight: bold;
     margin-bottom: 10px;
 }
+.memory-count-small {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
 .memory-description {
     font-size: 0.9rem;
     color: #666;
+}
+.memory-keywords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+}
+.memory-keywords .badge {
+    font-size: 0.7rem;
 }
 .integration-count {
     font-size: 2.5rem;
@@ -296,6 +419,45 @@
 .stat-value {
     font-size: 1.5rem;
     font-weight: bold;
+}
+.stage-header {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    color: #495057;
+}
+.stage-header .feather-icon {
+    margin-right: 8px;
+    color: #6c757d;
+}
+.stage-content {
+    padding-left: 24px;
+}
+.stage-keywords {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 5px;
+}
+.reasoning-step {
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+.step-number {
+    display: inline-block;
+    background-color: #e9ecef;
+    color: #495057;
+    width: 18px;
+    height: 18px;
+    text-align: center;
+    line-height: 18px;
+    border-radius: 50%;
+    margin-right: 8px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+.format-confidence {
+    height: 10px;
+    border-radius: 5px;
 }
 </style>
 {% endblock %}
