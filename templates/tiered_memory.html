@@ -1,0 +1,544 @@
+{% extends "layout.html" %}
+
+{% block title %}Tiered Memory System{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4">Dual Hemispheric Memory Framework</h1>
+    
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Memory System Overview</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h5>System Status</h5>
+                                    <div class="d-flex justify-content-center">
+                                        <div class="spinner-border text-primary" role="status" id="status-spinner">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </div>
+                                    <div id="system-status" class="mt-2">Loading...</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-light">
+                                <div class="card-body text-center">
+                                    <h5>Last Maintenance</h5>
+                                    <p id="last-maintenance">Loading...</p>
+                                    <button class="btn btn-primary btn-sm" id="run-maintenance">
+                                        Run Maintenance
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="text-center">Memory Operations</h5>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="stat-box text-center">
+                                                <div class="stat-label">Push</div>
+                                                <div class="stat-value" id="ops-push">0</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="stat-box text-center">
+                                                <div class="stat-label">Pull</div>
+                                                <div class="stat-value" id="ops-pull">0</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="stat-box text-center">
+                                                <div class="stat-label">Retrieve</div>
+                                                <div class="stat-value" id="ops-retrieve">0</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="stat-box text-center">
+                                                <div class="stat-label">Integrate</div>
+                                                <div class="stat-value" id="ops-integrate">0</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="memory-system-diagram">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card text-center mb-3">
+                            <div class="card-header bg-primary text-white">
+                                Left Hemisphere (Analytical)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card memory-tier">
+                                    <div class="card-header">L1: Short-term Memory</div>
+                                    <div class="card-body">
+                                        <div class="memory-count" id="l1-count">0</div>
+                                        <div class="memory-description">
+                                            Fast access, temporary storage
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card memory-tier">
+                                    <div class="card-header">L2: Medium-term Memory</div>
+                                    <div class="card-body">
+                                        <div class="memory-count" id="l2-count">0</div>
+                                        <div class="memory-description">
+                                            Intermediate storage
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card memory-tier">
+                                    <div class="card-header">L3: Long-term Memory</div>
+                                    <div class="card-body">
+                                        <div class="memory-count" id="l3-count">0</div>
+                                        <div class="memory-description">
+                                            Consolidated knowledge
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card text-center mb-3">
+                            <div class="card-header bg-info text-white">
+                                Right Hemisphere (Creative)
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card memory-tier">
+                                    <div class="card-header">R1: Real-time Adaptation</div>
+                                    <div class="card-body">
+                                        <div class="memory-count" id="r1-count">0</div>
+                                        <div class="memory-description">
+                                            Novel perceptions
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card memory-tier">
+                                    <div class="card-header">R2: Contextual Optimization</div>
+                                    <div class="card-body">
+                                        <div class="memory-count" id="r2-count">0</div>
+                                        <div class="memory-description">
+                                            Refined ideas
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card memory-tier">
+                                    <div class="card-header">R3: Cognitive Synthesis</div>
+                                    <div class="card-body">
+                                        <div class="memory-count" id="r3-count">0</div>
+                                        <div class="memory-description">
+                                            Creative insights
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="card">
+                            <div class="card-header bg-success text-white text-center">
+                                Central Integration (Hemispheric Fusion)
+                            </div>
+                            <div class="card-body text-center">
+                                <div class="integration-count" id="central-count">0</div>
+                                <div class="integration-description">
+                                    Dialectic synthesis of analytical facts and creative insights
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Memory Test Panel</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Store Memory</h6>
+                            <form id="store-memory-form">
+                                <div class="mb-3">
+                                    <label for="memory-key" class="form-label">Memory Key</label>
+                                    <input type="text" class="form-control" id="memory-key" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="memory-value" class="form-label">Memory Content</label>
+                                    <textarea class="form-control" id="memory-value" rows="3" required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="memory-hemisphere" class="form-label">Hemisphere</label>
+                                    <select class="form-select" id="memory-hemisphere" required>
+                                        <option value="left">Left (Analytical)</option>
+                                        <option value="right">Right (Creative)</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="memory-importance" class="form-label">
+                                        <span class="hemisphere-label">Importance</span> <span id="memory-score-value">0.5</span>
+                                    </label>
+                                    <input type="range" class="form-range" id="memory-importance" min="0" max="1" step="0.1" value="0.5">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="memory-context" class="form-label">Context (JSON)</label>
+                                    <textarea class="form-control" id="memory-context" rows="2" placeholder='{"session": "test", "topic": "memory"}'></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Store Memory</button>
+                            </form>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Retrieve Memory</h6>
+                            <form id="retrieve-memory-form" class="mb-4">
+                                <div class="mb-3">
+                                    <label for="retrieve-key" class="form-label">Memory Key</label>
+                                    <input type="text" class="form-control" id="retrieve-key" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="retrieve-hemisphere" class="form-label">Hemisphere</label>
+                                    <select class="form-select" id="retrieve-hemisphere">
+                                        <option value="both">Both Hemispheres</option>
+                                        <option value="left">Left Only</option>
+                                        <option value="right">Right Only</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Retrieve Memory</button>
+                            </form>
+                            
+                            <div id="memory-result" class="mt-3 d-none">
+                                <h6>Retrieved Memory</h6>
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div id="result-content">
+                                            <!-- Retrieved memory will be displayed here -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.memory-tier {
+    transition: all 0.3s ease;
+    height: 100%;
+}
+.memory-tier:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+.memory-count {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.memory-description {
+    font-size: 0.9rem;
+    color: #666;
+}
+.integration-count {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.stat-box {
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f8f9fa;
+}
+.stat-label {
+    font-size: 0.9rem;
+    color: #666;
+}
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Update hemisphere-dependent labels
+    document.getElementById('memory-hemisphere').addEventListener('change', function() {
+        const hemisphere = this.value;
+        const scoreLabel = document.querySelector('.hemisphere-label');
+        if (hemisphere === 'left') {
+            scoreLabel.textContent = 'Importance';
+        } else {
+            scoreLabel.textContent = 'Novelty';
+        }
+    });
+    
+    // Update score value display
+    document.getElementById('memory-importance').addEventListener('input', function() {
+        document.getElementById('memory-score-value').textContent = this.value;
+    });
+    
+    // Load memory statistics
+    fetchMemoryStats();
+    
+    // Set up interval to refresh stats
+    setInterval(fetchMemoryStats, 10000);
+    
+    // Store memory form submission
+    document.getElementById('store-memory-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const key = document.getElementById('memory-key').value;
+        const value = document.getElementById('memory-value').value;
+        const hemisphere = document.getElementById('memory-hemisphere').value;
+        const score = parseFloat(document.getElementById('memory-importance').value);
+        
+        let context = null;
+        const contextText = document.getElementById('memory-context').value.trim();
+        if (contextText) {
+            try {
+                context = JSON.parse(contextText);
+            } catch (error) {
+                showAlert('Invalid JSON context format', 'danger');
+                return;
+            }
+        }
+        
+        storeMemory(key, value, hemisphere, score, context);
+    });
+    
+    // Retrieve memory form submission
+    document.getElementById('retrieve-memory-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const key = document.getElementById('retrieve-key').value;
+        const hemisphere = document.getElementById('retrieve-hemisphere').value;
+        
+        retrieveMemory(key, hemisphere);
+    });
+    
+    // Run maintenance button
+    document.getElementById('run-maintenance').addEventListener('click', function() {
+        runMaintenanceOperation();
+    });
+});
+
+function fetchMemoryStats() {
+    fetch('/api/memory/stats')
+        .then(response => response.json())
+        .then(data => {
+            updateMemoryStats(data);
+        })
+        .catch(error => {
+            console.error('Error fetching memory stats:', error);
+            showAlert('Failed to fetch memory statistics', 'danger');
+        });
+}
+
+function updateMemoryStats(data) {
+    // Update hemisphere counts
+    document.getElementById('l1-count').textContent = data.left['1'] || 0;
+    document.getElementById('l2-count').textContent = data.left['2'] || 0;
+    document.getElementById('l3-count').textContent = data.left['3'] || 0;
+    
+    document.getElementById('r1-count').textContent = data.right['1'] || 0;
+    document.getElementById('r2-count').textContent = data.right['2'] || 0;
+    document.getElementById('r3-count').textContent = data.right['3'] || 0;
+    
+    document.getElementById('central-count').textContent = data.central || 0;
+    
+    // Update operation counts
+    document.getElementById('ops-push').textContent = data.operations.push || 0;
+    document.getElementById('ops-pull').textContent = data.operations.pull || 0;
+    document.getElementById('ops-retrieve').textContent = data.operations.retrieve || 0;
+    document.getElementById('ops-integrate').textContent = data.operations.integrate || 0;
+    
+    // Update system status
+    document.getElementById('status-spinner').style.display = 'none';
+    document.getElementById('system-status').innerHTML = `
+        <span class="badge bg-success">ACTIVE</span>
+        <div class="small mt-1">Total Memories: ${getTotalMemories(data)}</div>
+    `;
+    
+    // Update last maintenance time
+    if (data.last_maintenance) {
+        const maintenanceDate = new Date(data.last_maintenance);
+        document.getElementById('last-maintenance').textContent = maintenanceDate.toLocaleString();
+    } else {
+        document.getElementById('last-maintenance').textContent = 'No maintenance yet';
+    }
+}
+
+function getTotalMemories(data) {
+    return (
+        (data.left['1'] || 0) + 
+        (data.left['2'] || 0) + 
+        (data.left['3'] || 0) + 
+        (data.right['1'] || 0) + 
+        (data.right['2'] || 0) + 
+        (data.right['3'] || 0) + 
+        (data.central || 0)
+    );
+}
+
+function storeMemory(key, value, hemisphere, score, context) {
+    const endpoint = hemisphere === 'left' ? '/api/memory/store/analytical' : '/api/memory/store/creative';
+    
+    fetch(endpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            key: key,
+            value: value,
+            score: score,
+            context: context
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('Memory stored successfully', 'success');
+            fetchMemoryStats(); // Refresh stats
+        } else {
+            showAlert(`Failed to store memory: ${data.error}`, 'danger');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showAlert('An error occurred while storing memory', 'danger');
+    });
+}
+
+function retrieveMemory(key, hemisphere) {
+    fetch(`/api/memory/retrieve?key=${encodeURIComponent(key)}&hemisphere=${hemisphere}`)
+        .then(response => response.json())
+        .then(data => {
+            const resultContainer = document.getElementById('memory-result');
+            const resultContent = document.getElementById('result-content');
+            
+            resultContainer.classList.remove('d-none');
+            
+            if (data.success && data.memory) {
+                const memoryData = data.memory.data;
+                const hemisphereLabel = data.memory.hemisphere === 'left' ? 'Left (Analytical)' : 'Right (Creative)';
+                
+                let scoreLabel, scoreValue;
+                if (data.memory.hemisphere === 'left') {
+                    scoreLabel = 'Importance';
+                    scoreValue = memoryData.importance || 'N/A';
+                } else {
+                    scoreLabel = data.memory.data.novelty_score ? 'Novelty' : 
+                                (data.memory.data.optimization_score ? 'Optimization' : 'Synthesis');
+                    scoreValue = memoryData.novelty_score || memoryData.optimization_score || 
+                                memoryData.synthesis_score || 'N/A';
+                }
+                
+                resultContent.innerHTML = `
+                    <div class="alert alert-success">
+                        <strong>Memory Found in ${hemisphereLabel} Hemisphere</strong>
+                    </div>
+                    <dl class="row">
+                        <dt class="col-sm-3">Key</dt>
+                        <dd class="col-sm-9">${memoryData.key}</dd>
+                        
+                        <dt class="col-sm-3">Value</dt>
+                        <dd class="col-sm-9">${memoryData.value}</dd>
+                        
+                        <dt class="col-sm-3">${scoreLabel}</dt>
+                        <dd class="col-sm-9">${scoreValue}</dd>
+                        
+                        <dt class="col-sm-3">Access Count</dt>
+                        <dd class="col-sm-9">${memoryData.access_count || 'N/A'}</dd>
+                        
+                        <dt class="col-sm-3">Last Accessed</dt>
+                        <dd class="col-sm-9">${new Date(memoryData.last_accessed).toLocaleString()}</dd>
+                        
+                        <dt class="col-sm-3">Created</dt>
+                        <dd class="col-sm-9">${new Date(memoryData.created_at).toLocaleString()}</dd>
+                    </dl>
+                `;
+            } else {
+                resultContent.innerHTML = `
+                    <div class="alert alert-warning">
+                        <strong>Memory Not Found</strong>
+                        <p>No memory with key "${key}" was found in the specified hemisphere(s).</p>
+                    </div>
+                `;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('An error occurred while retrieving memory', 'danger');
+        });
+}
+
+function runMaintenanceOperation() {
+    fetch('/api/memory/maintenance', { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert('Memory maintenance completed successfully', 'success');
+                fetchMemoryStats(); // Refresh stats
+            } else {
+                showAlert(`Failed to run maintenance: ${data.error}`, 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showAlert('An error occurred during maintenance operation', 'danger');
+        });
+}
+
+function showAlert(message, type) {
+    // Use the existing showAlert function from layout.html
+    if (typeof window.showAlert === 'function') {
+        window.showAlert(message, type);
+    } else {
+        alert(message);
+    }
+}
+</script>
+{% endblock %}
