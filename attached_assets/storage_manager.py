@@ -39,6 +39,11 @@ class TieredStorageManager:
         cursor = conn.cursor()
         compressed = self.compression[compression_algo](json.dumps(data))
         try:
+            # Validate table name against a whitelist to prevent SQL injection
+            valid_tables = ["memory", "knowledge", "metrics", "settings", "hypotheses"]
+            if table not in valid_tables:
+                raise ValueError(f"Invalid table name: {table}")
+            
             cursor.execute(f"INSERT INTO {table} (data) VALUES (?)", (compressed,))
             conn.commit()
         except Exception:
