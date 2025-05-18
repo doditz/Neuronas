@@ -1,0 +1,460 @@
+{% extends "layout.html" %}
+
+{% block title %}Dual LLM System{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h1 class="mb-4">Dual Hemispheric LLM System</h1>
+    
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="alert alert-info">
+                <i data-feather="info"></i> 
+                The dual hemispheric LLM system combines analytical processing (left hemisphere) and creative processing (right hemisphere) to provide balanced cognitive responses.
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <!-- Control Panel -->
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Cognitive Control Panel</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-group mb-4">
+                        <label for="d2-activation" class="form-label d-flex justify-content-between">
+                            <span>D2 Receptor Activation</span>
+                            <span class="badge bg-info" id="d2-value">0.5</span>
+                        </label>
+                        <input type="range" class="form-range" id="d2-activation" min="0" max="1" step="0.05" value="0.5">
+                        <div class="d-flex justify-content-between small text-muted">
+                            <span>Inhibitory</span>
+                            <span>Baseline</span>
+                            <span>Excitatory</span>
+                        </div>
+                        <small class="form-text text-muted mt-2">
+                            Controls dopaminergic modulation across both hemispheres (0.0-1.0)
+                        </small>
+                    </div>
+                    
+                    <div class="form-group mb-4">
+                        <label for="hemisphere-balance" class="form-label d-flex justify-content-between">
+                            <span>Hemisphere Balance</span>
+                            <span class="badge bg-primary" id="balance-value">0.5</span>
+                        </label>
+                        <input type="range" class="form-range" id="hemisphere-balance" min="0" max="1" step="0.05" value="0.5">
+                        <div class="d-flex justify-content-between small text-muted">
+                            <span>Analytical</span>
+                            <span>Balanced</span>
+                            <span>Creative</span>
+                        </div>
+                        <small class="form-text text-muted mt-2">
+                            Controls balance between left (analytical) and right (creative) hemispheres
+                        </small>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-grid">
+                        <button class="btn btn-primary" id="apply-settings">Apply Settings</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Active Personas</h5>
+                </div>
+                <div class="card-body">
+                    <div class="hemisphere-personas">
+                        <div class="d-flex mb-3 align-items-center">
+                            <div class="persona-icon left">L</div>
+                            <div class="persona-info">
+                                <div class="persona-name" id="left-persona-name">Analytica</div>
+                                <div class="persona-type text-muted">Left Hemisphere</div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex mb-3 align-items-center">
+                            <div class="persona-icon right">R</div>
+                            <div class="persona-info">
+                                <div class="persona-name" id="right-persona-name">Creativa</div>
+                                <div class="persona-type text-muted">Right Hemisphere</div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex align-items-center">
+                            <div class="persona-icon central">C</div>
+                            <div class="persona-info">
+                                <div class="persona-name">Sociologica</div>
+                                <div class="persona-type text-muted">Integration</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Interaction Panel -->
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Cognitive Query</h5>
+                </div>
+                <div class="card-body">
+                    <form id="query-form">
+                        <div class="form-group mb-3">
+                            <label for="query-input">Enter your query:</label>
+                            <textarea class="form-control" id="query-input" rows="3" placeholder="What would you like to explore?"></textarea>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary">
+                                <i data-feather="send"></i> Process Query
+                            </button>
+                            <div class="processing-indicator d-none" id="processing-indicator">
+                                <div class="spinner-border spinner-border-sm text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <span class="ms-2">Processing...</span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="response-container mb-4 d-none" id="response-container">
+                <div class="card">
+                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Integrated Response</h5>
+                        <div>
+                            <span class="badge bg-light text-dark me-2">Time: <span id="response-time">0ms</span></span>
+                            <span class="badge bg-light text-dark">D2: <span id="response-d2">0.5</span></span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="integrated-response" class="mb-4"></div>
+                        
+                        <div class="response-metrics">
+                            <div class="mb-3">
+                                <label class="form-label mb-1">Hemispheric Contribution</label>
+                                <div class="progress" style="height: 8px;">
+                                    <div class="progress-bar bg-primary" id="left-contribution" role="progressbar" style="width: 50%"></div>
+                                    <div class="progress-bar bg-info" id="right-contribution" role="progressbar" style="width: 50%"></div>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <small class="text-muted">Left: <span id="left-percent">50%</span></small>
+                                    <small class="text-muted">Right: <span id="right-percent">50%</span></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="accordion" id="hemisphericResponses">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="leftHeadingOne">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#leftCollapseOne" aria-expanded="false" aria-controls="leftCollapseOne">
+                            <div class="d-flex align-items-center">
+                                <div class="persona-icon left me-2">L</div>
+                                <div>
+                                    Left Hemisphere Response
+                                    <div class="small text-muted">Analytical Processing</div>
+                                </div>
+                            </div>
+                        </button>
+                    </h2>
+                    <div id="leftCollapseOne" class="accordion-collapse collapse" aria-labelledby="leftHeadingOne" data-bs-parent="#hemisphericResponses">
+                        <div class="accordion-body" id="left-response">
+                            <div class="text-center text-muted">No response yet</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="rightHeadingOne">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#rightCollapseOne" aria-expanded="false" aria-controls="rightCollapseOne">
+                            <div class="d-flex align-items-center">
+                                <div class="persona-icon right me-2">R</div>
+                                <div>
+                                    Right Hemisphere Response
+                                    <div class="small text-muted">Creative Processing</div>
+                                </div>
+                            </div>
+                        </button>
+                    </h2>
+                    <div id="rightCollapseOne" class="accordion-collapse collapse" aria-labelledby="rightHeadingOne" data-bs-parent="#hemisphericResponses">
+                        <div class="accordion-body" id="right-response">
+                            <div class="text-center text-muted">No response yet</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.persona-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: white;
+    margin-right: 15px;
+}
+.persona-icon.left {
+    background-color: #007bff;
+}
+.persona-icon.right {
+    background-color: #17a2b8;
+}
+.persona-icon.central {
+    background-color: #28a745;
+}
+.persona-name {
+    font-weight: 600;
+    font-size: 1rem;
+}
+.response-metrics {
+    border-top: 1px solid #dee2e6;
+    padding-top: 15px;
+    margin-top: 15px;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize feather icons
+    feather.replace();
+    
+    // Get DOM elements
+    const d2Slider = document.getElementById('d2-activation');
+    const balanceSlider = document.getElementById('hemisphere-balance');
+    const d2Value = document.getElementById('d2-value');
+    const balanceValue = document.getElementById('balance-value');
+    const applyButton = document.getElementById('apply-settings');
+    const queryForm = document.getElementById('query-form');
+    const queryInput = document.getElementById('query-input');
+    const processingIndicator = document.getElementById('processing-indicator');
+    const responseContainer = document.getElementById('response-container');
+    const integratedResponse = document.getElementById('integrated-response');
+    const leftResponse = document.getElementById('left-response');
+    const rightResponse = document.getElementById('right-response');
+    const leftContribution = document.getElementById('left-contribution');
+    const rightContribution = document.getElementById('right-contribution');
+    const leftPercent = document.getElementById('left-percent');
+    const rightPercent = document.getElementById('right-percent');
+    const responseTime = document.getElementById('response-time');
+    const responseD2 = document.getElementById('response-d2');
+    const leftPersonaName = document.getElementById('left-persona-name');
+    const rightPersonaName = document.getElementById('right-persona-name');
+    
+    // Update values on slider change
+    d2Slider.addEventListener('input', function() {
+        d2Value.textContent = this.value;
+    });
+    
+    balanceSlider.addEventListener('input', function() {
+        balanceValue.textContent = this.value;
+    });
+    
+    // Apply settings
+    applyButton.addEventListener('click', function() {
+        const d2Activation = parseFloat(d2Slider.value);
+        const hemisphereBalance = parseFloat(balanceSlider.value);
+        
+        fetch('/api/llm/set_parameters', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                d2_activation: d2Activation,
+                hemisphere_balance: hemisphereBalance
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showAlert('Parameters updated successfully', 'success');
+                updatePersonaDisplay(data.state);
+            } else {
+                showAlert(`Failed to update parameters: ${data.error}`, 'danger');
+            }
+        })
+        .catch(error => {
+            console.error('Error updating parameters:', error);
+            showAlert('An error occurred while updating parameters', 'danger');
+        });
+    });
+    
+    // Process query
+    queryForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const query = queryInput.value.trim();
+        if (!query) {
+            showAlert('Please enter a query', 'warning');
+            return;
+        }
+        
+        // Show processing indicator
+        processingIndicator.classList.remove('d-none');
+        
+        // Reset previous responses
+        responseContainer.classList.add('d-none');
+        integratedResponse.innerHTML = '';
+        leftResponse.innerHTML = '<div class="text-center text-muted">Processing...</div>';
+        rightResponse.innerHTML = '<div class="text-center text-muted">Processing...</div>';
+        
+        // Get current settings
+        const d2Activation = parseFloat(d2Slider.value);
+        const hemisphereBalance = parseFloat(balanceSlider.value);
+        
+        // Process query
+        fetch('/api/llm/process', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                query: query,
+                d2_activation: d2Activation,
+                hemisphere_balance: hemisphereBalance
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Hide processing indicator
+            processingIndicator.classList.add('d-none');
+            
+            if (data.success) {
+                // Show response container
+                responseContainer.classList.remove('d-none');
+                
+                // Update integrated response
+                integratedResponse.innerHTML = formatResponse(data.response);
+                
+                // Update left hemisphere response
+                if (data.left_processing && data.left_processing.success) {
+                    leftResponse.innerHTML = formatResponse(data.left_processing.response);
+                } else {
+                    leftResponse.innerHTML = '<div class="alert alert-warning">Left hemisphere processing failed</div>';
+                }
+                
+                // Update right hemisphere response
+                if (data.right_processing && data.right_processing.success) {
+                    rightResponse.innerHTML = formatResponse(data.right_processing.response);
+                } else {
+                    rightResponse.innerHTML = '<div class="alert alert-warning">Right hemisphere processing failed</div>';
+                }
+                
+                // Update contribution percentages
+                const leftInfluence = data.integrated_processing ? 
+                    data.integrated_processing.left_influence * 100 : 50;
+                const rightInfluence = data.integrated_processing ? 
+                    data.integrated_processing.right_influence * 100 : 50;
+                
+                leftContribution.style.width = `${leftInfluence}%`;
+                rightContribution.style.width = `${rightInfluence}%`;
+                leftPercent.textContent = `${Math.round(leftInfluence)}%`;
+                rightPercent.textContent = `${Math.round(rightInfluence)}%`;
+                
+                // Update processing time
+                const processingTime = data.integrated_processing ? 
+                    Math.round(data.integrated_processing.total_processing_time * 1000) : 0;
+                responseTime.textContent = `${processingTime}ms`;
+                
+                // Update D2 activation
+                responseD2.textContent = data.d2_activation.toFixed(2);
+                
+                // Update persona names
+                leftPersonaName.textContent = capitalizeFirstLetter(data.left_persona || 'Analytica');
+                rightPersonaName.textContent = capitalizeFirstLetter(data.right_persona || 'Creativa');
+            } else {
+                showAlert(`Processing failed: ${data.error}`, 'danger');
+            }
+        })
+        .catch(error => {
+            // Hide processing indicator
+            processingIndicator.classList.add('d-none');
+            
+            console.error('Error processing query:', error);
+            showAlert('An error occurred while processing the query', 'danger');
+        });
+    });
+    
+    // Format response with basic Markdown-like parsing
+    function formatResponse(text) {
+        if (!text) return '<div class="text-muted">No response available</div>';
+        
+        // Replace newlines with <br> tags
+        let formatted = text.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
+        
+        // Wrap in paragraph if not already
+        if (!formatted.startsWith('<p>')) {
+            formatted = '<p>' + formatted;
+        }
+        if (!formatted.endsWith('</p>')) {
+            formatted = formatted + '</p>';
+        }
+        
+        return formatted;
+    }
+    
+    // Update persona display based on system state
+    function updatePersonaDisplay(state) {
+        if (state && state.personas) {
+            leftPersonaName.textContent = capitalizeFirstLetter(state.left_persona || 'Analytica');
+            rightPersonaName.textContent = capitalizeFirstLetter(state.right_persona || 'Creativa');
+        }
+    }
+    
+    // Helper function to capitalize first letter
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+    
+    // Load initial system state
+    fetch('/api/llm/state')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.state) {
+                // Update sliders with current values
+                if ('d2_activation' in data.state) {
+                    d2Slider.value = data.state.d2_activation;
+                    d2Value.textContent = data.state.d2_activation.toFixed(2);
+                }
+                
+                if ('hemisphere_balance' in data.state) {
+                    balanceSlider.value = data.state.hemisphere_balance;
+                    balanceValue.textContent = data.state.hemisphere_balance.toFixed(2);
+                }
+                
+                // Update persona display
+                updatePersonaDisplay(data.state);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching system state:', error);
+        });
+});
+
+// Use the showAlert function from layout.html
+function showAlert(message, type) {
+    if (typeof window.showAlert === 'function') {
+        window.showAlert(message, type);
+    } else {
+        alert(message);
+    }
+}
+</script>
+{% endblock %}

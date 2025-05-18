@@ -10,8 +10,9 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-# Import tiered memory system
+# Import tiered memory system and dual LLM system
 from tiered_memory_integration import tiered_memory
+from dual_llm_system import dual_llm_system
 
 # Initialize SQLAlchemy base
 class Base(DeclarativeBase):
@@ -32,6 +33,7 @@ db.init_app(app)
 # Import routes after app initialization to avoid circular imports
 from routes import register_routes
 from memory_routes import memory_bp
+from llm_routes import llm_bp
 
 # Load configuration
 def load_config():
@@ -86,6 +88,9 @@ def initialize_application():
     app.tiered_memory = tiered_memory
     app.tiered_memory.start_maintenance_thread()
     
+    # Initialize and attach the dual LLM system
+    app.dual_llm = dual_llm_system
+    
     logger.info("Neuronas system initialized successfully")
 
 # Use with app.app_context for initialization
@@ -103,6 +108,9 @@ register_routes(app)
 
 # Register memory routes blueprint
 app.register_blueprint(memory_bp, url_prefix='/api/memory')
+
+# Register dual LLM routes blueprint
+app.register_blueprint(llm_bp, url_prefix='/api/llm')
 
 # Error handlers
 @app.errorhandler(404)
