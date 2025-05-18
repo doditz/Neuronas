@@ -62,7 +62,7 @@ def load_config():
         }
 
 # Core application initialization
-@app.before_first_request
+# Initialize application function
 def initialize_application():
     from core_modules.core_engine import CognitiveEngine
     from core_modules.gateway_interface import GatewayInterface
@@ -76,12 +76,13 @@ def initialize_application():
     app.gateway = GatewayInterface()
     app.storage = StorageManager()
     
-    # Initialize database tables
-    with app.app_context():
-        import models
-        db.create_all()
-    
     logger.info("Neuronas system initialized successfully")
+
+# Use with app.app_context for initialization
+with app.app_context():
+    import models
+    db.create_all()
+    initialize_application()
 
 # Register routes
 register_routes(app)
