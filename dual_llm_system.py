@@ -618,6 +618,64 @@ class DualLLMSystem:
         # Update integration model URL if using Ollama
         if self.integration.model_provider == 'ollama':
             self.integration.ollama_url = url
+            
+    def set_left_model(self, model_name, persona_name=None):
+        """
+        Set the model for the left hemisphere
+        
+        Args:
+            model_name (str): Name of the model to use
+            persona_name (str, optional): Name of the persona to assign
+        """
+        # Find current left hemisphere model
+        for name, persona in self.personas.items():
+            if persona.hemisphere_type == 'left':
+                # Update model name
+                persona.model_name = model_name
+                
+                # Update persona name if provided
+                if persona_name:
+                    persona.name = persona_name
+                    # Update key in personas dictionary if needed
+                    if name != persona_name:
+                        self.personas[persona_name] = persona
+                        del self.personas[name]
+                
+                break
+                
+    def set_right_model(self, model_name, persona_name=None):
+        """
+        Set the model for the right hemisphere
+        
+        Args:
+            model_name (str): Name of the model to use
+            persona_name (str, optional): Name of the persona to assign
+        """
+        # Find current right hemisphere model
+        for name, persona in self.personas.items():
+            if persona.hemisphere_type == 'right':
+                # Update model name
+                persona.model_name = model_name
+                
+                # Update persona name if provided
+                if persona_name:
+                    persona.name = persona_name
+                    # Update key in personas dictionary if needed
+                    if name != persona_name:
+                        self.personas[persona_name] = persona
+                        del self.personas[name]
+                
+                break
+                
+    def set_central_model(self, model_name):
+        """
+        Set the model for the central integration
+        
+        Args:
+            model_name (str): Name of the model to use
+        """
+        # Update integration model
+        self.integration.model_name = model_name
         
     def select_personas(self, prompt, memory_context=None):
         """

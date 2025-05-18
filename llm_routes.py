@@ -46,6 +46,14 @@ def process_with_dual_llm():
     simulation_mode = data.get('simulation_mode', True)  # Default to simulation mode enabled
     ollama_url = data.get('ollama_url', 'http://localhost:11434')
     
+    # Get model selection parameters
+    left_model = data.get('left_model', 'nous-hermes2:7b')
+    right_model = data.get('right_model', 'mixtral:latest')
+    central_model = data.get('central_model', 'gemma:7b')
+    left_persona = data.get('left_persona', 'Cognitiva')
+    right_persona = data.get('right_persona', 'Metaphysica')
+    model_focus = data.get('model_focus', 'Balanced')
+    
     # Process through dual LLM system
     try:
         # Set D2 activation and hemisphere balance
@@ -58,6 +66,16 @@ def process_with_dual_llm():
             
         if hasattr(current_app.dual_llm, 'set_ollama_url'):
             current_app.dual_llm.set_ollama_url(ollama_url)
+            
+        # Set model selections if the methods exist
+        if hasattr(current_app.dual_llm, 'set_left_model'):
+            current_app.dual_llm.set_left_model(left_model, left_persona)
+            
+        if hasattr(current_app.dual_llm, 'set_right_model'):
+            current_app.dual_llm.set_right_model(right_model, right_persona)
+            
+        if hasattr(current_app.dual_llm, 'set_central_model'):
+            current_app.dual_llm.set_central_model(central_model)
         
         # Process the query
         result = current_app.dual_llm.process_query(

@@ -113,6 +113,22 @@
                             <input type="text" class="form-control" id="ollama-url" value="http://localhost:11434" placeholder="http://localhost:11434">
                             <small class="text-muted">URL where your Ollama server is running</small>
                         </div>
+                        
+                        <div class="mt-4">
+                            <label for="model-selector" class="form-label d-flex justify-content-between">
+                                <span>Model Selection</span>
+                                <span class="badge bg-primary" id="model-value">Balanced</span>
+                            </label>
+                            <input type="range" class="form-range" id="model-selector" min="0" max="2" step="1" value="1">
+                            <div class="d-flex justify-content-between small text-muted">
+                                <span>Analytical</span>
+                                <span>Balanced</span>
+                                <span>Creative</span>
+                            </div>
+                            <small class="form-text text-muted mt-2">
+                                Select model focus: Analytical (left), Balanced (center), or Creative (right)
+                            </small>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -259,8 +275,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Get DOM elements
     const d2Slider = document.getElementById('d2-activation');
     const balanceSlider = document.getElementById('hemisphere-balance');
+    const modelSlider = document.getElementById('model-selector');
     const d2Value = document.getElementById('d2-value');
     const balanceValue = document.getElementById('balance-value');
+    const modelValue = document.getElementById('model-value');
     const applyButton = document.getElementById('apply-settings');
     const queryForm = document.getElementById('query-form');
     const queryInput = document.getElementById('query-input');
@@ -277,6 +295,37 @@ document.addEventListener('DOMContentLoaded', function() {
     const responseD2 = document.getElementById('response-d2');
     const leftPersonaName = document.getElementById('left-persona-name');
     const rightPersonaName = document.getElementById('right-persona-name');
+    const leftModelName = document.getElementById('left-model-name');
+    const rightModelName = document.getElementById('right-model-name');
+    const centralModelName = document.getElementById('central-model-name');
+    
+    // Model options based on slider position
+    const modelOptions = {
+        0: { // Analytical focus
+            left: 'llama3:8b',
+            right: 'mistral:7b',
+            central: 'gemma:7b',
+            leftPersona: 'Analytica',
+            rightPersona: 'Creativa',
+            label: 'Analytical'
+        },
+        1: { // Balanced
+            left: 'nous-hermes2:7b',
+            right: 'mixtral:latest',
+            central: 'gemma:7b',
+            leftPersona: 'Cognitiva',
+            rightPersona: 'Metaphysica',
+            label: 'Balanced'
+        },
+        2: { // Creative focus
+            left: 'phi3:3b',
+            right: 'solar:10.7b',
+            central: 'llava:7b',
+            leftPersona: 'Ethica',
+            rightPersona: 'Quantica',
+            label: 'Creative'
+        }
+    };
     
     // Update values on slider change
     d2Slider.addEventListener('input', function() {
@@ -285,6 +334,20 @@ document.addEventListener('DOMContentLoaded', function() {
     
     balanceSlider.addEventListener('input', function() {
         balanceValue.textContent = this.value;
+    });
+    
+    // Update model selection on slider change
+    modelSlider.addEventListener('input', function() {
+        const modelIndex = parseInt(this.value);
+        const modelConfig = modelOptions[modelIndex];
+        
+        // Update display
+        modelValue.textContent = modelConfig.label;
+        leftPersonaName.textContent = modelConfig.leftPersona;
+        rightPersonaName.textContent = modelConfig.rightPersona;
+        leftModelName.textContent = modelConfig.left;
+        rightModelName.textContent = modelConfig.right;
+        centralModelName.textContent = modelConfig.central;
     });
     
     // Apply settings
@@ -342,6 +405,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const simulationMode = document.getElementById('offline-mode').checked;
         const ollamaUrl = document.getElementById('ollama-url').value;
         
+        // Get selected model configuration
+        const modelIndex = parseInt(modelSlider.value);
+        const modelConfig = modelOptions[modelIndex];
+        
         // Process query
         fetch('/api/llm/process', {
             method: 'POST',
@@ -353,7 +420,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 d2_activation: d2Activation,
                 hemisphere_balance: hemisphereBalance,
                 simulation_mode: simulationMode,
-                ollama_url: ollamaUrl
+                ollama_url: ollamaUrl,
+                left_model: modelConfig.left,
+                right_model: modelConfig.right,
+                central_model: modelConfig.central,
+                left_persona: modelConfig.leftPersona,
+                right_persona: modelConfig.rightPersona,
+                model_focus: modelConfig.label
             })
         })
         .then(response => response.json())
