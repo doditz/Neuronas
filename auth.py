@@ -7,6 +7,7 @@ from oauthlib.oauth2 import WebApplicationClient
 from app import app, db
 from models import User
 from datetime import datetime
+from replit_auth import make_replit_blueprint
 
 # Initialiser le gestionnaire de connexion
 login_manager = LoginManager()
@@ -133,4 +134,13 @@ def profile():
 # Enregistrer le blueprint
 def init_auth():
     app.register_blueprint(auth_bp, url_prefix='')
+    
+    # Ajouter l'authentification Replit
+    replit_bp = make_replit_blueprint()
+    if replit_bp:
+        app.register_blueprint(replit_bp, url_prefix='/auth')
+        app.logger.info("Authentification Replit configurée avec succès")
+    else:
+        app.logger.warning("L'authentification Replit n'a pas pu être configurée")
+    
     return login_manager

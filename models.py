@@ -2,6 +2,8 @@ from app import db
 from datetime import datetime
 import json
 from flask_login import UserMixin
+from flask_dance.consumer.storage.sqla import OAuthConsumerMixin
+from sqlalchemy import UniqueConstraint
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class CognitiveMemory(db.Model):
@@ -99,7 +101,7 @@ class ReinforcedHypotheses(db.Model):
 
 class User(UserMixin, db.Model):
     """User model for authentication and preferences"""
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(255), primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(256))
@@ -107,8 +109,13 @@ class User(UserMixin, db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     last_login = db.Column(db.DateTime, nullable=True)
     
+    # Profile information
+    first_name = db.Column(db.String(64), nullable=True)
+    last_name = db.Column(db.String(64), nullable=True)
+    profile_image_url = db.Column(db.String(255), nullable=True)
+    
     # OAuth related fields
-    oauth_provider = db.Column(db.String(20), nullable=True)  # 'google', 'github', etc.
+    oauth_provider = db.Column(db.String(20), nullable=True)  # 'google', 'github', 'replit', etc.
     oauth_id = db.Column(db.String(100), nullable=True)
     
     # Neuronas settings
@@ -162,6 +169,19 @@ class UserSetting(db.Model):
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat()
         }
+
+class OAuth(OAuthConsumerMixin, db.Model):
+    """Stores OAuth tokens for authentication with various providers"""
+    user_id = db.Column(db.String(255), db.ForeignKey(User.id))
+    browser_session_key = db.Column(db.String(255), nullable=False)
+    user = db.relationship(User)
+
+    __table_args__ = (UniqueConstraint(
+        'user_id',
+        'browser_session_key',
+        'provider',
+        name='uq_user_browser_session_key_provider',
+    ),)
 
 class QueryLog(db.Model):
     """Logs user queries and system responses"""
