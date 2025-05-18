@@ -66,17 +66,26 @@ def register_routes(app):
     def update_profile():
         """Mettre à jour le profil utilisateur et les préférences Neuronas"""
         # Mise à jour des paramètres Neuronas
-        current_user.d2_temperature = float(request.form.get('d2_temperature', 0.5))
-        current_user.hemisphere_balance = float(request.form.get('hemisphere_balance', 0.5))
-        current_user.creativity_weight = float(request.form.get('creativity_weight', 0.5))
-        current_user.analytical_weight = float(request.form.get('analytical_weight', 0.5))
+        def safe_float(value, default=0.5):
+            """Convert input to float safely, preventing NaN injection"""
+            if isinstance(value, str) and value.lower() == 'nan':
+                return default
+            try:
+                return float(value)
+            except (ValueError, TypeError):
+                return default
+                
+        current_user.d2_temperature = safe_float(request.form.get('d2_temperature', 0.5))
+        current_user.hemisphere_balance = safe_float(request.form.get('hemisphere_balance', 0.5))
+        current_user.creativity_weight = safe_float(request.form.get('creativity_weight', 0.5))
+        current_user.analytical_weight = safe_float(request.form.get('analytical_weight', 0.5))
         
         # Mise à jour des modules spéciaux
         modules = ['QRONAS', 'BRONAS', 'D2Stim', 'D2Pin', 'D2Spin']
         
         for module in modules:
             module_enabled = request.form.get(f'{module}_enabled') == 'on'
-            module_weight = float(request.form.get(f'{module}_weight', 0.5))
+            module_weight = safe_float(request.form.get(f'{module}_weight', 0.5))
             
             # Recherche des paramètres existants
             setting_enabled = UserSetting.query.filter_by(
