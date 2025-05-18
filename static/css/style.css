@@ -100,13 +100,103 @@
     margin-bottom: 1.5rem;
 }
 
-/* Styles responsive */
+/* Styles responsive pour mobiles */
 @media (max-width: 768px) {
     .brain-visualization {
-        min-height: 200px;
+        min-height: 150px;
     }
     
     .hemisphere-container {
         flex-direction: column;
+    }
+    
+    .hemisphere {
+        height: 180px;
+    }
+    
+    .tier-indicator {
+        width: 90%;
+        left: 5%;
+    }
+    
+    .tier-item {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.65rem;
+    }
+    
+    .modulation-controls button {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.5rem;
+    }
+    
+    .module-item {
+        font-size: 0.75rem;
+        padding: 0.3rem;
+    }
+    
+    .module-status .badge {
+        font-size: 0.65rem;
+    }
+    
+    .hemisphere-label {
+        font-size: 1rem;
+    }
+    
+    .neuronas-logo {
+        font-size: 1.8rem;
+    }
+    
+    .card-header h5 {
+        font-size: 1rem;
+    }
+    
+    /* Améliorer l'interface de requête sur petit écran */
+    .query-input-container textarea {
+        min-height: 80px;
+    }
+    
+    /* Réduire la taille des boutons et badges */
+    .badge {
+        font-size: 0.7rem;
+    }
+    
+    .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.8rem;
+    }
+}
+
+/* Spécifique aux très petits écrans (iPhone SE, etc.) */
+@media (max-width: 375px) {
+    .hemisphere {
+        height: 150px;
+    }
+    
+    .tier-indicator {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.2rem;
+    }
+    
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .card-body {
+        padding: 0.5rem;
+    }
+    
+    .dashboard-stats {
+        flex-wrap: wrap;
+    }
+    
+    .stat-item {
+        flex: 0 0 48%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-value {
+        font-size: 1.4rem;
     }
 }
