@@ -1,0 +1,56 @@
+{% extends "layout.html" %}
+
+{% block title %}Login - NeuronasX{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Login to NeuronasX</h4>
+                </div>
+                <div class="card-body">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <div class="text-center mb-4">
+                        <img src="{{ url_for('static', filename='img/neuronas-logo.svg') }}" 
+                             alt="NeuronasX Logo" width="120" class="mb-4">
+                        <p class="text-muted">Access the bio-inspired cognitive engine</p>
+                    </div>
+                    
+                    <div class="d-grid gap-3">
+                        <a href="{{ url_for('replit_auth.login') }}" class="btn btn-dark btn-lg">
+                            <i data-feather="code"></i> Login with Replit
+                        </a>
+                        
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg">
+                            <i data-feather="mail"></i> Login with Google
+                        </a>
+                        
+                        <div class="text-center mt-3">
+                            <small class="text-muted">
+                                By logging in, you agree to our Terms of Service and Privacy Policy
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        feather.replace();
+    });
+</script>
+{% endblock %}

@@ -33,6 +33,13 @@ def register_routes(app):
         else:
             return render_template('index.html')
             
+    @app.route('/login')
+    def login_page():
+        """Login page with authentication options"""
+        if current_user.is_authenticated:
+            return redirect(url_for('index'))
+        return render_template('login.html')
+            
     @app.route('/mobile')
     def mobile():
         """Interface mobile duplex"""
