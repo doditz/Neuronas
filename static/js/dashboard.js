@@ -508,19 +508,61 @@ function displayQueryLog(queries) {
         const timestamp = new Date(query.created_at);
         const formattedTime = formatTime(timestamp);
         
-        queryItem.innerHTML = `
-            <div class="d-flex justify-content-between">
-                <span class="query-text">${query.query}</span>
-                <span class="badge bg-secondary">${formattedTime}</span>
-            </div>
-            <div class="small text-muted mt-1">
-                <span>Type: <span class="badge bg-info">${query.query_type || 'unknown'}</span></span>
-                <span class="mx-2">|</span>
-                <span>Hemisphere: ${query.hemisphere_used || 'N/A'}</span>
-                <span class="mx-2">|</span>
-                <span>D2: ${query.d2_activation ? query.d2_activation.toFixed(2) : 'N/A'}</span>
-            </div>
-        `;
+        // Create elements instead of using innerHTML to prevent XSS
+        const itemContainer = document.createElement('div');
+        itemContainer.className = 'd-flex justify-content-between';
+        
+        const queryTextSpan = document.createElement('span');
+        queryTextSpan.className = 'query-text';
+        queryTextSpan.textContent = query.query; // Using textContent for safe insertion
+        
+        const timeSpan = document.createElement('span');
+        timeSpan.className = 'badge bg-secondary';
+        timeSpan.textContent = formattedTime;
+        
+        itemContainer.appendChild(queryTextSpan);
+        itemContainer.appendChild(timeSpan);
+        
+        const metadataDiv = document.createElement('div');
+        metadataDiv.className = 'small text-muted mt-1';
+        
+        // Type span with badge
+        const typeSpanOuter = document.createElement('span');
+        typeSpanOuter.textContent = 'Type: ';
+        
+        const typeSpanInner = document.createElement('span');
+        typeSpanInner.className = 'badge bg-info';
+        typeSpanInner.textContent = query.query_type || 'unknown';
+        
+        typeSpanOuter.appendChild(typeSpanInner);
+        
+        // Separator spans
+        const separator1 = document.createElement('span');
+        separator1.className = 'mx-2';
+        separator1.textContent = '|';
+        
+        const separator2 = document.createElement('span');
+        separator2.className = 'mx-2';
+        separator2.textContent = '|';
+        
+        // Hemisphere span
+        const hemisphereSpan = document.createElement('span');
+        hemisphereSpan.textContent = `Hemisphere: ${query.hemisphere_used || 'N/A'}`;
+        
+        // D2 activation span
+        const d2Span = document.createElement('span');
+        d2Span.textContent = `D2: ${query.d2_activation ? query.d2_activation.toFixed(2) : 'N/A'}`;
+        
+        // Append all metadata elements
+        metadataDiv.appendChild(typeSpanOuter);
+        metadataDiv.appendChild(separator1);
+        metadataDiv.appendChild(hemisphereSpan);
+        metadataDiv.appendChild(separator2);
+        metadataDiv.appendChild(d2Span);
+        
+        // Append everything to the query item
+        queryItem.appendChild(itemContainer);
+        queryItem.appendChild(metadataDiv);
         
         container.appendChild(queryItem);
     });
