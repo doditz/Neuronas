@@ -1,253 +1,283 @@
-/* Styles spécifiques pour la vue mobile duplex */
-
-/* Conteneur principal en flexbox vertical */
-.duplex-container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  overflow: hidden;
+/* Mobile CSS for NeuronasX */
+:root {
+  --left-color: #1e5f93;
+  --left-color-light: #2980b9;
+  --right-color: #8e44ad;
+  --right-color-light: #9b59b6;
+  --dark-bg: #1a1a2e;
+  --dark-card: #162447;
+  --text-light: #e0e0e0;
+  --text-muted: #a0a0a0;
+  --active-highlight: #2ecc71;
 }
 
-/* Zone supérieure avec les hémisphères en côte à côte */
-.hemispheres-container {
-  display: flex;
-  flex-direction: row;
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
+body {
+  background-color: var(--dark-bg);
+  color: var(--text-light);
+  font-family: 'Inter', 'Roboto', sans-serif;
 }
 
-/* Styles des hémisphères */
-.hemisphere-box {
-  flex: 1;
-  margin: 5px;
-  border-radius: 12px;
+/* Main container */
+.neuronas-container {
+  max-width: 100%;
+  padding: 0.5rem;
+  margin: 0 auto;
+}
+
+/* Header */
+.neuronas-header {
   display: flex;
-  flex-direction: column;
-  padding: 10px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.neuronas-brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2ecc71;
+}
+
+.neuronas-version {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-left: 0.5rem;
+}
+
+.status-badges {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.d2-badge {
+  background-color: #00a8ff;
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.status-badge {
+  background-color: #535c68;
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.login-button {
+  background-color: #111;
+  color: white;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  border: 1px solid #333;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+/* Hemisphere containers */
+.hemispheres {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.hemisphere {
+  flex: 1;
+  background-color: var(--dark-card);
+  border-radius: 10px;
+  padding: 1rem;
+  min-height: 250px;
   position: relative;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .hemisphere-left {
-  background: linear-gradient(135deg, rgba(25, 91, 140, 0.7), rgba(44, 62, 80, 0.7));
-  border: 1px solid rgba(52, 152, 219, 0.4);
+  background: linear-gradient(135deg, rgba(30, 95, 147, 0.8), rgba(22, 36, 71, 0.9));
+  border: 1px solid rgba(41, 128, 185, 0.4);
 }
 
 .hemisphere-right {
-  background: linear-gradient(135deg, rgba(142, 68, 173, 0.7), rgba(44, 62, 80, 0.7));
+  background: linear-gradient(135deg, rgba(142, 68, 173, 0.8), rgba(22, 36, 71, 0.9));
   border: 1px solid rgba(155, 89, 182, 0.4);
 }
 
-/* Titre de l'hémisphère */
-.hemisphere-title {
-  font-size: 0.9rem;
-  text-align: center;
+.hemisphere-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 0.5rem;
-  font-weight: bold;
 }
 
-/* Badge de type de traitement */
-.process-badge {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  font-size: 0.6rem;
-  padding: 2px 5px;
+.hemisphere-title {
+  font-weight: 600;
+  font-size: 1rem;
 }
 
-/* Indicateurs de niveaux */
-.tier-badge {
+.hemisphere-badge {
+  font-size: 0.7rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  background-color: rgba(46, 204, 113, 0.3);
+  color: #2ecc71;
+}
+
+.memory-tier {
   background-color: rgba(0, 0, 0, 0.3);
   border-radius: 4px;
-  padding: 2px 4px;
-  margin: 2px;
-  font-size: 0.65rem;
-  text-align: center;
+  padding: 0.3rem 0.5rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
 }
 
-/* Zone inférieure pour les contrôles et visualisations */
-.interaction-zone {
-  height: 35vh;
-  background: rgba(20, 30, 40, 0.7);
-  border-top: 1px solid rgba(52, 152, 219, 0.3);
-  padding: 10px;
+/* Cognitive dashboard */
+.cognitive-dashboard {
+  margin-bottom: 1rem;
+}
+
+.cognitive-metrics {
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
 }
 
-/* Zone de visualisation des interactions cognitives */
-.cognitive-interactions {
-  flex: 1;
+.metric-item {
+  margin-right: 0.5rem;
+}
+
+.metric-value {
+  color: #2ecc71;
+  font-weight: 600;
+}
+
+.module-chips {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  position: relative;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
 }
 
-/* Visualisation des connexions neuronales */
-.neural-connections {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-/* Zone des contrôles */
-.control-panel {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  padding: 10px;
-  gap: 10px;
-  border-top: 1px solid rgba(52, 152, 219, 0.2);
-}
-
-/* Boutons de contrôle */
-.mode-button {
-  flex: 1;
-  padding: 8px 5px;
+.module-chip {
+  background-color: rgba(41, 128, 185, 0.3);
+  color: #2980b9;
+  border-radius: 20px;
+  padding: 0.2rem 0.7rem;
   font-size: 0.75rem;
-  border-radius: 5px;
+  border: 1px solid rgba(41, 128, 185, 0.5);
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.control-button {
+  flex: 1;
   text-align: center;
+  padding: 0.5rem;
+  margin: 0 0.2rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background-color: var(--dark-card);
+  border: 1px solid #333;
 }
 
-/* Animation des particules neuronales */
-@keyframes neural-pulse {
-  0% { opacity: 0.3; transform: scale(0.95); }
-  50% { opacity: 0.8; transform: scale(1.05); }
-  100% { opacity: 0.3; transform: scale(0.95); }
+.d2pin-button {
+  color: var(--left-color-light);
+  border-color: var(--left-color);
 }
 
-.neural-node {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: rgba(52, 152, 219, 0.8);
-  animation: neural-pulse 3s infinite;
+.d2stim-button {
+  color: var(--right-color-light);
+  border-color: var(--right-color);
 }
 
-.neural-connection {
-  position: absolute;
-  height: 1px;
-  background: linear-gradient(90deg, rgba(25, 91, 140, 0.7), rgba(142, 68, 173, 0.7));
-  transform-origin: 0 0;
+.balanced-button {
+  color: #7f8c8d;
+  border-color: #2c3e50;
 }
 
-/* Zone d'entrée de requête */
-.query-input-zone {
-  padding: 8px;
-  border-top: 1px solid rgba(52, 152, 219, 0.2);
+/* Query input */
+.query-container {
+  margin-bottom: 1rem;
 }
 
 .query-input {
   width: 100%;
-  padding: 8px;
-  border-radius: 5px;
-  background: rgba(30, 40, 50, 0.8);
-  border: 1px solid rgba(52, 152, 219, 0.3);
-  color: white;
-  font-size: 0.9rem;
+  padding: 0.7rem;
+  border-radius: 6px;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: var(--text-light);
+  border: 1px solid #333;
+  margin-bottom: 0.5rem;
 }
 
-/* Indicateurs de performance */
-.performance-indicators {
+.query-metrics {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-around;
-  margin-top: 5px;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-muted);
 }
 
-.indicator {
-  font-size: 0.7rem;
-  display: flex;
-  align-items: center;
-  color: rgba(255, 255, 255, 0.7);
+/* Response output */
+.response-container {
+  background-color: var(--dark-card);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  min-height: 150px;
+  max-height: 300px;
+  overflow-y: auto;
 }
 
-.indicator-value {
-  margin-left: 5px;
-  font-weight: bold;
-  color: rgba(52, 152, 219, 0.9);
+.response-content {
+  color: var(--text-light);
+  line-height: 1.5;
+  font-size: 0.95rem;
 }
 
-/* Animation de flux de données */
-@keyframes data-flow {
-  0% { transform: translateY(0) translateX(0); opacity: 0; }
-  50% { opacity: 0.8; }
-  100% { transform: translateY(-50px) translateX(50px); opacity: 0; }
+.response-placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+  text-align: center;
+  margin-top: 2rem;
 }
 
-.data-particle {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  background-color: rgba(52, 152, 219, 0.8);
-  border-radius: 50%;
-  animation: data-flow 3s infinite;
+/* Footer */
+.neuronas-footer {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 1rem;
+  padding-bottom: 1rem;
 }
 
-/* Statistiques de probabilité */
-.probability-stats {
+.system-status {
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 60px;
-  margin-top: 5px;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 5px;
-  padding: 5px;
-  font-size: 0.7rem;
+  gap: 1rem;
+  margin-top: 0.5rem;
 }
 
-.stats-label {
-  margin-right: 5px;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.stats-value {
-  font-weight: bold;
-  color: rgba(52, 152, 219, 1);
-}
-
-/* Affichage des événements cognitifs */
-.cognitive-events {
-  height: 60px;
-  overflow-y: auto;
-  font-size: 0.65rem;
-  margin-top: 5px;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 5px;
-  padding: 5px;
-}
-
-.event-entry {
-  margin-bottom: 2px;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.event-time {
-  color: rgba(52, 152, 219, 0.8);
-  margin-right: 5px;
-}
-
-/* Modules actifs */
-.active-modules {
+.status-item {
   display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-top: 5px;
+  align-items: center;
+  gap: 0.3rem;
 }
 
-.module-chip {
-  font-size: 0.6rem;
-  background: rgba(30, 40, 50, 0.8);
-  border: 1px solid rgba(52, 152, 219, 0.3);
-  border-radius: 10px;
-  padding: 2px 6px;
-  white-space: nowrap;
+.status-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--active-highlight);
 }

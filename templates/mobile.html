@@ -2,187 +2,121 @@
 
 {% block head %}
 <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
-<style>
-  /* Ajouts pour le Prime Directive Core */
-  .prime-directive {
-    position: absolute;
-    bottom: 5px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(52, 152, 219, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 10;
-  }
-  
-  .prime-core {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, rgba(52, 152, 219, 0.8), rgba(155, 89, 182, 0.8));
-    box-shadow: 0 0 10px rgba(52, 152, 219, 0.8), 0 0 20px rgba(155, 89, 182, 0.4);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    font-size: 10px;
-    font-weight: bold;
-    animation: core-pulse 2s infinite;
-  }
-  
-  @keyframes core-pulse {
-    0% { transform: scale(1); box-shadow: 0 0 10px rgba(52, 152, 219, 0.8), 0 0 20px rgba(155, 89, 182, 0.4); }
-    50% { transform: scale(1.1); box-shadow: 0 0 15px rgba(52, 152, 219, 0.9), 0 0 30px rgba(155, 89, 182, 0.5); }
-    100% { transform: scale(1); box-shadow: 0 0 10px rgba(52, 152, 219, 0.8), 0 0 20px rgba(155, 89, 182, 0.4); }
-  }
-  
-  .quantum-particles {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-  }
-  
-  .quantum-particle {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    background-color: rgba(52, 152, 219, 0.6);
-    border-radius: 50%;
-  }
-  
-  .ethical-validation {
-    position: absolute;
-    top: 5px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
-    padding: 2px 6px;
-    font-size: 8px;
-    color: rgba(255, 255, 255, 0.8);
-  }
-  
-  .ethical-score {
-    color: #2ecc71;
-    font-weight: bold;
-  }
-  
-  .ethical-alert {
-    color: #e74c3c;
-    font-weight: bold;
-  }
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 {% endblock %}
 
 {% block content %}
-<div class="duplex-container">
-  <!-- Zone des hémisphères -->
-  <div class="hemispheres-container">
-    <!-- Hémisphère gauche -->
-    <div class="hemisphere-box hemisphere-left">
-      <div class="hemisphere-title">Hémisphère Gauche</div>
-      <span class="process-badge badge bg-info">Analytique</span>
-      <div class="tier-badge">L1: <span id="l1-count">0</span></div>
-      <div class="tier-badge">L2: <span id="l2-count">0</span></div>
-      <div class="tier-badge">L3: <span id="l3-count">0</span></div>
+<div class="neuronas-container">
+  <!-- Header with app name and status badges -->
+  <div class="neuronas-header">
+    <div>
+      <span class="neuronas-brand">NeuronasX</span>
+      <span class="neuronas-version">v3.0</span>
     </div>
-    
-    <!-- Hémisphère droit -->
-    <div class="hemisphere-box hemisphere-right">
-      <div class="hemisphere-title">Hémisphère Droit</div>
-      <span class="process-badge badge bg-info">Créatif</span>
-      <div class="tier-badge">R1: <span id="r1-count">0</span></div>
-      <div class="tier-badge">R2: <span id="r2-count">0</span></div>
-      <div class="tier-badge">R3: <span id="r3-count">0</span></div>
+    <div class="status-badges">
+      <div class="d2-badge" id="d2-status">D2: 0.50</div>
+      <div class="status-badge" id="mode-status">H: C</div>
+      <button class="login-button" id="login-button">
+        <i data-feather="log-in" class="feather-xs"></i> Connexion
+      </button>
     </div>
   </div>
   
-  <!-- Zone d'interaction en bas -->
-  <div class="interaction-zone">
-    <!-- Visualisation des interactions cognitives -->
-    <div class="cognitive-interactions">
-      <div class="neural-connections" id="neural-viz">
-        <!-- Canvas pour les visualisations d3.js -->
-        <div class="quantum-particles" id="quantum-particles"></div>
-        
-        <!-- Prime Directive Core au centre -->
-        <div class="prime-directive">
-          <div class="prime-core" id="prime-core">PD</div>
-          <div class="ethical-validation">
-            <span>🔒 Éthique: </span><span class="ethical-score" id="ethical-score">99.2%</span>
-          </div>
-        </div>
+  <!-- Hemisphere containers -->
+  <div class="hemispheres">
+    <!-- Left hemisphere -->
+    <div class="hemisphere hemisphere-left">
+      <div class="hemisphere-header">
+        <div class="hemisphere-title">Hémisphère Gauche</div>
+        <div class="hemisphere-badge">Analytique</div>
       </div>
-      
-      <!-- Statistiques de probabilité entre hémisphères -->
-      <div class="probability-stats">
-        <span class="stats-label">Activation G/D:</span>
-        <span class="stats-value" id="left-prob">45%</span>
-        <span class="stats-label">/</span>
-        <span class="stats-value" id="right-prob">55%</span>
-        <span class="stats-label ml-2">Entropie:</span>
-        <span class="stats-value" id="entropy-value">0.34</span>
-        <span class="stats-label ml-2">D2:</span>
-        <span class="stats-value" id="d2-value">0.67</span>
+      <div class="memory-tier">L1: <span id="l1-count">4</span></div>
+      <div class="memory-tier">L2: <span id="l2-count">4</span></div>
+      <div class="memory-tier">L3: <span id="l3-count">10</span></div>
+    </div>
+    
+    <!-- Right hemisphere -->
+    <div class="hemisphere hemisphere-right">
+      <div class="hemisphere-header">
+        <div class="hemisphere-title">Hémisphère Droit</div>
+        <div class="hemisphere-badge">Créatif</div>
       </div>
-      
-      <!-- Journal des événements cognitifs -->
-      <div class="cognitive-events" id="cognitive-log">
-        <div class="event-entry"><span class="event-time">14:32:15</span> <span class="ethical-score">✓</span> Prime Directive validation (99.2%)</div>
-        <div class="event-entry"><span class="event-time">14:32:14</span> QRONAS: 128 scénarios quantiques générés</div>
-        <div class="event-entry"><span class="event-time">14:32:13</span> BRONAS: Filtrage éthique (37 vetos)</div>
-        <div class="event-entry"><span class="event-time">14:32:12</span> D2Stim: Optimisation poids moraux (ISO 7000)</div>
-        <div class="event-entry"><span class="event-time">14:32:10</span> Latence décisionnelle: 83ms</div>
+      <div class="memory-tier">R1: <span id="r1-count">6</span></div>
+      <div class="memory-tier">R2: <span id="r2-count">2</span></div>
+      <div class="memory-tier">R3: <span id="r3-count">24</span></div>
+    </div>
+  </div>
+  
+  <!-- Cognitive metrics dashboard -->
+  <div class="cognitive-dashboard">
+    <div class="cognitive-metrics">
+      <div class="metric-item">
+        Activation G/D: <span class="metric-value" id="left-activation">47%</span>/<span class="metric-value" id="right-activation">53%</span>
       </div>
-      
-      <!-- Modules actifs -->
-      <div class="active-modules">
-        <div class="module-chip">D2Stim</div>
-        <div class="module-chip">QRONAS</div>
-        <div class="module-chip">BRONAS</div>
-        <div class="module-chip">QuAC</div>
-        <div class="module-chip">D2Spin</div>
-        <div class="module-chip">QkISM</div>
-        <div class="module-chip">SMAS</div>
+      <div class="metric-item">
+        Entropie: <span class="metric-value" id="entropy-value">0.33</span>
+      </div>
+      <div class="metric-item">
+        D2: <span class="metric-value" id="d2-value">0.45</span>
       </div>
     </div>
     
-    <!-- Contrôles de modulation -->
-    <div class="control-panel">
-      <div class="mode-button btn btn-outline-info btn-sm" id="d2pin-btn">
-        <i data-feather="minus-circle" class="feather-xxs"></i> D2Pin
-      </div>
-      <div class="mode-button btn btn-outline-secondary btn-sm" id="balanced-btn">
-        <i data-feather="circle" class="feather-xxs"></i> Équilibré
-      </div>
-      <div class="mode-button btn btn-outline-info btn-sm" id="d2stim-btn">
-        <i data-feather="plus-circle" class="feather-xxs"></i> D2Stim
+    <div class="module-chips">
+      <div class="module-chip">D2Stim</div>
+      <div class="module-chip">QRONAS</div>
+      <div class="module-chip">BRONAS</div>
+      <div class="module-chip">QuAC</div>
+      <div class="module-chip">D2Spin</div>
+      <div class="module-chip">QkISM</div>
+      <div class="module-chip">SMAS</div>
+    </div>
+  </div>
+  
+  <!-- D2 control buttons -->
+  <div class="controls">
+    <div class="control-button d2pin-button" id="d2pin-btn">
+      <i data-feather="minus-circle" class="feather-sm"></i> D2Pin
+    </div>
+    <div class="control-button balanced-button" id="balanced-btn">
+      <i data-feather="circle" class="feather-sm"></i> Équilibré
+    </div>
+    <div class="control-button d2stim-button" id="d2stim-btn">
+      <i data-feather="plus-circle" class="feather-sm"></i> D2Stim
+    </div>
+  </div>
+  
+  <!-- Query input -->
+  <div class="query-container">
+    <input type="text" class="query-input" id="query-input" 
+           placeholder="Entrez votre requête cognitive..." autocomplete="off">
+    <div class="query-metrics">
+      <div>Focus: <span id="focus-value">0.72</span></div>
+      <div>Temps: <span id="time-value">1.5s</span></div>
+      <div>Type: <span id="type-value">Équilibré</span></div>
+    </div>
+  </div>
+  
+  <!-- AI Response output -->
+  <div class="response-container" id="response-container">
+    <div class="response-content" id="response-content">
+      <div class="response-placeholder">
+        Soumettez une requête pour recevoir une réponse...
       </div>
     </div>
-    
-    <!-- Zone d'entrée de requête -->
-    <div class="query-input-zone">
-      <input type="text" class="query-input" id="query-input" 
-             placeholder="Entrez votre requête cognitive..." autocomplete="off">
-      
-      <!-- Indicateurs de performance -->
-      <div class="performance-indicators">
-        <div class="indicator">
-          Focus: <span class="indicator-value" id="focus-ind">0.75</span>
-        </div>
-        <div class="indicator">
-          Temps: <span class="indicator-value" id="time-ind">0.3s</span>
-        </div>
-        <div class="indicator">
-          Type: <span class="indicator-value" id="type-ind">Analytique</span>
-        </div>
+  </div>
+  
+  <!-- Footer with system status -->
+  <div class="neuronas-footer">
+    <div>NeuronasX v3.0 — Bio-Inspired Cognitive Engine</div>
+    <div class="system-status">
+      <div class="status-item">
+        <span class="status-indicator"></span> Cognitive Core: <span id="core-status">Active</span>
+      </div>
+      <div class="status-item">
+        <span class="status-indicator"></span> Memory System: <span id="memory-status">Active</span>
+      </div>
+      <div class="status-item">
+        <span class="status-indicator"></span> Ethical Framework: <span id="ethical-status">Active</span>
       </div>
     </div>
   </div>
@@ -190,365 +124,206 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="https://d3js.org/d3.v7.min.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Initialisation des visualisations
-    initNeuralViz();
+    // DOM Elements
+    const d2Status = document.getElementById('d2-status');
+    const modeStatus = document.getElementById('mode-status');
+    const loginButton = document.getElementById('login-button');
+    const d2PinBtn = document.getElementById('d2pin-btn');
+    const balancedBtn = document.getElementById('balanced-btn');
+    const d2StimBtn = document.getElementById('d2stim-btn');
+    const queryInput = document.getElementById('query-input');
+    const responseContainer = document.getElementById('response-container');
+    const responseContent = document.getElementById('response-content');
     
-    // Initialiser les compteurs
-    updateCounters();
+    // Memory counts
+    const l1Count = document.getElementById('l1-count');
+    const l2Count = document.getElementById('l2-count');
+    const l3Count = document.getElementById('l3-count');
+    const r1Count = document.getElementById('r1-count');
+    const r2Count = document.getElementById('r2-count');
+    const r3Count = document.getElementById('r3-count');
     
-    // Créer les particules quantiques
-    createQuantumParticles();
+    // Metrics
+    const leftActivation = document.getElementById('left-activation');
+    const rightActivation = document.getElementById('right-activation');
+    const entropyValue = document.getElementById('entropy-value');
+    const d2Value = document.getElementById('d2-value');
+    const focusValue = document.getElementById('focus-value');
+    const timeValue = document.getElementById('time-value');
+    const typeValue = document.getElementById('type-value');
     
-    // Simulation des événements en temps réel
-    startCognitiveSimulation();
+    // Initialize Feather icons if available
+    if (typeof feather !== 'undefined') {
+      feather.replace();
+    }
     
-    // Initialiser la Prime Directive Core
-    initPrimeDirective();
+    // Add event listeners
+    loginButton.addEventListener('click', handleLogin);
+    d2PinBtn.addEventListener('click', () => setD2Mode('pin'));
+    balancedBtn.addEventListener('click', () => setD2Mode('balanced'));
+    d2StimBtn.addEventListener('click', () => setD2Mode('stim'));
+    queryInput.addEventListener('keydown', handleQueryInput);
     
-    // Gestionnaires d'événements pour les boutons de mode
-    document.getElementById('d2pin-btn').addEventListener('click', function() {
-      setMode('pin');
-    });
+    // Fetch initial memory stats
+    fetchMemoryStats();
     
-    document.getElementById('balanced-btn').addEventListener('click', function() {
-      setMode('balanced');
-    });
+    // Set up periodic updates
+    setInterval(fetchMemoryStats, 10000);
     
-    document.getElementById('d2stim-btn').addEventListener('click', function() {
-      setMode('stim');
-    });
+    // Login handler
+    function handleLogin() {
+      // Redirect to login page
+      window.location.href = '/login';
+    }
     
-    // Gestionnaire d'événement pour l'entrée de requête
-    document.getElementById('query-input').addEventListener('keydown', function(e) {
+    // D2 mode setter
+    function setD2Mode(mode) {
+      // Reset all buttons to default state
+      d2PinBtn.style.backgroundColor = '';
+      balancedBtn.style.backgroundColor = '';
+      d2StimBtn.style.backgroundColor = '';
+      
+      // Highlight the selected button
+      if (mode === 'pin') {
+        d2PinBtn.style.backgroundColor = 'rgba(30, 95, 147, 0.3)';
+        d2Status.textContent = 'D2: 0.25';
+        modeStatus.textContent = 'H: L';
+      } else if (mode === 'stim') {
+        d2StimBtn.style.backgroundColor = 'rgba(142, 68, 173, 0.3)';
+        d2Status.textContent = 'D2: 0.75';
+        modeStatus.textContent = 'H: R';
+      } else {
+        balancedBtn.style.backgroundColor = 'rgba(44, 62, 80, 0.3)';
+        d2Status.textContent = 'D2: 0.50';
+        modeStatus.textContent = 'H: C';
+      }
+      
+      // Send to API
+      fetch('/api/llm/parameters', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 
+          d2_activation: mode === 'pin' ? 0.25 : (mode === 'stim' ? 0.75 : 0.5),
+          hemisphere_balance: mode === 'pin' ? 0.25 : (mode === 'stim' ? 0.75 : 0.5)
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('D2 mode updated:', data);
+        updateMetrics(data);
+      })
+      .catch(error => {
+        console.error('Error updating D2 mode:', error);
+      });
+    }
+    
+    // Query input handler
+    function handleQueryInput(e) {
       if (e.key === 'Enter') {
-        processQuery(this.value);
-        this.value = '';
-      }
-    });
-    
-    // Fonction pour initialiser la visualisation neurale
-    function initNeuralViz() {
-      const container = document.getElementById('neural-viz');
-      const width = container.clientWidth;
-      const height = container.clientHeight;
-      
-      // Créer des nœuds neuronaux aléatoires
-      for (let i = 0; i < 15; i++) {
-        const node = document.createElement('div');
-        node.className = 'neural-node';
-        node.style.left = `${Math.random() * width}px`;
-        node.style.top = `${Math.random() * height}px`;
-        node.style.animationDelay = `${Math.random() * 2}s`;
-        container.appendChild(node);
-      }
-      
-      // Créer des connexions entre nœuds
-      const nodes = container.querySelectorAll('.neural-node');
-      for (let i = 0; i < 20; i++) {
-        const connection = document.createElement('div');
-        connection.className = 'neural-connection';
-        
-        const startNode = nodes[Math.floor(Math.random() * nodes.length)];
-        const endNode = nodes[Math.floor(Math.random() * nodes.length)];
-        
-        const startX = parseInt(startNode.style.left);
-        const startY = parseInt(startNode.style.top);
-        const endX = parseInt(endNode.style.left);
-        const endY = parseInt(endNode.style.top);
-        
-        // Calculer la distance et l'angle
-        const dx = endX - startX;
-        const dy = endY - startY;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        const angle = Math.atan2(dy, dx) * 180 / Math.PI;
-        
-        // Positionner la connexion
-        connection.style.width = `${distance}px`;
-        connection.style.left = `${startX + 4}px`;
-        connection.style.top = `${startY + 4}px`;
-        connection.style.transform = `rotate(${angle}deg)`;
-        
-        container.appendChild(connection);
-      }
-      
-      // Ajouter des particules de flux de données
-      for (let i = 0; i < 10; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'data-particle';
-        particle.style.left = `${Math.random() * width}px`;
-        particle.style.top = `${Math.random() * height}px`;
-        particle.style.animationDelay = `${Math.random() * 3}s`;
-        container.appendChild(particle);
-      }
-    }
-    
-    // Fonction pour mettre à jour les compteurs
-    function updateCounters() {
-      document.getElementById('l1-count').textContent = Math.floor(Math.random() * 20);
-      document.getElementById('l2-count').textContent = Math.floor(Math.random() * 50);
-      document.getElementById('l3-count').textContent = Math.floor(Math.random() * 100);
-      document.getElementById('r1-count').textContent = Math.floor(Math.random() * 20);
-      document.getElementById('r2-count').textContent = Math.floor(Math.random() * 50);
-      document.getElementById('r3-count').textContent = Math.floor(Math.random() * 100);
-    }
-    
-    // Fonction pour créer les particules quantiques
-    function createQuantumParticles() {
-      const container = document.getElementById('quantum-particles');
-      const containerRect = container.getBoundingClientRect();
-      const width = containerRect.width;
-      const height = containerRect.height;
-      
-      // Créer des particules quantiques qui se déplacent entre les hémisphères
-      for (let i = 0; i < 30; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'quantum-particle';
-        
-        // Position initiale aléatoire
-        const x = Math.random() * width;
-        const y = Math.random() * height;
-        
-        particle.style.left = `${x}px`;
-        particle.style.top = `${y}px`;
-        
-        // Ajouter une animation CSS personnalisée pour chaque particule
-        const animDuration = 3 + Math.random() * 4;
-        const targetX = Math.random() * width;
-        const targetY = Math.random() * height;
-        
-        particle.style.transition = `all ${animDuration}s ease-in-out`;
-        
-        container.appendChild(particle);
-        
-        // Animer la particule
-        setTimeout(() => {
-          particle.style.left = `${targetX}px`;
-          particle.style.top = `${targetY}px`;
-          
-          // Créer une nouvelle animation après la fin de la précédente
-          setInterval(() => {
-            const newX = Math.random() * width;
-            const newY = Math.random() * height;
-            particle.style.left = `${newX}px`;
-            particle.style.top = `${newY}px`;
-          }, animDuration * 1000);
-        }, 100);
-      }
-    }
-    
-    // Fonction pour initialiser le Prime Directive Core
-    function initPrimeDirective() {
-      const primeCore = document.getElementById('prime-core');
-      const ethicalScore = document.getElementById('ethical-score');
-      
-      // Animation de pulsation du core
-      setInterval(() => {
-        // Mettre à jour le score éthique périodiquement
-        const newScore = (98 + Math.random() * 1.9).toFixed(1);
-        ethicalScore.textContent = `${newScore}%`;
-        
-        // Simuler des validations éthiques dans le log
-        if (Math.random() > 0.8) {
-          const cogLog = document.getElementById('cognitive-log');
-          const now = new Date();
-          const timeStr = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-          
-          const validationEvent = document.createElement('div');
-          validationEvent.className = 'event-entry';
-          
-          if (Math.random() > 0.1) {
-            // Validation normale (90% du temps)
-            validationEvent.innerHTML = `<span class="event-time">${timeStr}</span> <span class="ethical-score">✓</span> Validation Prime Directive (${newScore}%)`;
-          } else {
-            // Alerte éthique (10% du temps)
-            const alertScore = (90 + Math.random() * 5).toFixed(1);
-            validationEvent.innerHTML = `<span class="event-time">${timeStr}</span> <span class="ethical-alert">⚠</span> Veto éthique BRONAS (${alertScore}%)`;
-          }
-          
-          cogLog.insertBefore(validationEvent, cogLog.firstChild);
-          
-          // Limiter à 5 événements
-          if (cogLog.children.length > 5) {
-            cogLog.removeChild(cogLog.lastChild);
-          }
+        const query = queryInput.value.trim();
+        if (query) {
+          processQuery(query);
+          queryInput.value = '';
         }
-      }, 5000);
-    }
-    
-    // Fonction pour simuler l'activité cognitive
-    function startCognitiveSimulation() {
-      const cogLog = document.getElementById('cognitive-log');
-      const events = [
-        "QRONAS: 128 scénarios quantiques générés",
-        "BRONAS: Filtrage éthique (41 vetos)",
-        "D2Stim: Optimisation poids moraux (ISO 7000)",
-        "Latence décisionnelle: 76ms",
-        "Synchronisation hémisphérique (P=0.92)",
-        "Réduction d'entropie morale: 35%",
-        "D2Spin: Stabilisation neurosymbolique",
-        "QuAC: Compression adaptative (ratio: 0.7)",
-        "BRONAS: Cohérence éthique 99.3%",
-        "QRONAS: Collapse quantique optimal",
-        "D2Pin: Inhibition cognitive (biais détecté)",
-        "SMAS: Validation ISO 24089 complète",
-        "Intégration QkISM (vect=317)"
-      ];
-      
-      // Mettre à jour les statistiques toutes les 2 secondes
-      setInterval(() => {
-        document.getElementById('left-prob').textContent = `${Math.floor(Math.random() * 30 + 30)}%`;
-        document.getElementById('right-prob').textContent = `${Math.floor(Math.random() * 30 + 30)}%`;
-        document.getElementById('entropy-value').textContent = (Math.random() * 0.5 + 0.2).toFixed(2);
-        document.getElementById('d2-value').textContent = (Math.random() * 0.5 + 0.3).toFixed(2);
-      }, 2000);
-      
-      // Ajouter un événement cognitif toutes les 5 secondes
-      setInterval(() => {
-        const now = new Date();
-        const timeStr = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-        const randomEvent = events[Math.floor(Math.random() * events.length)];
-        
-        const eventNode = document.createElement('div');
-        eventNode.className = 'event-entry';
-        eventNode.innerHTML = `<span class="event-time">${timeStr}</span> ${randomEvent}`;
-        
-        cogLog.insertBefore(eventNode, cogLog.firstChild);
-        
-        // Limiter à 5 événements
-        if (cogLog.children.length > 5) {
-          cogLog.removeChild(cogLog.lastChild);
-        }
-      }, 5000);
-    }
-    
-    // Fonction pour définir le mode
-    function setMode(mode) {
-      // Mettre à jour les boutons
-      document.getElementById('d2pin-btn').className = mode === 'pin' ? 'mode-button btn btn-info btn-sm' : 'mode-button btn btn-outline-info btn-sm';
-      document.getElementById('balanced-btn').className = mode === 'balanced' ? 'mode-button btn btn-secondary btn-sm' : 'mode-button btn btn-outline-secondary btn-sm';
-      document.getElementById('d2stim-btn').className = mode === 'stim' ? 'mode-button btn btn-info btn-sm' : 'mode-button btn btn-outline-info btn-sm';
-      
-      // Simuler un changement d'état du système
-      const hemisphereL = document.querySelector('.hemisphere-left');
-      const hemisphereR = document.querySelector('.hemisphere-right');
-      
-      if (mode === 'pin') {
-        hemisphereL.style.opacity = "1";
-        hemisphereR.style.opacity = "0.6";
-        document.getElementById('left-prob').textContent = "75%";
-        document.getElementById('right-prob').textContent = "25%";
-        document.getElementById('d2-value').textContent = "0.82";
-      } else if (mode === 'stim') {
-        hemisphereL.style.opacity = "0.6";
-        hemisphereR.style.opacity = "1";
-        document.getElementById('left-prob').textContent = "25%";
-        document.getElementById('right-prob').textContent = "75%";
-        document.getElementById('d2-value').textContent = "0.32";
-      } else {
-        hemisphereL.style.opacity = "0.8";
-        hemisphereR.style.opacity = "0.8";
-        document.getElementById('left-prob').textContent = "50%";
-        document.getElementById('right-prob').textContent = "50%";
-        document.getElementById('d2-value').textContent = "0.50";
-      }
-      
-      // Ajouter un événement dans le journal
-      const cogLog = document.getElementById('cognitive-log');
-      const now = new Date();
-      const timeStr = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-      
-      const eventNode = document.createElement('div');
-      eventNode.className = 'event-entry';
-      
-      let eventText = "";
-      if (mode === 'pin') {
-        eventText = "Activation D2Pin - Mode Analytique";
-      } else if (mode === 'stim') {
-        eventText = "Activation D2Stim - Mode Créatif";
-      } else {
-        eventText = "Mode Équilibré activé";
-      }
-      
-      eventNode.innerHTML = `<span class="event-time">${timeStr}</span> ${eventText}`;
-      cogLog.insertBefore(eventNode, cogLog.firstChild);
-      
-      // Limiter à 5 événements
-      if (cogLog.children.length > 5) {
-        cogLog.removeChild(cogLog.lastChild);
       }
     }
     
-    // Fonction pour traiter une requête
+    // Process query
     function processQuery(query) {
-      if (!query.trim()) return;
+      // Show loading state
+      responseContent.innerHTML = `
+        <div style="text-align: center; margin-top: 2rem;">
+          <div class="spinner" style="display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(46, 204, 113, 0.3); border-radius: 50%; border-top-color: #2ecc71; animation: spin 1s linear infinite;"></div>
+          <p style="margin-top: 1rem; color: var(--text-muted);">Traitement en cours...</p>
+        </div>
+        <style>
+          @keyframes spin {
+            to { transform: rotate(360deg); }
+          }
+        </style>
+      `;
       
-      // Montrer l'état "en traitement"
-      document.getElementById('focus-ind').textContent = "...";
-      document.getElementById('time-ind').textContent = "...";
-      document.getElementById('type-ind').textContent = "...";
-      
-      // Ajouter un événement dans le journal
-      const cogLog = document.getElementById('cognitive-log');
-      const now = new Date();
-      const timeStr = `${now.getHours()}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-      
-      const eventNode = document.createElement('div');
-      eventNode.className = 'event-entry';
-      eventNode.innerHTML = `<span class="event-time">${timeStr}</span> Requête: "${query.substring(0, 20)}${query.length > 20 ? '...' : ''}"`;
-      cogLog.insertBefore(eventNode, cogLog.firstChild);
-      
-      // Simuler le traitement
-      setTimeout(() => {
-        // Générer des résultats aléatoires
-        const focus = (Math.random() * 0.5 + 0.3).toFixed(2);
-        const time = (Math.random() * 1.5 + 0.2).toFixed(1);
-        const types = ["Analytique", "Créatif", "Équilibré"];
-        const type = types[Math.floor(Math.random() * types.length)];
+      // Send query to API
+      fetch('/api/query', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ query: query })
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Update response content
+        responseContent.innerHTML = `<p>${data.response}</p>`;
         
-        // Mettre à jour les indicateurs
-        document.getElementById('focus-ind').textContent = focus;
-        document.getElementById('time-ind').textContent = time + "s";
-        document.getElementById('type-ind').textContent = type;
+        // Update metrics
+        timeValue.textContent = `${data.processing_time.toFixed(2)}s`;
+        typeValue.textContent = data.query_type || 'Équilibré';
+        focusValue.textContent = (Math.random() * 0.3 + 0.7).toFixed(2); // Simulated for now
         
-        // Ajouter événement de complétion
-        const completionEvent = document.createElement('div');
-        completionEvent.className = 'event-entry';
-        completionEvent.innerHTML = `<span class="event-time">${timeStr}</span> Traitement terminé (${time}s - ${type})`;
-        cogLog.insertBefore(completionEvent, cogLog.firstChild);
-        
-        // Limiter à 5 événements
-        if (cogLog.children.length > 5) {
-          cogLog.removeChild(cogLog.lastChild);
-        }
-        
-        // Simuler l'activation des hémisphères en fonction du type
-        const hemisphereL = document.querySelector('.hemisphere-left');
-        const hemisphereR = document.querySelector('.hemisphere-right');
-        
-        if (type === "Analytique") {
-          hemisphereL.style.opacity = "1";
-          hemisphereR.style.opacity = "0.6";
-          document.getElementById('left-prob').textContent = "70%";
-          document.getElementById('right-prob').textContent = "30%";
-        } else if (type === "Créatif") {
-          hemisphereL.style.opacity = "0.6";
-          hemisphereR.style.opacity = "1";
-          document.getElementById('left-prob').textContent = "30%";
-          document.getElementById('right-prob').textContent = "70%";
+        // Highlight hemisphere based on response
+        if (data.hemisphere_used === 'L') {
+          document.querySelector('.hemisphere-left').style.borderColor = 'rgba(46, 204, 113, 0.8)';
+          document.querySelector('.hemisphere-right').style.borderColor = 'rgba(155, 89, 182, 0.4)';
+        } else if (data.hemisphere_used === 'R') {
+          document.querySelector('.hemisphere-left').style.borderColor = 'rgba(41, 128, 185, 0.4)';
+          document.querySelector('.hemisphere-right').style.borderColor = 'rgba(46, 204, 113, 0.8)';
         } else {
-          hemisphereL.style.opacity = "0.8";
-          hemisphereR.style.opacity = "0.8";
-          document.getElementById('left-prob').textContent = "50%";
-          document.getElementById('right-prob').textContent = "50%";
+          document.querySelector('.hemisphere-left').style.borderColor = 'rgba(41, 128, 185, 0.6)';
+          document.querySelector('.hemisphere-right').style.borderColor = 'rgba(155, 89, 182, 0.6)';
         }
         
-        // Mettre à jour les compteurs
-        updateCounters();
-      }, 1000);
+        // Update memory stats after processing
+        fetchMemoryStats();
+      })
+      .catch(error => {
+        console.error('Error processing query:', error);
+        responseContent.innerHTML = `
+          <p style="color: #e74c3c;">Une erreur s'est produite lors du traitement de votre requête. Veuillez réessayer.</p>
+        `;
+      });
     }
+    
+    // Fetch memory stats
+    function fetchMemoryStats() {
+      fetch('/api/system/status')
+        .then(response => response.json())
+        .then(data => {
+          // Update memory counters
+          l1Count.textContent = data.memory_stats.L1;
+          l2Count.textContent = data.memory_stats.L2;
+          l3Count.textContent = data.memory_stats.L3;
+          r1Count.textContent = data.memory_stats.R1;
+          r2Count.textContent = data.memory_stats.R2;
+          r3Count.textContent = data.memory_stats.R3;
+          
+          // Update metrics
+          const leftProb = Math.floor(Math.random() * 20 + 40); // Simulated for now
+          const rightProb = 100 - leftProb;
+          leftActivation.textContent = `${leftProb}%`;
+          rightActivation.textContent = `${rightProb}%`;
+          entropyValue.textContent = (Math.random() * 0.2 + 0.2).toFixed(2); // Simulated
+          d2Value.textContent = (Math.random() * 0.3 + 0.3).toFixed(2); // Simulated
+        })
+        .catch(error => {
+          console.error('Error fetching memory stats:', error);
+        });
+    }
+    
+    // Update metrics based on D2 mode
+    function updateMetrics(data) {
+      if (data) {
+        entropyValue.textContent = data.entropy ? data.entropy.toFixed(2) : entropyValue.textContent;
+        d2Value.textContent = data.d2_activation ? data.d2_activation.toFixed(2) : d2Value.textContent;
+      }
+    }
+    
+    // Initialize with balanced mode
+    setD2Mode('balanced');
   });
 </script>
 {% endblock %}
