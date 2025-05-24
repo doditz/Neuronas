@@ -87,6 +87,37 @@
         font-size: 0.75rem;
         font-weight: 600;
     }
+    
+    /* Pipeline visualization styles */
+    .pipeline-visualization {
+        min-height: 60px;
+    }
+    
+    .pipeline-step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 0.5rem;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+        opacity: 0.5;
+    }
+    
+    .pipeline-step.active {
+        background-color: rgba(52, 152, 219, 0.3);
+        opacity: 1;
+        box-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
+    }
+    
+    .pipeline-step.completed {
+        background-color: rgba(46, 204, 113, 0.3);
+        opacity: 1;
+    }
+    
+    /* Left and right hemisphere output containers */
+    .left-hemisphere-output, .right-hemisphere-output {
+        min-height: 150px;
+    }
 </style>
 {% endblock %}
 
@@ -219,19 +250,159 @@
         <div class="col-md-12">
             <div class="card bg-dark">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0"><i data-feather="cpu" class="feather-sm me-1"></i> Cognitive Response</h5>
+                    <h5 class="card-title mb-0"><i data-feather="cpu" class="feather-sm me-1"></i> Dual Cognitive Response</h5>
                     <div>
                         <span class="badge bg-secondary me-2" id="processing-time">0.0s</span>
                         <span class="badge bg-info" id="query-type">N/A</span>
                     </div>
                 </div>
                 <div class="card-body">
-                    <div id="response-content" class="p-3 bg-dark rounded">
-                        <p class="text-muted text-center">Submit a query to receive a cognitive response...</p>
+                    <!-- Dual-hemisphere output view -->
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <div class="progress" style="height: 5px;">
+                                <div class="progress-bar bg-info" id="hemisphere-balance-indicator" role="progressbar" style="width: 50%"></div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-1">
+                                <small class="text-muted">Left (Analytical)</small>
+                                <small class="text-muted">Right (Creative)</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Processing pipeline visualization -->
+                    <div class="row mb-4 d-none d-md-flex">
+                        <div class="col-md-12">
+                            <div class="pipeline-visualization p-2 bg-dark border border-secondary rounded">
+                                <div class="d-flex justify-content-around align-items-center">
+                                    <div class="pipeline-step" id="input-step">
+                                        <i data-feather="message-square" class="feather-sm mb-1"></i>
+                                        <span>Input</span>
+                                    </div>
+                                    <i data-feather="arrow-right" class="feather-sm"></i>
+                                    <div class="pipeline-step" id="analysis-step">
+                                        <i data-feather="code" class="feather-sm mb-1"></i>
+                                        <span>Analysis</span>
+                                    </div>
+                                    <i data-feather="arrow-right" class="feather-sm"></i>
+                                    <div class="pipeline-step" id="synthesis-step">
+                                        <i data-feather="git-branch" class="feather-sm mb-1"></i>
+                                        <span>Synthesis</span>
+                                    </div>
+                                    <i data-feather="arrow-right" class="feather-sm"></i>
+                                    <div class="pipeline-step" id="integration-step">
+                                        <i data-feather="layers" class="feather-sm mb-1"></i>
+                                        <span>Integration</span>
+                                    </div>
+                                    <i data-feather="arrow-right" class="feather-sm"></i>
+                                    <div class="pipeline-step" id="output-step">
+                                        <i data-feather="send" class="feather-sm mb-1"></i>
+                                        <span>Output</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tabs for different response views -->
+                    <ul class="nav nav-tabs" id="responseViewTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="integrated-tab" data-bs-toggle="tab" data-bs-target="#integrated" type="button" role="tab">
+                                Integrated Response
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="dual-tab" data-bs-toggle="tab" data-bs-target="#dual" type="button" role="tab">
+                                Dual View
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab">
+                                Process Details
+                            </button>
+                        </li>
+                    </ul>
+                    
+                    <!-- Tab content -->
+                    <div class="tab-content mt-3" id="responseViewTabsContent">
+                        <!-- Integrated response -->
+                        <div class="tab-pane fade show active" id="integrated" role="tabpanel">
+                            <div id="response-content" class="p-3 bg-dark rounded">
+                                <p class="text-muted text-center">Submit a query to receive a cognitive response...</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Dual view -->
+                        <div class="tab-pane fade" id="dual" role="tabpanel">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="p-3 bg-dark rounded h-100 border-end border-secondary">
+                                        <h6 class="text-info mb-2">Left Hemisphere (Analytical)</h6>
+                                        <div id="left-response" class="left-hemisphere-output">
+                                            <p class="text-muted">Analytical processing output will appear here...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-3 bg-dark rounded h-100">
+                                        <h6 class="text-info mb-2">Right Hemisphere (Creative)</h6>
+                                        <div id="right-response" class="right-hemisphere-output">
+                                            <p class="text-muted">Creative processing output will appear here...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Process details -->
+                        <div class="tab-pane fade" id="details" role="tabpanel">
+                            <div class="p-3 bg-dark rounded">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <h6 class="text-secondary">Cognitive Parameters</h6>
+                                            <ul class="list-group list-group-flush bg-transparent">
+                                                <li class="list-group-item bg-dark d-flex justify-content-between">
+                                                    <span>Hemisphere Used:</span>
+                                                    <span id="detail-hemisphere">N/A</span>
+                                                </li>
+                                                <li class="list-group-item bg-dark d-flex justify-content-between">
+                                                    <span>D2 Activation:</span>
+                                                    <span id="detail-d2">0.5</span>
+                                                </li>
+                                                <li class="list-group-item bg-dark d-flex justify-content-between">
+                                                    <span>Processing Time:</span>
+                                                    <span id="detail-time">0.0s</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div>
+                                            <h6 class="text-secondary">Memory Interaction</h6>
+                                            <ul class="list-group list-group-flush">
+                                                <li class="list-group-item bg-dark d-flex justify-content-between">
+                                                    <span>L1 Memory Access:</span>
+                                                    <span id="l1-access-count">0</span>
+                                                </li>
+                                                <li class="list-group-item bg-dark d-flex justify-content-between">
+                                                    <span>R1 Memory Access:</span>
+                                                    <span id="r1-access-count">0</span>
+                                                </li>
+                                                <li class="list-group-item bg-dark d-flex justify-content-between">
+                                                    <span>Integration Depth:</span>
+                                                    <span id="integration-depth">0</span>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="card-footer text-muted d-flex justify-content-between">
-                    <small>Hemisphere: <span id="response-hemisphere">N/A</span></small>
+                    <small>Hemisphere Balance: <span id="response-balance">50:50</span></small>
                     <small>D2 Activation: <span id="response-d2">0.5</span></small>
                 </div>
             </div>
@@ -292,8 +463,13 @@
         
         // Function to process query
         function processQuery(query) {
-            // Show loading state
+            // Show loading state in all response areas
             responseContent.innerHTML = '<div class="text-center"><div class="spinner-border text-info" role="status"></div><p class="mt-2">Processing cognitive query...</p></div>';
+            document.getElementById('left-response').innerHTML = '<div class="text-center"><div class="spinner-border text-info spinner-border-sm" role="status"></div></div>';
+            document.getElementById('right-response').innerHTML = '<div class="text-center"><div class="spinner-border text-info spinner-border-sm" role="status"></div></div>';
+            
+            // Animate the pipeline
+            animateProcessingPipeline();
             
             // Send to API
             fetch('/api/query', {
@@ -305,13 +481,46 @@
             })
             .then(response => response.json())
             .then(data => {
-                // Update response
+                // Update integrated response
                 responseContent.innerHTML = `<p>${data.response}</p>`;
                 
-                // Update metrics
+                // Update the dual view with hemisphere-specific outputs
+                // In a real implementation, we would have separate left and right outputs
+                // For now, we'll simulate them based on the hemisphere used
+                if (data.hemisphere_used === 'L') {
+                    document.getElementById('left-response').innerHTML = `<p>${data.response}</p>`;
+                    document.getElementById('right-response').innerHTML = `<p class="text-muted">Right hemisphere contribution minimal for this analytical query.</p>`;
+                    updateHemisphereBalance(80); // 80% left
+                } else if (data.hemisphere_used === 'R') {
+                    document.getElementById('left-response').innerHTML = `<p class="text-muted">Left hemisphere contribution minimal for this creative query.</p>`;
+                    document.getElementById('right-response').innerHTML = `<p>${data.response}</p>`;
+                    updateHemisphereBalance(20); // 20% left, 80% right
+                } else {
+                    // Balanced processing
+                    document.getElementById('left-response').innerHTML = `<p>Analytical contribution: Structured analysis of the query parameters.</p>`;
+                    document.getElementById('right-response').innerHTML = `<p>Creative contribution: Novel connections and intuitive synthesis.</p>`;
+                    updateHemisphereBalance(50); // 50-50 balance
+                }
+                
+                // Update all metrics
                 processingTime.textContent = `${data.processing_time.toFixed(4)}s`;
                 queryType.textContent = data.query_type;
-                responseHemisphere.textContent = data.hemisphere_used;
+                
+                // Update hemisphere balance display
+                const leftPercentage = data.hemisphere_used === 'L' ? 80 : (data.hemisphere_used === 'R' ? 20 : 50);
+                document.getElementById('response-balance').textContent = `${leftPercentage}:${100-leftPercentage}`;
+                
+                // Update detailed view
+                document.getElementById('detail-hemisphere').textContent = data.hemisphere_used;
+                document.getElementById('detail-d2').textContent = data.d2_activation.toFixed(2);
+                document.getElementById('detail-time').textContent = `${data.processing_time.toFixed(4)}s`;
+                
+                // Update memory access (simulated for now)
+                document.getElementById('l1-access-count').textContent = Math.floor(Math.random() * 5) + 1;
+                document.getElementById('r1-access-count').textContent = Math.floor(Math.random() * 5) + 1;
+                document.getElementById('integration-depth').textContent = Math.floor(Math.random() * 3) + 1;
+                
+                // Update D2 activation
                 responseD2.textContent = data.d2_activation.toFixed(2);
                 
                 // Update visuals based on hemisphere used
@@ -323,13 +532,19 @@
                     updateHemisphereVisuals(0.6, 0.6);
                 }
                 
+                // Complete the pipeline animation
+                completePipelineAnimation();
+                
                 // Update memory stats after processing
                 updateMemoryStats();
             })
             .catch(error => {
                 console.error('Error processing query:', error);
                 responseContent.innerHTML = '<p class="text-danger">Error processing your query. Please try again.</p>';
+                document.getElementById('left-response').innerHTML = '<p class="text-danger">Error in processing.</p>';
+                document.getElementById('right-response').innerHTML = '<p class="text-danger">Error in processing.</p>';
                 showAlert('Error processing query', 'danger');
+                resetPipelineAnimation();
             });
         }
         
@@ -423,6 +638,111 @@
             } else {
                 element.className = 'tier-item bg-primary';
             }
+        }
+        
+        // Pipeline animation functions
+        function animateProcessingPipeline() {
+            // Reset all steps
+            resetPipelineAnimation();
+            
+            // Sequential animation for each step
+            const steps = ['input-step', 'analysis-step', 'synthesis-step', 'integration-step', 'output-step'];
+            let stepIndex = 0;
+            
+            // Highlight current step
+            document.getElementById(steps[stepIndex]).classList.add('active');
+            
+            // Set up the animation interval
+            window.pipelineInterval = setInterval(() => {
+                // Mark current step as completed
+                document.getElementById(steps[stepIndex]).classList.remove('active');
+                document.getElementById(steps[stepIndex]).classList.add('completed');
+                
+                stepIndex++;
+                
+                // Check if all steps are completed
+                if (stepIndex >= steps.length) {
+                    clearInterval(window.pipelineInterval);
+                    return;
+                }
+                
+                // Highlight next step
+                document.getElementById(steps[stepIndex]).classList.add('active');
+            }, 600); // 600ms per step
+        }
+        
+        function completePipelineAnimation() {
+            // Clear any running interval
+            if (window.pipelineInterval) {
+                clearInterval(window.pipelineInterval);
+            }
+            
+            // Mark all steps as completed
+            const steps = ['input-step', 'analysis-step', 'synthesis-step', 'integration-step', 'output-step'];
+            steps.forEach(step => {
+                const element = document.getElementById(step);
+                element.classList.remove('active');
+                element.classList.add('completed');
+            });
+        }
+        
+        function resetPipelineAnimation() {
+            // Clear any running interval
+            if (window.pipelineInterval) {
+                clearInterval(window.pipelineInterval);
+            }
+            
+            // Reset all steps
+            const steps = ['input-step', 'analysis-step', 'synthesis-step', 'integration-step', 'output-step'];
+            steps.forEach(step => {
+                const element = document.getElementById(step);
+                element.classList.remove('active');
+                element.classList.remove('completed');
+            });
+        }
+        
+        // Update hemisphere balance indicator
+        function updateHemisphereBalance(leftPercentage) {
+            const indicator = document.getElementById('hemisphere-balance-indicator');
+            indicator.style.width = `${leftPercentage}%`;
+            
+            // Update color based on which hemisphere is dominant
+            if (leftPercentage > 60) {
+                indicator.className = 'progress-bar bg-primary'; // Blue for left hemisphere
+            } else if (leftPercentage < 40) {
+                indicator.className = 'progress-bar bg-purple'; // Purple for right hemisphere
+            } else {
+                indicator.className = 'progress-bar bg-info'; // Balanced
+            }
+        }
+        
+        // Utility function to show alerts
+        function showAlert(message, type = 'info') {
+            // Create alert element
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+            alertDiv.role = 'alert';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            
+            // Append to body
+            document.body.prepend(alertDiv);
+            
+            // Auto-dismiss after 5 seconds
+            setTimeout(() => {
+                alertDiv.classList.remove('show');
+                setTimeout(() => alertDiv.remove(), 300);
+            }, 5000);
+        }
+        
+        // Initialize hemisphere balance indicator
+        updateHemisphereBalance(50);
+        
+        // Initialize Feather icons
+        if (typeof feather !== 'undefined') {
+            feather.replace();
         }
         
         // Set up periodic updates
