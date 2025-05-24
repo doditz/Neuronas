@@ -403,9 +403,14 @@ class CognitiveMemoryManager:
                 stats['r3_to_l3'] = result or 0
                 
                 # Run central integration
-                stmt = text("SELECT central.integrate_hemispheres()")
-                result = conn.execute(stmt).scalar()
-                stats['integration'] = result or 0
+                try:
+                    # Pass valid parameters to avoid enum type errors (L/R hemisphere types)
+                    stmt = text("SELECT central.integrate_hemispheres(0.5, 0.5, 'balanced')")
+                    result = conn.execute(stmt).scalar()
+                    stats['integration'] = result or 0
+                except SQLAlchemyError as e:
+                    logger.warning(f"Central integration skipped: {e}")
+                    stats['integration'] = 0
                 
                 conn.commit()
                 logger.info(f"Memory maintenance completed: {stats}")
