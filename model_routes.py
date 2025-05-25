@@ -181,4 +181,10 @@ def register_model_routes(app):
         from flask import render_template
         return render_template('architecture.html')
     
+    @app.route('/asimov')
+    def asimov_view():
+        """View the Neuronas Asimov directives"""
+        from flask import render_template
+        return render_template('asimov_directives.html')
+    
     return app
