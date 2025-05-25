@@ -375,44 +375,78 @@ class CognitiveMemoryManager:
             'integration': 0
         }
         
+        max_retries = 3
+        retry_delay = 1  # seconds
+        
+        def execute_with_retry(conn, statement, operation_name):
+            """Execute a statement with retry logic for connection issues"""
+            for attempt in range(max_retries):
+                try:
+                    result = conn.execute(statement).scalar()
+                    return result or 0
+                except SQLAlchemyError as e:
+                    if attempt < max_retries - 1:
+                        logger.warning(f"Retrying {operation_name} after error: {e}")
+                        time.sleep(retry_delay * (attempt + 1))  # Exponential backoff
+                    else:
+                        logger.error(f"Failed {operation_name} after {max_retries} attempts: {e}")
+                        raise
+        
         try:
+            # Create a fresh connection for maintenance
+            self.engine = create_engine(self.db_url, pool_pre_ping=True)
+            
             with self.engine.connect() as conn:
                 # Push from L1 to L2
-                stmt = text("SELECT left_hemisphere.push_l1_to_l2()")
-                result = conn.execute(stmt).scalar()
-                stats['l1_to_l2'] = result or 0
+                try:
+                    stmt = text("SELECT left_hemisphere.push_l1_to_l2()")
+                    stats['l1_to_l2'] = execute_with_retry(conn, stmt, "L1 to L2 push")
+                except SQLAlchemyError:
+                    # Already logged in execute_with_retry
+                    pass
                 
                 # Push from L2 to L3
-                stmt = text("SELECT left_hemisphere.push_l2_to_l3()")
-                result = conn.execute(stmt).scalar()
-                stats['l2_to_l3'] = result or 0
+                try:
+                    stmt = text("SELECT left_hemisphere.push_l2_to_l3()")
+                    stats['l2_to_l3'] = execute_with_retry(conn, stmt, "L2 to L3 push")
+                except SQLAlchemyError:
+                    pass
                 
                 # Push from R1 to R2
-                stmt = text("SELECT right_hemisphere.push_r1_to_r2()")
-                result = conn.execute(stmt).scalar()
-                stats['r1_to_r2'] = result or 0
+                try:
+                    stmt = text("SELECT right_hemisphere.push_r1_to_r2()")
+                    stats['r1_to_r2'] = execute_with_retry(conn, stmt, "R1 to R2 push")
+                except SQLAlchemyError:
+                    pass
                 
                 # Push from R2 to R3
-                stmt = text("SELECT right_hemisphere.push_r2_to_r3()")
-                result = conn.execute(stmt).scalar()
-                stats['r2_to_r3'] = result or 0
+                try:
+                    stmt = text("SELECT right_hemisphere.push_r2_to_r3()")
+                    stats['r2_to_r3'] = execute_with_retry(conn, stmt, "R2 to R3 push")
+                except SQLAlchemyError:
+                    pass
                 
                 # Push from R3 to L3 (cross-hemispheric)
-                stmt = text("SELECT right_hemisphere.push_r3_to_l3()")
-                result = conn.execute(stmt).scalar()
-                stats['r3_to_l3'] = result or 0
+                try:
+                    stmt = text("SELECT right_hemisphere.push_r3_to_l3()")
+                    stats['r3_to_l3'] = execute_with_retry(conn, stmt, "R3 to L3 push")
+                except SQLAlchemyError:
+                    pass
                 
                 # Run central integration
                 try:
                     # Pass valid parameters to avoid enum type errors (L/R hemisphere types)
                     stmt = text("SELECT central.integrate_hemispheres(0.5, 0.5, 'balanced')")
-                    result = conn.execute(stmt).scalar()
-                    stats['integration'] = result or 0
+                    stats['integration'] = execute_with_retry(conn, stmt, "central integration")
                 except SQLAlchemyError as e:
                     logger.warning(f"Central integration skipped: {e}")
                     stats['integration'] = 0
                 
-                conn.commit()
+                try:
+                    conn.commit()
+                except SQLAlchemyError as e:
+                    logger.warning(f"Commit failed during memory maintenance: {e}")
+                
                 logger.info(f"Memory maintenance completed: {stats}")
                 return stats
                 
