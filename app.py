@@ -146,6 +146,10 @@ register_routes(app)
 from model_routes import register_model_routes
 register_model_routes(app)
 
+# Register music generation routes
+from music_routes import register_music_routes
+register_music_routes(app)
+
 # Error handlers
 @app.errorhandler(404)
 def not_found(error):

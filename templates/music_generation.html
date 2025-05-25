@@ -1,0 +1,680 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<style>
+  .music-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background: rgba(30, 40, 50, 0.9);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  .section-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .section-title {
+    font-size: 1.8rem;
+    color: #fff;
+    font-weight: 600;
+  }
+  
+  .model-badge {
+    background: rgba(46, 204, 113, 0.2);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    border-radius: 20px;
+    padding: 5px 15px;
+    color: #2ecc71;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  .prompt-container {
+    margin-bottom: 20px;
+  }
+  
+  .prompt-label {
+    color: #bbb;
+    margin-bottom: 8px;
+    font-size: 1rem;
+  }
+  
+  .prompt-textarea {
+    width: 100%;
+    min-height: 120px;
+    background: rgba(40, 50, 60, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 12px;
+    color: #fff;
+    font-size: 1rem;
+    resize: vertical;
+  }
+  
+  .prompt-textarea:focus {
+    outline: none;
+    border-color: rgba(52, 152, 219, 0.5);
+  }
+  
+  .d2-controls {
+    background: rgba(40, 50, 60, 0.7);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .d2-title {
+    color: #3498db;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 5px;
+  }
+  
+  .slider-container {
+    margin-bottom: 15px;
+  }
+  
+  .slider-label {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+  }
+  
+  .slider-name {
+    color: #ddd;
+  }
+  
+  .slider-value {
+    color: #3498db;
+    font-family: monospace;
+  }
+  
+  .d2-slider {
+    width: 100%;
+    height: 5px;
+    -webkit-appearance: none;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    outline: none;
+  }
+  
+  .d2-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #3498db;
+    cursor: pointer;
+  }
+  
+  .d2-slider::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #3498db;
+    cursor: pointer;
+  }
+  
+  .button-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .generate-btn {
+    flex: 1;
+    background: rgba(46, 204, 113, 0.2);
+    border: 1px solid rgba(46, 204, 113, 0.3);
+    color: #2ecc71;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .generate-btn:hover {
+    background: rgba(46, 204, 113, 0.3);
+  }
+  
+  .generate-btn:disabled {
+    background: rgba(100, 100, 100, 0.2);
+    border-color: rgba(100, 100, 100, 0.3);
+    color: #888;
+    cursor: not-allowed;
+  }
+  
+  .reset-btn {
+    background: rgba(231, 76, 60, 0.2);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    color: #e74c3c;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .reset-btn:hover {
+    background: rgba(231, 76, 60, 0.3);
+  }
+  
+  .audio-container {
+    background: rgba(40, 50, 60, 0.7);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .no-audio {
+    color: #aaa;
+    text-align: center;
+    font-style: italic;
+  }
+  
+  .audio-player {
+    width: 100%;
+    margin-top: 10px;
+  }
+  
+  .audio-metadata {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: #aaa;
+  }
+  
+  .loading-spinner {
+    border: 4px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    border-top: 4px solid #3498db;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  
+  .preset-prompts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .preset-btn {
+    background: rgba(52, 152, 219, 0.2);
+    border: 1px solid rgba(52, 152, 219, 0.3);
+    color: #3498db;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s ease;
+  }
+  
+  .preset-btn:hover {
+    background: rgba(52, 152, 219, 0.3);
+  }
+  
+  .file-upload {
+    background: rgba(40, 50, 60, 0.7);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 2px dashed rgba(255, 255, 255, 0.2);
+  }
+  
+  .upload-label {
+    color: #bbb;
+    margin-bottom: 10px;
+    display: block;
+  }
+  
+  .upload-btn {
+    background: rgba(155, 89, 182, 0.2);
+    border: 1px solid rgba(155, 89, 182, 0.3);
+    color: #9b59b6;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .upload-btn:hover {
+    background: rgba(155, 89, 182, 0.3);
+  }
+  
+  .status-box {
+    background: rgba(40, 50, 60, 0.7);
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 20px;
+    font-family: monospace;
+    color: #aaa;
+    font-size: 0.9rem;
+  }
+  
+  .status-title {
+    color: #3498db;
+    margin-bottom: 10px;
+    font-family: sans-serif;
+    font-size: 1rem;
+  }
+  
+  .status-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+  }
+  
+  .status-label {
+    color: #bbb;
+  }
+  
+  .status-value {
+    color: #2ecc71;
+  }
+  
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .tab {
+    padding: 10px 15px;
+    color: #aaa;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+  }
+  
+  .tab.active {
+    color: #3498db;
+    border-bottom-color: #3498db;
+  }
+  
+  .tab-content {
+    display: none;
+  }
+  
+  .tab-content.active {
+    display: block;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="music-container">
+  <div class="section-header">
+    <div class="section-title">NeuronasX Music Generation</div>
+    <div class="model-badge">ACE-Step v1-3.5B</div>
+  </div>
+  
+  <div class="tabs">
+    <div class="tab active" data-tab="text-to-music">Text to Music</div>
+    <div class="tab" data-tab="audio-to-music">Audio to Music</div>
+  </div>
+  
+  <div class="tab-content active" id="text-to-music">
+    <div class="preset-prompts">
+      <div class="preset-btn">Orchestral Epic</div>
+      <div class="preset-btn">Piano Melody</div>
+      <div class="preset-btn">Electronic Beat</div>
+      <div class="preset-btn">Jazz Ensemble</div>
+      <div class="preset-btn">Ambient Texture</div>
+      <div class="preset-btn">Rock Band</div>
+    </div>
+    
+    <div class="prompt-container">
+      <div class="prompt-label">Describe the music you want to generate:</div>
+      <textarea class="prompt-textarea" id="music-prompt" placeholder="Example: A gentle piano melody with soft strings in the background, creating a peaceful and reflective atmosphere..."></textarea>
+    </div>
+  </div>
+  
+  <div class="tab-content" id="audio-to-music">
+    <div class="file-upload">
+      <label class="upload-label">Upload an audio file to continue or transform:</label>
+      <input type="file" id="audio-file" accept="audio/*" style="display: none;">
+      <button class="upload-btn" id="upload-btn">Select Audio File</button>
+      <span id="file-name" style="margin-left: 10px; color: #bbb;"></span>
+    </div>
+    
+    <div class="prompt-container">
+      <div class="prompt-label">Additional instructions (optional):</div>
+      <textarea class="prompt-textarea" id="audio-prompt" placeholder="Example: Continue this melody but make it more energetic and add drums..."></textarea>
+    </div>
+  </div>
+  
+  <div class="d2-controls">
+    <div class="d2-title">D² Control Parameters</div>
+    
+    <div class="slider-container">
+      <div class="slider-label">
+        <span class="slider-name">D2 Activation</span>
+        <span class="slider-value" id="activation-value">0.50</span>
+      </div>
+      <input type="range" min="0" max="1" step="0.01" value="0.5" class="d2-slider" id="activation-slider">
+    </div>
+    
+    <div class="slider-container">
+      <div class="slider-label">
+        <span class="slider-name">Creative Balance</span>
+        <span class="slider-value" id="creative-value">0.50</span>
+      </div>
+      <input type="range" min="0" max="1" step="0.01" value="0.5" class="d2-slider" id="creative-slider">
+    </div>
+    
+    <div class="slider-container">
+      <div class="slider-label">
+        <span class="slider-name">Entropy</span>
+        <span class="slider-value" id="entropy-value">0.30</span>
+      </div>
+      <input type="range" min="0" max="1" step="0.01" value="0.3" class="d2-slider" id="entropy-slider">
+    </div>
+    
+    <div class="slider-container">
+      <div class="slider-label">
+        <span class="slider-name">Stimulation</span>
+        <span class="slider-value" id="stim-value">0.00</span>
+      </div>
+      <input type="range" min="0" max="1" step="0.01" value="0" class="d2-slider" id="stim-slider">
+    </div>
+  </div>
+  
+  <div class="button-row">
+    <button class="generate-btn" id="generate-btn">Generate Music</button>
+    <button class="reset-btn" id="reset-btn">Reset</button>
+  </div>
+  
+  <div class="audio-container" id="audio-container">
+    <div class="no-audio" id="no-audio">Generated music will appear here</div>
+    <div class="loading-spinner" id="loading-spinner" style="display: none;"></div>
+    <audio controls class="audio-player" id="audio-player" style="display: none;"></audio>
+    <div class="audio-metadata" id="audio-metadata" style="display: none;"></div>
+  </div>
+  
+  <div class="status-box">
+    <div class="status-title">System Status</div>
+    <div class="status-row">
+      <span class="status-label">Model:</span>
+      <span class="status-value" id="model-status">ACE-Step v1-3.5B (Simulation)</span>
+    </div>
+    <div class="status-row">
+      <span class="status-label">D²STIB Efficiency:</span>
+      <span class="status-value">57% Processing Reduction</span>
+    </div>
+    <div class="status-row">
+      <span class="status-label">Ollama Connection:</span>
+      <span class="status-value" id="ollama-status">Simulated</span>
+    </div>
+    <div class="status-row">
+      <span class="status-label">Current Session:</span>
+      <span class="status-value" id="session-id">Loading...</span>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // DOM Elements
+    const tabs = document.querySelectorAll('.tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+    const presetBtns = document.querySelectorAll('.preset-btn');
+    const musicPrompt = document.getElementById('music-prompt');
+    const audioPrompt = document.getElementById('audio-prompt');
+    const generateBtn = document.getElementById('generate-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const audioContainer = document.getElementById('audio-container');
+    const noAudio = document.getElementById('no-audio');
+    const loadingSpinner = document.getElementById('loading-spinner');
+    const audioPlayer = document.getElementById('audio-player');
+    const audioMetadata = document.getElementById('audio-metadata');
+    const uploadBtn = document.getElementById('upload-btn');
+    const audioFile = document.getElementById('audio-file');
+    const fileName = document.getElementById('file-name');
+    
+    // D2 Sliders
+    const activationSlider = document.getElementById('activation-slider');
+    const activationValue = document.getElementById('activation-value');
+    const creativeSlider = document.getElementById('creative-slider');
+    const creativeValue = document.getElementById('creative-value');
+    const entropySlider = document.getElementById('entropy-slider');
+    const entropyValue = document.getElementById('entropy-value');
+    const stimSlider = document.getElementById('stim-slider');
+    const stimValue = document.getElementById('stim-value');
+    
+    // Status Elements
+    const modelStatus = document.getElementById('model-status');
+    const ollamaStatus = document.getElementById('ollama-status');
+    const sessionId = document.getElementById('session-id');
+    
+    // Preset prompts
+    const presets = [
+      "An orchestral piece with epic brass, powerful percussion, and soaring strings, creating a heroic and adventurous atmosphere for a fantasy battle scene.",
+      "A gentle solo piano melody with a nostalgic quality, perfect for a reflective moment, with occasional soft pedal and natural reverb.",
+      "An energetic electronic beat with pulsing synthesizers, glitchy percussions, and a driving bassline, ideal for a futuristic scene.",
+      "A smooth jazz ensemble with saxophone lead, walking bass, soft brushed drums, and piano comping, creating a sophisticated atmosphere.",
+      "A spacious ambient texture with sustained pads, subtle textures, and occasional bell-like tones, creating a floating, meditative atmosphere.",
+      "A rock band arrangement with distorted guitars, powerful drums, a solid bass line, and an anthemic quality, building to an energetic chorus."
+    ];
+    
+    // Tab switching
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Remove active class from all tabs and contents
+        tabs.forEach(t => t.classList.remove('active'));
+        tabContents.forEach(c => c.classList.remove('active'));
+        
+        // Add active class to clicked tab
+        tab.classList.add('active');
+        
+        // Show corresponding content
+        const tabId = tab.getAttribute('data-tab');
+        document.getElementById(tabId).classList.add('active');
+      });
+    });
+    
+    // Preset prompts
+    presetBtns.forEach((btn, index) => {
+      btn.addEventListener('click', () => {
+        musicPrompt.value = presets[index];
+      });
+    });
+    
+    // D2 Sliders
+    activationSlider.addEventListener('input', () => {
+      activationValue.textContent = parseFloat(activationSlider.value).toFixed(2);
+    });
+    
+    creativeSlider.addEventListener('input', () => {
+      creativeValue.textContent = parseFloat(creativeSlider.value).toFixed(2);
+    });
+    
+    entropySlider.addEventListener('input', () => {
+      entropyValue.textContent = parseFloat(entropySlider.value).toFixed(2);
+    });
+    
+    stimSlider.addEventListener('input', () => {
+      stimValue.textContent = parseFloat(stimSlider.value).toFixed(2);
+    });
+    
+    // File upload
+    uploadBtn.addEventListener('click', () => {
+      audioFile.click();
+    });
+    
+    audioFile.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        fileName.textContent = e.target.files[0].name;
+      } else {
+        fileName.textContent = '';
+      }
+    });
+    
+    // Generate button
+    generateBtn.addEventListener('click', () => {
+      // Get active tab
+      const activeTab = document.querySelector('.tab.active').getAttribute('data-tab');
+      
+      // Get prompt based on active tab
+      let prompt;
+      let mode;
+      let audioFileData = null;
+      
+      if (activeTab === 'text-to-music') {
+        prompt = musicPrompt.value.trim();
+        mode = 'text';
+        
+        if (!prompt) {
+          alert('Please enter a description for the music you want to generate.');
+          return;
+        }
+      } else {
+        prompt = audioPrompt.value.trim();
+        mode = 'audio';
+        
+        if (audioFile.files.length === 0) {
+          alert('Please select an audio file.');
+          return;
+        }
+        
+        audioFileData = audioFile.files[0];
+      }
+      
+      // Get D2 parameters
+      const d2Params = {
+        activation: parseFloat(activationSlider.value),
+        creative_balance: parseFloat(creativeSlider.value),
+        entropy: parseFloat(entropySlider.value),
+        stim_level: parseFloat(stimSlider.value)
+      };
+      
+      // Show loading state
+      noAudio.style.display = 'none';
+      audioPlayer.style.display = 'none';
+      audioMetadata.style.display = 'none';
+      loadingSpinner.style.display = 'block';
+      generateBtn.disabled = true;
+      
+      // Prepare form data for API call
+      const formData = new FormData();
+      formData.append('prompt', prompt);
+      formData.append('mode', mode);
+      formData.append('d2_params', JSON.stringify(d2Params));
+      
+      if (mode === 'audio' && audioFileData) {
+        formData.append('audio_file', audioFileData);
+      }
+      
+      // Simulate API call (in a real app, this would be an actual fetch)
+      setTimeout(() => {
+        // Simulate successful generation
+        const timestamp = new Date().toLocaleTimeString();
+        
+        // Hide loading, show audio player
+        loadingSpinner.style.display = 'none';
+        audioPlayer.style.display = 'block';
+        audioMetadata.style.display = 'block';
+        
+        // In a real app, we'd set the audio source to the generated file
+        // audioPlayer.src = generatedAudioUrl;
+        
+        // For demo, just show metadata
+        audioMetadata.innerHTML = `
+          <div><strong>Prompt:</strong> ${prompt}</div>
+          <div><strong>Generated:</strong> ${timestamp}</div>
+          <div><strong>D2 Activation:</strong> ${d2Params.activation.toFixed(2)}</div>
+          <div><strong>Mode:</strong> ${mode === 'text' ? 'Text to Music' : 'Audio to Music'}</div>
+          <div><strong>Note:</strong> This is a simulation. In a real environment, audio would be generated.</div>
+        `;
+        
+        // Re-enable generate button
+        generateBtn.disabled = false;
+      }, 3000);
+    });
+    
+    // Reset button
+    resetBtn.addEventListener('click', () => {
+      // Reset prompts
+      musicPrompt.value = '';
+      audioPrompt.value = '';
+      
+      // Reset file input
+      audioFile.value = '';
+      fileName.textContent = '';
+      
+      // Reset D2 sliders
+      activationSlider.value = 0.5;
+      activationValue.textContent = '0.50';
+      creativeSlider.value = 0.5;
+      creativeValue.textContent = '0.50';
+      entropySlider.value = 0.3;
+      entropyValue.textContent = '0.30';
+      stimSlider.value = 0;
+      stimValue.textContent = '0.00';
+      
+      // Reset audio container
+      noAudio.style.display = 'block';
+      audioPlayer.style.display = 'none';
+      audioMetadata.style.display = 'none';
+      loadingSpinner.style.display = 'none';
+    });
+    
+    // Get session ID
+    fetch('/api/session/info')
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          sessionId.textContent = data.session_id.substring(0, 8) + '...';
+        } else {
+          sessionId.textContent = 'Error';
+        }
+      })
+      .catch(error => {
+        console.error('Error getting session info:', error);
+        sessionId.textContent = 'Error';
+      });
+    
+    // Check Ollama status
+    fetch('/api/llm/state')
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          if (data.state.simulation_mode) {
+            ollamaStatus.textContent = 'Simulation Mode';
+          } else {
+            ollamaStatus.textContent = 'Connected';
+          }
+        } else {
+          ollamaStatus.textContent = 'Not Connected';
+        }
+      })
+      .catch(error => {
+        console.error('Error checking Ollama status:', error);
+        ollamaStatus.textContent = 'Not Connected';
+      });
+  });
+</script>
+{% endblock %}
