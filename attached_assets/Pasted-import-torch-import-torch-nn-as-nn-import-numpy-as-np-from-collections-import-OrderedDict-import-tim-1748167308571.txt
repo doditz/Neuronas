@@ -1,0 +1,382 @@
+import torch
+import torch.nn as nn
+import numpy as np
+from collections import OrderedDict
+import time
+import hashlib
+from typing import Dict, List, Tuple, Union, Optional, Any
+import faiss
+from scipy.sparse import csr_matrix
+from sympy import primefactors, primerange
+import threading
+import logging
+from sklearn.metrics.pairwise import cosine_similarity
+
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger("QICMS")
+
+class PrimeFactorizedQuantumMemory:
+    """
+    Quantum-Inspired Collapsing Memory System using prime factorization for efficient
+    pathway representation and management.
+    """
+    
+    def __init__(self, 
+                 capacity: int = 1000, 
+                 collapse_threshold: int = 30, 
+                 similarity_threshold: float = 0.82,
+                 input_dim: int = 768, 
+                 device: str = 'cuda' if torch.cuda.is_available() else 'cpu',
+                 use_sparse: bool = True,
+                 collapse_refresh_rate: int = 500,
+                 adaptive_threshold: bool = True,
+                 max_collapsed_pathways: int = 200):
+        """
+        Initialize the quantum-inspired memory system.
+        
+        Args:
+            capacity: Maximum number of items in cache
+            collapse_threshold: Minimum items before considering collapse
+            similarity_threshold: Threshold for considering items similar
+            input_dim: Dimension of input vectors
+            device: Device to use for tensor operations
+            use_sparse: Whether to use sparse tensor representations
+            collapse_refresh_rate: How often to refresh collapsed pathways
+            adaptive_threshold: Whether to adjust similarity threshold dynamically
+            max_collapsed_pathways: Maximum number of collapsed pathways to maintain
+        """
+        self.capacity = capacity
+        self.collapse_threshold = collapse_threshold
+        self.similarity_threshold = similarity_threshold
+        self.base_similarity_threshold = similarity_threshold
+        self.device = device
+        self.input_dim = input_dim
+        self.use_sparse = use_sparse
+        self.collapse_refresh_rate = collapse_refresh_rate
+        self.adaptive_threshold = adaptive_threshold
+        self.max_collapsed_pathways = max_collapsed_pathways
+        
+        # Initialize prime number lookup for factorization
+        self.primes = list(primerange(2, 1000))
+        
+        # Initialize FAISS index for fast similarity search
+        self.index = faiss.IndexFlatL2(input_dim)
+        self.collapsed_pathways_data = np.zeros((0, input_dim), dtype=np.float32)
+        
+        # Pathway storage
+        self.pathway_cache = OrderedDict()
+        self.collapsed_ids = []
+        self.collapsed_weights = []
+        self.collapse_counts = []
+        self.pathway_factors = {}
+        self.pathway_entropy = {}
+        self.pathway_vectors = {}
+        self.temporal_versions = {}
+        
+        # Statistics
+        self.query_times = []
+        self.cache_hits = 0
+        self.collapse_hits = 0
+        self.total_queries = 0
+        self.computation_time_saved = 0
+        self.query_history = []
+        self.collapse_history = []
+        
+        # Lock for thread safety
+        self.lock = threading.RLock()
+        
+        # Adaptive parameters
+        self.last_collapse_time = 0
+        self.concept_drift_detected = False
+        self.drift_detection_window = 1000
+        self.drift_threshold = 0.15
+        
+        logger.info(f"Initialized QICMS with {capacity} capacity, {collapse_threshold} collapse threshold")
+    
+    def _factorize_pathway(self, weights: Union[torch.Tensor, List[torch.Tensor]]) -> int:
+        """
+        Create a unique prime factorization representation of pathway weights.
+        
+        Args:
+            weights: Tensor or list of tensors representing weights
+            
+        Returns:
+            Integer representing factorized signature
+        """
+        # Extract key weight values (using top-k absolute values)
+        if isinstance(weights, list):
+            flat_weights = torch.cat([w.flatten() for w in weights])
+        else:
+            flat_weights = weights.flatten()
+            
+        # Get top-k absolute values
+        k = min(20, len(flat_weights))
+        top_values, indices = torch.topk(torch.abs(flat_weights), k)
+        
+        # Create a unique fingerprint using prime factorization
+        signature = 1
+        for i, idx in enumerate(indices):
+            value = flat_weights[idx].item()
+            # Map to integer and use as exponent for i-th prime
+            exponent = int(np.abs(value) * 100) % 20
+            signature *= self.primes[i] ** exponent
+            
+        return signature
+    
+    def _hash_input(self, x: torch.Tensor) -> str:
+        """
+        Create efficient hash for input tensor.
+        
+        Args:
+            x: Input tensor
+            
+        Returns:
+            String hash representation
+        """
+        # Use top-k values for faster hashing
+        k = min(20, x.numel())
+        if k == x.numel():
+            x_flat = x.flatten()
+        else:
+            x_flat = torch.topk(torch.abs(x.flatten()), k)[1]
+            
+        # Convert to numpy and hash
+        x_np = x_flat.detach().cpu().numpy().astype(np.float32)
+        return hashlib.md5(x_np.tobytes()).hexdigest()
+    
+    def _vector_from_input(self, x: torch.Tensor) -> np.ndarray:
+        """
+        Extract feature vector from input for similarity comparison.
+        
+        Args:
+            x: Input tensor
+            
+        Returns:
+            NumPy array representation of input features
+        """
+        return x.detach().cpu().numpy().reshape(1, -1).astype(np.float32)
+    
+    def _compress_weights(self, weights: Union[torch.Tensor, List[torch.Tensor]]) -> Union[csr_matrix, np.ndarray, List[Union[csr_matrix, np.ndarray]]]:
+        """
+        Compress weights for efficient storage.
+        
+        Args:
+            weights: Tensor or list of tensors to compress
+            
+        Returns:
+            Compressed representation of weights
+        """
+        if not isinstance(weights, list):
+            # Convert to sparse representation
+            w_np = weights.detach().cpu().numpy()
+            if self.use_sparse:
+                return csr_matrix(w_np)
+            else:
+                return w_np
+        else:
+            # Handle list of weights
+            if self.use_sparse:
+                return [csr_matrix(w.detach().cpu().numpy()) for w in weights]
+            else:
+                return [w.detach().cpu().numpy() for w in weights]
+    
+    def _decompress_weights(self, compressed_weights: Union[csr_matrix, np.ndarray, List[Union[csr_matrix, np.ndarray]]]) -> Union[torch.Tensor, List[torch.Tensor]]:
+        """
+        Decompress weights back to tensor format.
+        
+        Args:
+            compressed_weights: Compressed weights to decompress
+            
+        Returns:
+            Tensor or list of tensors
+        """
+        if not isinstance(compressed_weights, list):
+            if self.use_sparse:
+                w_np = compressed_weights.toarray()
+            else:
+                w_np = compressed_weights
+            return torch.tensor(w_np).to(self.device)
+        else:
+            if self.use_sparse:
+                return [torch.tensor(w.toarray()).to(self.device) for w in compressed_weights]
+            else:
+                return [torch.tensor(w).to(self.device) for w in compressed_weights]
+    
+    def _update_similarity_threshold(self):
+        """Dynamically adjust similarity threshold based on system performance"""
+        if not self.adaptive_threshold or self.total_queries < 100:
+            return
+            
+        # Calculate hit rate
+        hit_rate = (self.cache_hits + self.collapse_hits) / max(1, self.total_queries)
+        
+        # Adjust threshold based on hit rate
+        if hit_rate < 0.2:
+            # Too few hits, lower threshold to be more lenient
+            self.similarity_threshold = max(0.65, self.similarity_threshold - 0.02)
+        elif hit_rate > 0.8:
+            # Too many hits, increase threshold to be more selective
+            self.similarity_threshold = min(0.95, self.similarity_threshold + 0.01)
+        
+        # Check if we're approaching memory limits
+        memory_pressure = len(self.collapsed_pathways_data) / self.max_collapsed_pathways
+        if memory_pressure > 0.9:
+            # Under high memory pressure, increase threshold to reduce new pathways
+            self.similarity_threshold = min(0.95, self.similarity_threshold + 0.03)
+        
+        logger.debug(f"Adjusted similarity threshold to {self.similarity_threshold:.2f} (hit rate: {hit_rate:.2f})")
+    
+    def _detect_concept_drift(self, x: torch.Tensor, input_hash: str) -> bool:
+        """
+        Detect if concept meaning is drifting over time.
+        
+        Args:
+            x: Input tensor
+            input_hash: Hash of input
+            
+        Returns:
+            Boolean indicating if drift was detected
+        """
+        # Only check periodically
+        if self.total_queries % self.drift_detection_window != 0:
+            return False
+            
+        # Need enough history
+        if len(self.query_history) < self.drift_detection_window:
+            return False
+            
+        # Check if similar queries have diverging representations
+        x_vec = self._vector_from_input(x)
+        
+        for old_hash, old_vec in self.pathway_vectors.items():
+            if old_hash == input_hash:
+                continue
+                
+            # Calculate similarity
+            sim = cosine_similarity(x_vec, old_vec)[0][0]
+            
+            # Check if we have a temporal version record
+            if old_hash in self.temporal_versions and len(self.temporal_versions[old_hash]) > 1:
+                oldest_vec = self.temporal_versions[old_hash][0]
+                newest_vec = self.temporal_versions[old_hash][-1]
+                
+                # Calculate drift between oldest and newest version
+                version_sim = cosine_similarity(oldest_vec, newest_vec)[0][0]
+                
+                if version_sim < (1 - self.drift_threshold):
+                    logger.info(f"Concept drift detected for {old_hash[:8]}, similarity: {version_sim:.2f}")
+                    self.concept_drift_detected = True
+                    return True
+        
+        return False
+    
+    def _manage_temporal_versioning(self, input_hash: str, x_vec: np.ndarray):
+        """
+        Maintain temporal versions of concepts to track drift.
+        
+        Args:
+            input_hash: Hash of input
+            x_vec: Vector representation
+        """
+        if input_hash not in self.temporal_versions:
+            self.temporal_versions[input_hash] = [x_vec]
+        else:
+            # Keep at most 5 versions to track evolution
+            if len(self.temporal_versions[input_hash]) >= 5:
+                self.temporal_versions[input_hash].pop(0)
+            self.temporal_versions[input_hash].append(x_vec)
+    
+    def query(self, x: torch.Tensor, expert_weights: Union[torch.Tensor, List[torch.Tensor]], forward_func: callable) -> Tuple[torch.Tensor, Union[torch.Tensor, List[torch.Tensor]]]:
+        """
+        Query the memory system with input x and current expert weights.
+        
+        Args:
+            x: Input tensor
+            expert_weights: Weights for processing
+            forward_func: Function to call for forward processing
+            
+        Returns:
+            Tuple of (result tensor, weights used)
+        """
+        with self.lock:
+            start_time = time.time()
+            self.total_queries += 1
+            result = None
+            input_hash = self._hash_input(x)
+            
+            # Store vector representation for similarity and drift detection
+            x_vec = self._vector_from_input(x)
+            self.pathway_vectors[input_hash] = x_vec
+            self._manage_temporal_versioning(input_hash, x_vec)
+            
+            # Check exact cache hit
+            if input_hash in self.pathway_cache:
+                # Cache hit
+                result, compressed_weights = self.pathway_cache[input_hash]
+                weights = self._decompress_weights(compressed_weights)
+                
+                # Move to end (most recently used)
+                self.pathway_cache.move_to_end(input_hash)
+                self.cache_hits += 1
+                
+                # Update entropy (more certain)
+                if input_hash in self.pathway_entropy:
+                    self.pathway_entropy[input_hash] *= 0.9
+                else:
+                    self.pathway_entropy[input_hash] = 0.1
+                
+                query_time = time.time() - start_time
+                self.query_times.append(query_time)
+                self.computation_time_saved += 0.95 * query_time  # 95% time saved
+                
+                return result, weights
+            
+            # Check for collapsed pathway hits using FAISS
+            if len(self.collapsed_pathways_data) > 0:
+                distances, indices = self.index.search(x_vec, min(3, len(self.collapsed_pathways_data)))
+                
+                if distances[0, 0] < (1 - self.similarity_threshold) * 100:
+                    # Collapsed pathway hit
+                    idx = indices[0, 0]
+                    collapsed_idx = self.collapsed_ids[idx]
+                    weights = self._decompress_weights(self.collapsed_weights[collapsed_idx])
+                    
+                    # Compute result with collapsed weights
+                    result = forward_func(x, weights)
+                    self.collapse_hits += 1
+                    self.collapse_counts[collapsed_idx] += 1
+                    
+                    query_time = time.time() - start_time
+                    self.query_times.append(query_time)
+                    self.computation_time_saved += 0.7 * query_time  # 70% time saved
+                    
+                    return result, weights
+            
+            # Check for concept drift
+            drift_detected = self._detect_concept_drift(x, input_hash)
+            if drift_detected and self.total_queries > self.collapse_threshold:
+                # Refresh some collapsed pathways
+                self._refresh_collapsed_pathways()
+            
+            # No hit, compute new result
+            result = forward_func(x, expert_weights)
+            
+            # Factorize the pathway for efficient storage
+            pathway_factor = self._factorize_pathway(expert_weights)
+            self.pathway_factors[input_hash] = pathway_factor
+            
+            # Compress weights for storage
+            compressed_weights = self._compress_weights(expert_weights)
+            
+            # Store in cache
+            self.pathway_cache[input_hash] = (result, compressed_weights)
+            
+            # Initialize entropy for new pathway (maximum uncertainty)
+            self.pathway_entropy[input_hash] = 1.0
+            
+            # Add to query history
+            self.query_history.append((input_hash, time.time()))
+            
+            # Check if cache exceeds capacity
+            if len(self.pathway_cache) > self.capacity:
+                # Remove oldest
