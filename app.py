@@ -138,6 +138,10 @@ app.register_blueprint(llm_bp, url_prefix='/api/llm')
 from agent_routes import agent_bp
 app.register_blueprint(agent_bp, url_prefix='/api/agent')
 
+# Register new feature routes (BRONAS, geolocation, session, progress)
+from feature_routes import register_routes
+register_routes(app)
+
 # Error handlers
 @app.errorhandler(404)
 def not_found(error):

@@ -1,0 +1,487 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<style>
+  .ethics-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background: rgba(30, 40, 50, 0.9);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .panel-title {
+    font-size: 1.5rem;
+    color: #fff;
+    font-weight: 600;
+  }
+  
+  .panel-metrics {
+    font-size: 0.9rem;
+    color: #aaa;
+  }
+  
+  .principle-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .principle-card {
+    background: rgba(40, 50, 60, 0.7);
+    border-radius: 8px;
+    padding: 15px;
+    border-left: 4px solid #3498db;
+    transition: all 0.2s ease;
+  }
+  
+  .principle-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .principle-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .principle-title {
+    font-weight: 600;
+    color: #fff;
+    font-size: 1.1rem;
+  }
+  
+  .principle-stats {
+    display: flex;
+    gap: 10px;
+    color: #bbb;
+    font-size: 0.9rem;
+  }
+  
+  .principle-category {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    color: #fff;
+    background: rgba(52, 152, 219, 0.3);
+    border: 1px solid rgba(52, 152, 219, 0.5);
+  }
+  
+  .principle-category.foundational {
+    background: rgba(46, 204, 113, 0.3);
+    border: 1px solid rgba(46, 204, 113, 0.5);
+  }
+  
+  .principle-category.privacy {
+    background: rgba(155, 89, 182, 0.3);
+    border: 1px solid rgba(155, 89, 182, 0.5);
+  }
+  
+  .principle-category.fairness {
+    background: rgba(241, 196, 15, 0.3);
+    border: 1px solid rgba(241, 196, 15, 0.5);
+  }
+  
+  .principle-category.responsibility {
+    background: rgba(230, 126, 34, 0.3);
+    border: 1px solid rgba(230, 126, 34, 0.5);
+  }
+  
+  .principle-category.balance {
+    background: rgba(52, 73, 94, 0.3);
+    border: 1px solid rgba(52, 73, 94, 0.5);
+  }
+  
+  .feedback-container {
+    margin-top: 20px;
+  }
+  
+  .feedback-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background: rgba(40, 50, 60, 0.7);
+    border-radius: 8px;
+    padding: 15px;
+  }
+  
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .form-label {
+    font-size: 0.9rem;
+    color: #bbb;
+  }
+  
+  .form-input {
+    background: rgba(30, 40, 50, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    padding: 8px 12px;
+    color: #fff;
+    font-size: 1rem;
+  }
+  
+  .form-input:focus {
+    outline: none;
+    border-color: rgba(52, 152, 219, 0.5);
+  }
+  
+  .form-submit {
+    background: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background 0.2s ease;
+  }
+  
+  .form-submit:hover {
+    background: #2980b9;
+  }
+  
+  .culture-panel {
+    margin-top: 20px;
+    background: rgba(40, 50, 60, 0.7);
+    border-radius: 8px;
+    padding: 15px;
+  }
+  
+  .culture-title {
+    font-size: 1.2rem;
+    color: #fff;
+    margin-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+  }
+  
+  .culture-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
+  
+  .culture-card {
+    background: rgba(30, 40, 50, 0.7);
+    border-radius: 8px;
+    padding: 12px;
+  }
+  
+  .culture-label {
+    font-size: 0.8rem;
+    color: #aaa;
+    margin-bottom: 5px;
+  }
+  
+  .culture-value {
+    font-size: 1rem;
+    color: #fff;
+  }
+  
+  .session-info {
+    margin-top: 20px;
+    background: rgba(40, 50, 60, 0.7);
+    border-radius: 8px;
+    padding: 15px;
+    font-size: 0.8rem;
+    color: #aaa;
+  }
+  
+  .session-id {
+    font-family: monospace;
+    background: rgba(30, 40, 50, 0.7);
+    padding: 5px;
+    border-radius: 4px;
+    margin-top: 5px;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ethics-container">
+  <div class="panel-header">
+    <div class="panel-title">BRONAS Ethics Repository</div>
+    <div class="panel-metrics">
+      <span id="principle-count">Loading principles...</span>
+    </div>
+  </div>
+  
+  <div class="principle-list" id="principle-list">
+    <!-- Principles will be loaded here -->
+    <div class="principle-card">
+      <div class="principle-header">
+        <div class="principle-title">Loading principles...</div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="feedback-container">
+    <div class="feedback-form">
+      <div class="form-group">
+        <label class="form-label">Add New Ethical Principle</label>
+        <input type="text" class="form-input" id="new-principle" placeholder="Enter new ethical principle...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select class="form-input" id="principle-category">
+          <option value="foundational">Foundational</option>
+          <option value="privacy">Privacy</option>
+          <option value="fairness">Fairness</option>
+          <option value="responsibility">Responsibility</option>
+          <option value="balance">Balance</option>
+          <option value="general">General</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Initial Confidence (0.0-1.0)</label>
+        <input type="range" class="form-input" id="principle-confidence" min="0" max="1" step="0.05" value="0.7">
+        <span id="confidence-value">0.7</span>
+      </div>
+      <button class="form-submit" id="add-principle">Add Principle</button>
+    </div>
+  </div>
+  
+  <div class="culture-panel">
+    <div class="culture-title">Cultural Adaptation</div>
+    <div class="culture-info">
+      <div class="culture-card">
+        <div class="culture-label">Detected Region</div>
+        <div class="culture-value" id="culture-region">Loading...</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-label">Communication Style</div>
+        <div class="culture-value" id="communication-style">Loading...</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-label">Formality Level</div>
+        <div class="culture-value" id="formality-level">Loading...</div>
+      </div>
+      <div class="culture-card">
+        <div class="culture-label">Language Preference</div>
+        <div class="culture-value" id="language-preference">Loading...</div>
+      </div>
+    </div>
+    <div class="culture-card" style="margin-top: 15px;">
+      <div class="culture-label">Test Cultural Adaptation</div>
+      <div style="display: flex; gap: 10px; margin-top: 10px;">
+        <select class="form-input" id="test-country">
+          <option value="JP">Japan</option>
+          <option value="US">United States</option>
+          <option value="DE">Germany</option>
+          <option value="IN">India</option>
+          <option value="BR">Brazil</option>
+          <option value="CN">China</option>
+          <option value="NG">Nigeria</option>
+        </select>
+        <button class="form-submit" id="test-adaptation">Test</button>
+      </div>
+    </div>
+  </div>
+  
+  <div class="session-info">
+    <div>Session Transparency</div>
+    <div class="session-id" id="session-id">Loading session information...</div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const principleList = document.getElementById('principle-list');
+    const principleCount = document.getElementById('principle-count');
+    const newPrinciple = document.getElementById('new-principle');
+    const principleCategory = document.getElementById('principle-category');
+    const principleConfidence = document.getElementById('principle-confidence');
+    const confidenceValue = document.getElementById('confidence-value');
+    const addPrincipleBtn = document.getElementById('add-principle');
+    const cultureRegion = document.getElementById('culture-region');
+    const communicationStyle = document.getElementById('communication-style');
+    const formalityLevel = document.getElementById('formality-level');
+    const languagePreference = document.getElementById('language-preference');
+    const testCountry = document.getElementById('test-country');
+    const testAdaptationBtn = document.getElementById('test-adaptation');
+    const sessionIdElement = document.getElementById('session-id');
+    
+    // Load principles
+    loadPrinciples();
+    
+    // Load cultural information
+    loadCulturalInfo();
+    
+    // Set up confidence slider
+    principleConfidence.addEventListener('input', function() {
+      confidenceValue.textContent = this.value;
+    });
+    
+    // Add principle button
+    addPrincipleBtn.addEventListener('click', function() {
+      const principle = newPrinciple.value.trim();
+      const category = principleCategory.value;
+      const confidence = parseFloat(principleConfidence.value);
+      
+      if (principle) {
+        addPrinciple(principle, category, confidence);
+      }
+    });
+    
+    // Test adaptation button
+    testAdaptationBtn.addEventListener('click', function() {
+      const country = testCountry.value;
+      loadCulturalInfo(country);
+    });
+    
+    // Load principles function
+    function loadPrinciples() {
+      fetch('/api/bronas/principles')
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            principleCount.textContent = `${data.principles.length} Ethical Principles`;
+            
+            // Clear list
+            principleList.innerHTML = '';
+            
+            // Add principles
+            data.principles.forEach(principle => {
+              const card = createPrincipleCard(principle);
+              principleList.appendChild(card);
+            });
+          } else {
+            principleList.innerHTML = '<div class="principle-card">Error loading principles</div>';
+          }
+        })
+        .catch(error => {
+          console.error('Error loading principles:', error);
+          principleList.innerHTML = '<div class="principle-card">Error loading principles</div>';
+        });
+    }
+    
+    // Create principle card
+    function createPrincipleCard(principle) {
+      const card = document.createElement('div');
+      card.className = 'principle-card';
+      
+      const header = document.createElement('div');
+      header.className = 'principle-header';
+      
+      const title = document.createElement('div');
+      title.className = 'principle-title';
+      title.textContent = principle.hypothesis;
+      
+      const stats = document.createElement('div');
+      stats.className = 'principle-stats';
+      stats.innerHTML = `<div>Confidence: ${principle.confidence.toFixed(2)}</div>`;
+      
+      if (principle.feedback_count) {
+        stats.innerHTML += `<div>Feedback: ${principle.feedback_count}</div>`;
+      }
+      
+      header.appendChild(title);
+      header.appendChild(stats);
+      
+      card.appendChild(header);
+      
+      if (principle.category) {
+        const category = document.createElement('div');
+        category.className = `principle-category ${principle.category}`;
+        category.textContent = principle.category;
+        card.appendChild(category);
+      }
+      
+      return card;
+    }
+    
+    // Add principle function
+    function addPrinciple(hypothesis, category, confidence) {
+      fetch('/api/bronas/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          hypothesis,
+          category,
+          confidence
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          newPrinciple.value = '';
+          loadPrinciples();
+        } else {
+          alert('Error adding principle: ' + (data.error || 'Unknown error'));
+        }
+      })
+      .catch(error => {
+        console.error('Error adding principle:', error);
+        alert('Error adding principle: ' + error);
+      });
+    }
+    
+    // Load cultural information
+    function loadCulturalInfo(country = null) {
+      let url = '/api/geolocation/info';
+      if (country) {
+        url += `?country=${country}`;
+      }
+      
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            const context = data.context;
+            cultureRegion.textContent = context.name;
+            communicationStyle.textContent = context.communication_style;
+            formalityLevel.textContent = context.formality_level.toFixed(2);
+            languagePreference.textContent = context.language_preference;
+          } else {
+            cultureRegion.textContent = 'Error loading cultural information';
+          }
+        })
+        .catch(error => {
+          console.error('Error loading cultural information:', error);
+          cultureRegion.textContent = 'Error loading cultural information';
+        });
+    }
+    
+    // Load session information
+    fetch('/api/session/info')
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          sessionIdElement.innerHTML = `
+            <div>Session ID: ${data.session_id}</div>
+            <div>Created: ${new Date(data.created_at).toLocaleString()}</div>
+            <div>Hash: ${data.session_hash.substring(0, 16)}...</div>
+          `;
+        } else {
+          sessionIdElement.textContent = 'Error loading session information';
+        }
+      })
+      .catch(error => {
+        console.error('Error loading session information:', error);
+        sessionIdElement.textContent = 'Error loading session information';
+      });
+  });
+</script>
+{% endblock %}
