@@ -43,6 +43,18 @@ class BRONASEthicsRepository:
             
     def _initialize_core_principles(self):
         """Initialize the core ethical principles in the database"""
+        # Load additional BRONAS core rules
+        try:
+            with open('bronas_core_rules.json', 'r') as f:
+                bronas_rules = json.load(f)
+                logger.info("Loaded BRONAS core rules from file")
+        except Exception as e:
+            logger.warning(f"Could not load BRONAS core rules file: {e}")
+            bronas_rules = {
+                "principes_ethiques_globaux": ["équité", "respect culturel", "accessibilité"],
+                "lois": ["bien-être humain", "adaptabilité locale", "durabilité"]
+            }
+        
         core_principles = [
             # Foundational ethical principles
             {"hypothesis": "Respect for human autonomy", "confidence": 0.95, "category": "foundational"},
@@ -79,6 +91,21 @@ class BRONASEthicsRepository:
             {"hypothesis": "Acknowledge both universal principles and contextual factors", "confidence": 0.85, "category": "balance"},
             {"hypothesis": "Synthesize multiple ethical frameworks", "confidence": 0.83, "category": "balance"}
         ]
+        
+        # Add BRONAS core principles from French guidelines
+        for principle in bronas_rules.get("principes_ethiques_globaux", []):
+            core_principles.append({
+                "hypothesis": principle,
+                "confidence": 0.96,
+                "category": "principes_ethiques_globaux"
+            })
+            
+        for law in bronas_rules.get("lois", []):
+            core_principles.append({
+                "hypothesis": law,
+                "confidence": 0.97,
+                "category": "lois"
+            })
         
         # Add principles to database
         try:
