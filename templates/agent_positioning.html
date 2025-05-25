@@ -1,0 +1,895 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
+<style>
+  .positioning-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+  
+  .agent-control-panel {
+    background: rgba(20, 30, 40, 0.95);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 0.75rem;
+  }
+  
+  .panel-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #eee;
+  }
+  
+  .position-controls {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .position-button {
+    background: rgba(30, 40, 50, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+  
+  .position-button:hover {
+    background: rgba(40, 50, 60, 0.9);
+    transform: translateY(-2px);
+  }
+  
+  .position-button.active {
+    border-color: rgba(46, 204, 113, 0.7);
+    background: rgba(46, 204, 113, 0.2);
+  }
+  
+  .position-icon {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .position-name {
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+  }
+  
+  .position-description {
+    font-size: 0.8rem;
+    color: #aaa;
+    margin-bottom: 0.5rem;
+  }
+
+  .lock-indicator {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.875rem;
+  }
+  
+  .lock-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: #aaa;
+  }
+  
+  .lock-checkbox {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    position: relative;
+    cursor: pointer;
+    outline: none;
+  }
+  
+  .lock-checkbox:checked {
+    background-color: rgba(46, 204, 113, 0.6);
+    border-color: rgba(46, 204, 113, 0.8);
+  }
+  
+  .lock-checkbox:checked::after {
+    content: '✓';
+    position: absolute;
+    top: -3px;
+    left: 2px;
+    color: white;
+    font-size: 14px;
+  }
+  
+  .metrics-panel {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .metric-card {
+    background: rgba(30, 40, 50, 0.7);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+  
+  .metric-title {
+    font-size: 0.8rem;
+    color: #aaa;
+    margin-bottom: 0.5rem;
+  }
+  
+  .metric-value {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #eee;
+  }
+  
+  .small-metric {
+    display: inline-block;
+    margin-right: 1rem;
+  }
+  
+  .small-metric-title {
+    font-size: 0.7rem;
+    color: #999;
+  }
+  
+  .small-metric-value {
+    font-size: 1rem;
+    color: #ddd;
+  }
+  
+  .hemisphere-panel {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .left-hemisphere, 
+  .right-hemisphere {
+    background: rgba(30, 40, 50, 0.7);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .left-hemisphere {
+    border-left: 3px solid rgba(41, 128, 185, 0.6);
+  }
+  
+  .right-hemisphere {
+    border-right: 3px solid rgba(155, 89, 182, 0.6);
+  }
+  
+  .hemisphere-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .hemisphere-title {
+    font-weight: 500;
+  }
+  
+  .hemisphere-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .memory-tier {
+    font-size: 0.8rem;
+    color: #bbb;
+    margin-bottom: 0.25rem;
+  }
+  
+  .cognitive-flow {
+    height: 120px;
+    background: rgba(20, 25, 30, 0.7);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .flow-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .query-panel {
+    background: rgba(30, 40, 50, 0.7);
+    border-radius: 8px;
+    padding: 1rem;
+  }
+  
+  .query-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .query-input {
+    background: rgba(20, 30, 40, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    color: #eee;
+    font-size: 1rem;
+    width: 100%;
+  }
+  
+  .query-input:focus {
+    outline: none;
+    border-color: rgba(46, 204, 113, 0.5);
+    box-shadow: 0 0 0 2px rgba(46, 204, 113, 0.2);
+  }
+  
+  .query-submit {
+    background: rgba(46, 204, 113, 0.7);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    padding: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .query-submit:hover {
+    background: rgba(46, 204, 113, 0.9);
+  }
+  
+  .response-container {
+    background: rgba(30, 40, 50, 0.7);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+    min-height: 200px;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+  
+  .response-content {
+    white-space: pre-line;
+    line-height: 1.5;
+  }
+  
+  .response-placeholder {
+    color: #888;
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+  
+  .module-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  
+  .module-chip {
+    background: rgba(30, 40, 50, 0.7);
+    border-radius: 12px;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.8rem;
+    color: #ddd;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .module-chip:hover {
+    background: rgba(40, 50, 60, 0.9);
+  }
+  
+  .module-chip.active {
+    background: rgba(46, 204, 113, 0.3);
+    border: 1px solid rgba(46, 204, 113, 0.5);
+  }
+  
+  @media (max-width: 640px) {
+    .position-controls {
+      grid-template-columns: 1fr;
+    }
+    
+    .metrics-panel,
+    .hemisphere-panel {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="positioning-container">
+  <div class="agent-control-panel">
+    <div class="panel-header">
+      <div class="panel-title">Agent Positioning System</div>
+      <div class="panel-status">Status: <span id="agent-status">Active</span></div>
+    </div>
+    
+    <div class="position-controls">
+      <div class="position-button" id="left-position" data-position="left">
+        <div class="position-icon">◀</div>
+        <div class="position-name">Left Hemisphere</div>
+        <div class="position-description">Analytical processing focus</div>
+        <div class="lock-toggle">
+          <input type="checkbox" class="lock-checkbox" id="left-lock"> 
+          <label for="left-lock">Lock Position</label>
+        </div>
+      </div>
+      
+      <div class="position-button active" id="central-position" data-position="central">
+        <div class="position-icon">◆</div>
+        <div class="position-name">SMAS Dispatcher</div>
+        <div class="position-description">Central coordination</div>
+        <div class="lock-toggle">
+          <input type="checkbox" class="lock-checkbox" id="central-lock"> 
+          <label for="central-lock">Lock Position</label>
+        </div>
+      </div>
+      
+      <div class="position-button" id="right-position" data-position="right">
+        <div class="position-icon">▶</div>
+        <div class="position-name">Right Hemisphere</div>
+        <div class="position-description">Creative processing focus</div>
+        <div class="lock-toggle">
+          <input type="checkbox" class="lock-checkbox" id="right-lock"> 
+          <label for="right-lock">Lock Position</label>
+        </div>
+      </div>
+      
+      <div class="position-button" id="hybrid-position" data-position="hybrid">
+        <div class="position-icon">⟷</div>
+        <div class="position-name">Hybrid Mode</div>
+        <div class="position-description">Adaptive positioning</div>
+        <div class="lock-toggle">
+          <input type="checkbox" class="lock-checkbox" id="hybrid-lock"> 
+          <label for="hybrid-lock">Lock Position</label>
+        </div>
+      </div>
+    </div>
+    
+    <div class="metrics-panel">
+      <div class="metric-card">
+        <div class="metric-title">D2 Activation</div>
+        <div class="metric-value" id="d2-activation">0.50</div>
+        <div class="small-metrics">
+          <div class="small-metric">
+            <div class="small-metric-title">Left Influence</div>
+            <div class="small-metric-value" id="left-influence">0.50</div>
+          </div>
+          <div class="small-metric">
+            <div class="small-metric-title">Right Influence</div>
+            <div class="small-metric-value" id="right-influence">0.50</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="metric-card">
+        <div class="metric-title">Agent Metrics</div>
+        <div class="small-metrics">
+          <div class="small-metric">
+            <div class="small-metric-title">Position</div>
+            <div class="small-metric-value" id="current-position">Central</div>
+          </div>
+          <div class="small-metric">
+            <div class="small-metric-title">Locked</div>
+            <div class="small-metric-value" id="position-locked">No</div>
+          </div>
+          <div class="small-metric">
+            <div class="small-metric-title">Entropy</div>
+            <div class="small-metric-value" id="cognitive-entropy">0.33</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="cognitive-flow">
+      <canvas id="flow-canvas" class="flow-canvas"></canvas>
+    </div>
+    
+    <div class="hemisphere-panel">
+      <div class="left-hemisphere">
+        <div class="hemisphere-header">
+          <div class="hemisphere-title">Left Hemisphere</div>
+          <div class="hemisphere-badge">Analytical</div>
+        </div>
+        <div class="memory-tier">L1: <span id="l1-count">4</span></div>
+        <div class="memory-tier">L2: <span id="l2-count">4</span></div>
+        <div class="memory-tier">L3: <span id="l3-count">10</span></div>
+      </div>
+      
+      <div class="right-hemisphere">
+        <div class="hemisphere-header">
+          <div class="hemisphere-title">Right Hemisphere</div>
+          <div class="hemisphere-badge">Creative</div>
+        </div>
+        <div class="memory-tier">R1: <span id="r1-count">6</span></div>
+        <div class="memory-tier">R2: <span id="r2-count">2</span></div>
+        <div class="memory-tier">R3: <span id="r3-count">24</span></div>
+      </div>
+    </div>
+    
+    <div class="module-chips">
+      <div class="module-chip active" data-module="D2Stim">D2Stim</div>
+      <div class="module-chip active" data-module="QRONAS">QRONAS</div>
+      <div class="module-chip active" data-module="BRONAS">BRONAS</div>
+      <div class="module-chip active" data-module="QuAC">QuAC</div>
+      <div class="module-chip active" data-module="D2Spin">D2Spin</div>
+      <div class="module-chip active" data-module="QkISM">QkISM</div>
+      <div class="module-chip active" data-module="SMAS">SMAS</div>
+    </div>
+  </div>
+  
+  <div class="query-panel">
+    <form class="query-form" id="query-form">
+      <input type="text" class="query-input" id="query-input" placeholder="Enter your query for the positioned agent...">
+      <button type="submit" class="query-submit">Process Query</button>
+    </form>
+    
+    <div class="response-container" id="response-container">
+      <div class="response-content" id="response-content">
+        <div class="response-placeholder">
+          Submit a query to receive a response from the positioned agent...
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // DOM Elements
+    const positionButtons = document.querySelectorAll('.position-button');
+    const lockCheckboxes = document.querySelectorAll('.lock-checkbox');
+    const moduleChips = document.querySelectorAll('.module-chip');
+    const queryForm = document.getElementById('query-form');
+    const queryInput = document.getElementById('query-input');
+    const responseContent = document.getElementById('response-content');
+    
+    // Metrics elements
+    const d2Activation = document.getElementById('d2-activation');
+    const leftInfluence = document.getElementById('left-influence');
+    const rightInfluence = document.getElementById('right-influence');
+    const currentPosition = document.getElementById('current-position');
+    const positionLocked = document.getElementById('position-locked');
+    const cognitiveEntropy = document.getElementById('cognitive-entropy');
+    
+    // Memory counts
+    const l1Count = document.getElementById('l1-count');
+    const l2Count = document.getElementById('l2-count');
+    const l3Count = document.getElementById('l3-count');
+    const r1Count = document.getElementById('r1-count');
+    const r2Count = document.getElementById('r2-count');
+    const r3Count = document.getElementById('r3-count');
+    
+    // Flow canvas
+    const canvas = document.getElementById('flow-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Initialize canvas size
+    function resizeCanvas() {
+      const container = canvas.parentElement;
+      canvas.width = container.offsetWidth;
+      canvas.height = container.offsetHeight;
+      
+      // Redraw flow visualization
+      drawCognitiveFlow();
+    }
+    
+    // Draw cognitive flow visualization
+    function drawCognitiveFlow() {
+      if (!ctx) return;
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      const width = canvas.width;
+      const height = canvas.height;
+      const centerX = width / 2;
+      const centerY = height / 2;
+      
+      // Get current agent position and d2 level
+      const agentPos = currentPosition.textContent.toLowerCase();
+      const d2Level = parseFloat(d2Activation.textContent);
+      
+      // Draw hemisphere boundaries
+      ctx.beginPath();
+      ctx.moveTo(centerX, 10);
+      ctx.lineTo(centerX, height - 10);
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      
+      // Draw left hemisphere
+      ctx.beginPath();
+      ctx.arc(width * 0.25, centerY, height * 0.35, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(41, 128, 185, 0.1)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(41, 128, 185, 0.3)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      
+      // Draw right hemisphere
+      ctx.beginPath();
+      ctx.arc(width * 0.75, centerY, height * 0.35, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(155, 89, 182, 0.1)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(155, 89, 182, 0.3)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      
+      // Draw center dispatcher
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, height * 0.15, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(46, 204, 113, 0.1)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(46, 204, 113, 0.3)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      
+      // Draw agent position
+      let agentX, agentY;
+      if (agentPos === 'left') {
+        agentX = width * 0.25;
+        agentY = centerY;
+      } else if (agentPos === 'right') {
+        agentX = width * 0.75;
+        agentY = centerY;
+      } else {
+        agentX = centerX;
+        agentY = centerY;
+      }
+      
+      // Draw agent
+      ctx.beginPath();
+      ctx.arc(agentX, agentY, 10, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(46, 204, 113, 0.8)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      
+      // Draw flow lines
+      ctx.beginPath();
+      ctx.moveTo(width * 0.25, centerY);
+      ctx.lineTo(centerX, centerY);
+      ctx.lineTo(width * 0.75, centerY);
+      ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 + d2Level * 0.3})`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      
+      // Draw D2 influence (thicker line indicates more influence)
+      const leftLineWidth = 1 + ((1 - d2Level) * 5);
+      const rightLineWidth = 1 + (d2Level * 5);
+      
+      // Left influence
+      ctx.beginPath();
+      ctx.moveTo(width * 0.25, centerY);
+      ctx.lineTo(centerX, centerY);
+      ctx.strokeStyle = 'rgba(41, 128, 185, 0.6)';
+      ctx.lineWidth = leftLineWidth;
+      ctx.stroke();
+      
+      // Right influence
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.lineTo(width * 0.75, centerY);
+      ctx.strokeStyle = 'rgba(155, 89, 182, 0.6)';
+      ctx.lineWidth = rightLineWidth;
+      ctx.stroke();
+      
+      // Label hemispheres
+      ctx.font = '12px Arial';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      ctx.textAlign = 'center';
+      
+      // Left label
+      ctx.fillText('Analytical', width * 0.25, centerY - height * 0.3);
+      
+      // Right label
+      ctx.fillText('Creative', width * 0.75, centerY - height * 0.3);
+      
+      // Center label
+      ctx.fillText('SMAS', centerX, centerY - height * 0.1);
+    }
+    
+    // Set position button click handlers
+    positionButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const position = button.dataset.position;
+        const lockCheckbox = button.querySelector('.lock-checkbox');
+        const locked = lockCheckbox.checked;
+        
+        // Remove active class from all buttons
+        positionButtons.forEach(btn => btn.classList.remove('active'));
+        
+        // Add active class to clicked button
+        button.classList.add('active');
+        
+        // Set agent position
+        setAgentPosition(position, locked);
+      });
+    });
+    
+    // Lock checkbox handlers
+    lockCheckboxes.forEach(checkbox => {
+      checkbox.addEventListener('change', function() {
+        const positionButton = checkbox.closest('.position-button');
+        
+        if (positionButton.classList.contains('active')) {
+          // Update position lock for active position
+          const position = positionButton.dataset.position;
+          const locked = checkbox.checked;
+          
+          // Update agent position with new lock status
+          setAgentPosition(position, locked);
+        }
+      });
+    });
+    
+    // Module chip handlers
+    moduleChips.forEach(chip => {
+      chip.addEventListener('click', function() {
+        const module = chip.dataset.module;
+        const active = !chip.classList.contains('active');
+        
+        // Toggle active class
+        chip.classList.toggle('active');
+        
+        // Toggle module
+        toggleModule(module, active);
+      });
+    });
+    
+    // Query form handler
+    queryForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const query = queryInput.value.trim();
+      if (query) {
+        processQuery(query);
+      }
+    });
+    
+    // API functions
+    function setAgentPosition(position, locked) {
+      // Show loading state
+      currentPosition.textContent = 'Loading...';
+      
+      // Send to API
+      fetch('/api/agent/position', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          position: position,
+          lock_position: locked
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          updateAgentState(data.state);
+          drawCognitiveFlow();
+        } else {
+          console.error('Error setting agent position:', data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error setting agent position:', error);
+      });
+    }
+    
+    function toggleModule(module, active) {
+      fetch('/api/agent/smas/module', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          module: module,
+          active: active
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          console.log(`Module ${module} ${active ? 'activated' : 'deactivated'}`);
+        } else {
+          console.error('Error toggling module:', data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error toggling module:', error);
+      });
+    }
+    
+    function processQuery(query) {
+      // Show loading state
+      responseContent.innerHTML = `
+        <div style="text-align: center; margin-top: 2rem;">
+          <div class="spinner" style="display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(46, 204, 113, 0.3); border-radius: 50%; border-top-color: #2ecc71; animation: spin 1s linear infinite;"></div>
+          <p style="margin-top: 1rem; color: var(--text-muted);">Processing query...</p>
+        </div>
+        <style>
+          @keyframes spin {
+            to { transform: rotate(360deg); }
+          }
+        </style>
+      `;
+      
+      // Send to API
+      fetch('/api/agent/process', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          query: query
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Update response content
+          responseContent.innerHTML = `<p>${data.response}</p>`;
+          
+          // Update agent state if available
+          if (data.agent_position) {
+            fetchAgentState();
+          }
+          
+          // Highlight hemisphere based on response
+          if (data.hemisphere_used === 'L') {
+            document.querySelector('.left-hemisphere').style.borderColor = 'rgba(46, 204, 113, 0.8)';
+            document.querySelector('.right-hemisphere').style.borderColor = 'rgba(155, 89, 182, 0.4)';
+          } else if (data.hemisphere_used === 'R') {
+            document.querySelector('.left-hemisphere').style.borderColor = 'rgba(41, 128, 185, 0.4)';
+            document.querySelector('.right-hemisphere').style.borderColor = 'rgba(46, 204, 113, 0.8)';
+          } else {
+            document.querySelector('.left-hemisphere').style.borderColor = 'rgba(41, 128, 185, 0.6)';
+            document.querySelector('.right-hemisphere').style.borderColor = 'rgba(155, 89, 182, 0.6)';
+          }
+          
+          // Update memory stats
+          fetchMemoryStats();
+        } else {
+          responseContent.innerHTML = `<p style="color: #e74c3c;">Error: ${data.error}</p>`;
+        }
+      })
+      .catch(error => {
+        console.error('Error processing query:', error);
+        responseContent.innerHTML = `<p style="color: #e74c3c;">An error occurred while processing your query.</p>`;
+      });
+    }
+    
+    function fetchAgentState() {
+      fetch('/api/agent/state')
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            updateAgentState(data.state);
+            drawCognitiveFlow();
+          } else {
+            console.error('Error fetching agent state:', data.error);
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching agent state:', error);
+        });
+    }
+    
+    function fetchMemoryStats() {
+      fetch('/api/agent/smas/state')
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            const metrics = data.state.metrics;
+            
+            // Update memory counts (simulated for now)
+            l1Count.textContent = Math.floor(Math.random() * 10 + 3);
+            l2Count.textContent = Math.floor(Math.random() * 15 + 5);
+            l3Count.textContent = Math.floor(Math.random() * 20 + 10);
+            r1Count.textContent = Math.floor(Math.random() * 10 + 3);
+            r2Count.textContent = Math.floor(Math.random() * 15 + 5);
+            r3Count.textContent = Math.floor(Math.random() * 20 + 10);
+            
+            // Update other metrics
+            d2Activation.textContent = data.state.d2_level.toFixed(2);
+            cognitiveEntropy.textContent = data.state.cognitive_entropy.toFixed(2);
+            
+            // Update influence values
+            leftInfluence.textContent = (metrics.left_activation * 100).toFixed(0) + '%';
+            rightInfluence.textContent = (metrics.right_activation * 100).toFixed(0) + '%';
+          } else {
+            console.error('Error fetching memory stats:', data.error);
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching memory stats:', error);
+        });
+    }
+    
+    function updateAgentState(state) {
+      // Update position indicators
+      currentPosition.textContent = state.current_position.charAt(0).toUpperCase() + state.current_position.slice(1);
+      positionLocked.textContent = state.position_locked ? 'Yes' : 'No';
+      
+      // Update d2 level
+      if (state.smas_state && state.smas_state.d2_level) {
+        d2Activation.textContent = state.smas_state.d2_level.toFixed(2);
+      }
+      
+      // Update cognitive entropy
+      if (state.smas_state && state.smas_state.cognitive_entropy) {
+        cognitiveEntropy.textContent = state.smas_state.cognitive_entropy.toFixed(2);
+      }
+      
+      // Update influence values
+      leftInfluence.textContent = (state.analytical_weight * 100).toFixed(0) + '%';
+      rightInfluence.textContent = (state.creative_weight * 100).toFixed(0) + '%';
+      
+      // Update position buttons
+      positionButtons.forEach(button => {
+        const position = button.dataset.position;
+        const lockCheckbox = button.querySelector('.lock-checkbox');
+        
+        // Set active state
+        if (position === state.current_position) {
+          button.classList.add('active');
+          
+          // Set lock state
+          lockCheckbox.checked = state.position_locked;
+        } else {
+          button.classList.remove('active');
+        }
+      });
+    }
+    
+    // Initialize canvas
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    
+    // Initial data fetch
+    fetchAgentState();
+    fetchMemoryStats();
+    
+    // Set up periodic updates
+    setInterval(fetchAgentState, 10000);
+    setInterval(fetchMemoryStats, 15000);
+  });
+</script>
+{% endblock %}

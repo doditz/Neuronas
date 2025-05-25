@@ -10,9 +10,14 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-# Import tiered memory system and dual LLM system
+# Import core components
 from tiered_memory_integration import tiered_memory
 from dual_llm_system import dual_llm_system
+
+# Import innovative 100% free open-source components
+from local_llm_hybridizer import LocalDualSystem
+from smas_dispatcher import SMASDispatcher
+from agent_positioning_system import AgentPositioningSystem
 
 # Initialize SQLAlchemy base
 class Base(DeclarativeBase):
@@ -91,7 +96,24 @@ def initialize_application():
     # Initialize and attach the dual LLM system
     app.dual_llm = dual_llm_system
     
+    # Initialize 100% free open-source innovative hybridization components
+    # Local dual system for hemispheric processing without external APIs
+    app.local_dual_system = LocalDualSystem()
+    
+    # Initialize SMAS dispatcher for agent positioning
+    app.smas_dispatcher = SMASDispatcher()
+    
+    # Initialize agent positioning system
+    app.agent_positioning = AgentPositioningSystem(
+        dual_llm_system=app.local_dual_system,  # Use our 100% free local system
+        smas_dispatcher=app.smas_dispatcher
+    )
+    
+    # Set default agent position to central
+    app.agent_positioning.set_position("central", lock_position=False)
+    
     logger.info("Neuronas system initialized successfully")
+    logger.info("Open-source innovative hybridization initialized")
 
 # Use with app.app_context for initialization
 with app.app_context():
@@ -111,6 +133,10 @@ app.register_blueprint(memory_bp, url_prefix='/api/memory')
 
 # Register dual LLM routes blueprint
 app.register_blueprint(llm_bp, url_prefix='/api/llm')
+
+# Register agent positioning routes blueprint
+from agent_routes import agent_bp
+app.register_blueprint(agent_bp, url_prefix='/api/agent')
 
 # Error handlers
 @app.errorhandler(404)

@@ -90,6 +90,11 @@ def register_routes(app):
         """Dual hemispheric LLM system page"""
         return render_template('dual_llm.html')
         
+    @app.route('/agent-positioning')
+    def agent_positioning_page():
+        """Agent positioning system interface"""
+        return render_template('agent_positioning.html')
+        
     @app.route('/profile/update', methods=['POST'])
     @login_required
     def update_profile():
