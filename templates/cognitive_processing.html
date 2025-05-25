@@ -1,0 +1,502 @@
+
+{% extends "layout.html" %}
+
+{% block title %}Neuronas - Cognitive Processing{% endblock %}
+
+{% block content %}
+<div class="content-container">
+  <header class="page-header">
+    <h1><i class="fas fa-brain"></i> Cognitive Processing</h1>
+    <p class="subtitle">Experience the 5-lobe cognitive model in action</p>
+  </header>
+
+  <div class="cognitive-interface">
+    <div class="input-section">
+      <h2>Query Input</h2>
+      <textarea id="query-input" placeholder="Enter your query here..."></textarea>
+      <button id="process-btn" class="primary-btn">Process Query</button>
+    </div>
+
+    <div class="cognitive-visualization">
+      <h2>Cognitive Visualization</h2>
+      <div class="brain-model">
+        <div class="lobe sensory" data-lobe="sensory">
+          <span class="lobe-name">Sensory</span>
+          <span class="confidence-value">0.5</span>
+        </div>
+        <div class="lobe memory" data-lobe="memory">
+          <span class="lobe-name">Memory</span>
+          <span class="confidence-value">0.5</span>
+        </div>
+        <div class="lobe reasoning" data-lobe="reasoning">
+          <span class="lobe-name">Reasoning</span>
+          <span class="confidence-value">0.5</span>
+        </div>
+        <div class="lobe creative" data-lobe="creative">
+          <span class="lobe-name">Creative</span>
+          <span class="confidence-value">0.5</span>
+        </div>
+        <div class="lobe ethical" data-lobe="ethical">
+          <span class="lobe-name">Ethical</span>
+          <span class="confidence-value">0.5</span>
+        </div>
+      </div>
+      
+      <div class="system-metrics">
+        <div class="metric">
+          <span>System Risk:</span>
+          <div class="progress-bar">
+            <div class="progress risk-progress" style="width: 10%"></div>
+          </div>
+          <span class="value">0.1</span>
+        </div>
+        <div class="metric">
+          <span>System Drive:</span>
+          <div class="progress-bar">
+            <div class="progress drive-progress" style="width: 80%"></div>
+          </div>
+          <span class="value">0.8</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="thinking-steps">
+      <h2>Thinking Steps</h2>
+      <div class="step-tabs">
+        <button class="step-tab active" data-step="initial">Initial Assessment</button>
+        <button class="step-tab" data-step="1">Step 1</button>
+        <button class="step-tab" data-step="2">Step 2</button>
+        <button class="step-tab" data-step="3">Step 3</button>
+        <button class="step-tab" data-step="final">Final Response</button>
+      </div>
+      
+      <div class="step-content active" id="step-initial">
+        <p class="placeholder">Initial assessment will appear here after processing</p>
+      </div>
+      <div class="step-content" id="step-1">
+        <p class="placeholder">Thinking step 1 will appear here after processing</p>
+      </div>
+      <div class="step-content" id="step-2">
+        <p class="placeholder">Thinking step 2 will appear here after processing</p>
+      </div>
+      <div class="step-content" id="step-3">
+        <p class="placeholder">Thinking step 3 will appear here after processing</p>
+      </div>
+      <div class="step-content" id="step-final">
+        <p class="placeholder">Final response will appear here after processing</p>
+      </div>
+    </div>
+  </div>
+  
+  <div class="processing-history">
+    <h2>Processing History</h2>
+    <div class="history-list" id="history-list">
+      <p class="placeholder">No processing history yet</p>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const queryInput = document.getElementById('query-input');
+    const processBtn = document.getElementById('process-btn');
+    const lobes = document.querySelectorAll('.lobe');
+    const stepTabs = document.querySelectorAll('.step-tab');
+    const stepContents = document.querySelectorAll('.step-content');
+    const historyList = document.getElementById('history-list');
+    
+    // Risk and drive elements
+    const riskProgress = document.querySelector('.risk-progress');
+    const driveProgress = document.querySelector('.drive-progress');
+    const riskValue = document.querySelector('.metric:nth-child(1) .value');
+    const driveValue = document.querySelector('.metric:nth-child(2) .value');
+    
+    // Tab switching
+    stepTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        stepTabs.forEach(t => t.classList.remove('active'));
+        stepContents.forEach(c => c.classList.remove('active'));
+        
+        tab.classList.add('active');
+        const step = tab.getAttribute('data-step');
+        document.getElementById(`step-${step}`).classList.add('active');
+      });
+    });
+    
+    // Process button click
+    processBtn.addEventListener('click', () => {
+      const query = queryInput.value.trim();
+      if (!query) {
+        alert('Please enter a query first');
+        return;
+      }
+      
+      // Show loading state
+      processBtn.disabled = true;
+      processBtn.textContent = 'Processing...';
+      
+      // Send request to process the query
+      fetch('/api/cognitive/process', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ query: query })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          displayProcessingResults(data.result);
+          loadProcessingHistory();
+        } else {
+          alert('Error: ' + data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred during processing');
+      })
+      .finally(() => {
+        // Reset button state
+        processBtn.disabled = false;
+        processBtn.textContent = 'Process Query';
+      });
+    });
+    
+    // Display processing results
+    function displayProcessingResults(result) {
+      // Update lobe confidences
+      const initialAssessment = result.initial_assessment;
+      
+      Object.entries(initialAssessment.lobe_assessments).forEach(([lobe, data]) => {
+        const lobeElement = document.querySelector(`.lobe[data-lobe="${lobe}"]`);
+        if (lobeElement) {
+          const confidenceValue = lobeElement.querySelector('.confidence-value');
+          confidenceValue.textContent = data.confidence.toFixed(2);
+          
+          // Update size based on confidence
+          const size = 50 + (data.confidence * 50);
+          lobeElement.style.width = `${size}px`;
+          lobeElement.style.height = `${size}px`;
+        }
+      });
+      
+      // Update system metrics
+      updateSystemMetrics(initialAssessment.system_risk, initialAssessment.system_drive);
+      
+      // Update initial assessment tab
+      const initialContent = document.getElementById('step-initial');
+      initialContent.innerHTML = '';
+      
+      Object.entries(initialAssessment.lobe_assessments).forEach(([lobe, data]) => {
+        const lobeAssessment = document.createElement('div');
+        lobeAssessment.className = 'lobe-assessment';
+        lobeAssessment.innerHTML = `
+          <h3>${lobe.charAt(0).toUpperCase() + lobe.slice(1)} [${data.confidence.toFixed(2)}]</h3>
+          <p>${data.assessment}</p>
+        `;
+        initialContent.appendChild(lobeAssessment);
+      });
+      
+      // Update thinking steps
+      result.thinking_steps.forEach((step, index) => {
+        const stepContent = document.getElementById(`step-${index + 1}`);
+        stepContent.innerHTML = '';
+        
+        Object.entries(step.lobe_thoughts).forEach(([lobe, data]) => {
+          const lobeThought = document.createElement('div');
+          lobeThought.className = 'lobe-thought';
+          lobeThought.innerHTML = `
+            <h3>${lobe.charAt(0).toUpperCase() + lobe.slice(1)} [${data.confidence.toFixed(2)}]</h3>
+            <p>${data.thought}</p>
+          `;
+          stepContent.appendChild(lobeThought);
+          
+          // Update metrics for the current step
+          updateSystemMetrics(step.system_risk, step.system_drive);
+        });
+      });
+      
+      // Update final response
+      const finalContent = document.getElementById('step-final');
+      finalContent.innerHTML = `
+        <div class="final-response">
+          <h3>Final Response (Confidence: ${result.confidence})</h3>
+          <p>${result.final_response}</p>
+          <div class="response-metadata">
+            <span>Processing Time: ${result.processing_time.toFixed(3)}s</span>
+          </div>
+        </div>
+      `;
+      
+      // Switch to initial assessment tab
+      stepTabs[0].click();
+    }
+    
+    // Update system metrics display
+    function updateSystemMetrics(risk, drive) {
+      riskProgress.style.width = `${risk * 100}%`;
+      driveProgress.style.width = `${drive * 100}%`;
+      riskValue.textContent = risk.toFixed(2);
+      driveValue.textContent = drive.toFixed(2);
+    }
+    
+    // Load processing history
+    function loadProcessingHistory() {
+      fetch('/api/cognitive/history')
+        .then(response => response.json())
+        .then(data => {
+          if (data.success && data.history.length > 0) {
+            historyList.innerHTML = '';
+            
+            data.history.forEach(item => {
+              const historyItem = document.createElement('div');
+              historyItem.className = 'history-item';
+              historyItem.innerHTML = `
+                <div class="history-query">${item.query}</div>
+                <div class="history-meta">
+                  <span>Confidence: ${item.confidence}</span>
+                  <span>Time: ${new Date(item.timestamp).toLocaleTimeString()}</span>
+                </div>
+              `;
+              historyList.appendChild(historyItem);
+            });
+          }
+        })
+        .catch(error => {
+          console.error('Error loading history:', error);
+        });
+    }
+    
+    // Initial history load
+    loadProcessingHistory();
+  });
+</script>
+{% endblock %}
+
+{% block styles %}
+<style>
+  .cognitive-interface {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+    margin-bottom: 30px;
+  }
+  
+  .input-section {
+    grid-column: 1 / 3;
+    background: #f5f5f5;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  
+  #query-input {
+    width: 100%;
+    height: 100px;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+  }
+  
+  .primary-btn {
+    background: #4a69bd;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+  }
+  
+  .primary-btn:hover {
+    background: #1e3799;
+  }
+  
+  .cognitive-visualization {
+    background: #f5f5f5;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  
+  .brain-model {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin: 20px 0;
+    position: relative;
+    min-height: 200px;
+  }
+  
+  .lobe {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.5s ease;
+    color: white;
+    position: relative;
+    margin: 10px;
+  }
+  
+  .lobe-name {
+    font-weight: bold;
+  }
+  
+  .confidence-value {
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  
+  .sensory { background: #e74c3c; }
+  .memory { background: #3498db; }
+  .reasoning { background: #2ecc71; }
+  .creative { background: #f39c12; }
+  .ethical { background: #9b59b6; }
+  
+  .system-metrics {
+    margin-top: 20px;
+  }
+  
+  .metric {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .metric span {
+    width: 100px;
+  }
+  
+  .progress-bar {
+    flex: 1;
+    height: 15px;
+    background: #ddd;
+    border-radius: 10px;
+    margin: 0 10px;
+    overflow: hidden;
+  }
+  
+  .progress {
+    height: 100%;
+    transition: width 0.5s ease;
+  }
+  
+  .risk-progress {
+    background: #e74c3c;
+  }
+  
+  .drive-progress {
+    background: #2ecc71;
+  }
+  
+  .thinking-steps {
+    background: #f5f5f5;
+    border-radius: 8px;
+    padding: 20px;
+    grid-column: 1 / 3;
+  }
+  
+  .step-tabs {
+    display: flex;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .step-tab {
+    padding: 10px 15px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+  }
+  
+  .step-tab.active {
+    border-bottom: 3px solid #4a69bd;
+    font-weight: bold;
+  }
+  
+  .step-content {
+    display: none;
+    padding: 15px;
+    background: white;
+    border-radius: 4px;
+  }
+  
+  .step-content.active {
+    display: block;
+  }
+  
+  .lobe-assessment, .lobe-thought {
+    margin-bottom: 15px;
+    padding: 10px;
+    background: #f9f9f9;
+    border-radius: 4px;
+  }
+  
+  .processing-history {
+    background: #f5f5f5;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 20px;
+  }
+  
+  .history-item {
+    padding: 15px;
+    margin-bottom: 10px;
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  
+  .history-query {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  .history-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #666;
+  }
+  
+  .placeholder {
+    color: #999;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+  }
+  
+  .final-response {
+    background: #e8f4fd;
+    padding: 15px;
+    border-radius: 4px;
+    border-left: 4px solid #4a69bd;
+  }
+  
+  .response-metadata {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #666;
+  }
+  
+  @media (max-width: 768px) {
+    .cognitive-interface {
+      grid-template-columns: 1fr;
+    }
+    
+    .input-section, .cognitive-visualization, .thinking-steps {
+      grid-column: 1;
+    }
+  }
+</style>
+{% endblock %}
