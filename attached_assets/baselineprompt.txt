@@ -1,0 +1,26 @@
+1. Base Query Sets
+Cognitive Scientist: Here's a set of queries ranging from simple to ultra-complex, varying in cognitive needs and context retention requirements:
+
+Simple:
+
+"What is the capital of France?"
+
+"Define photosynthesis."
+
+Moderate:
+3. "Compare and contrast democracy and autocracy."
+4. "Explain the water cycle and its importance to Earth's ecosystems."
+
+Complex:
+5. "Analyze the economic impacts of artificial intelligence on the job market over the next decade."
+6. "Discuss the ethical implications of genetic engineering in humans."
+
+Ultra Complex (High Context Retention):
+7. "Given the historical context of the Industrial Revolution, the current state of automation, and potential future developments in AI, predict and explain the most significant changes in the nature of work over the next century."
+8. "Considering the interplay between quantum mechanics and general relativity, explain the challenges in developing a unified theory of physics and propose a potential approach to reconciling these theories."
+
+Ultra Complex (Simple Form):
+9. "Why do humans seem to repeat history approximately every 400 years?"
+10. "What if we discovered that both God and Lucifer exist?"
+11. "How would the world change if we could communicate with plants?"
+12. "Why is there something rather than nothing?"

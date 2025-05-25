@@ -1,0 +1,96 @@
+subconvo auto recursive mindepth=3
+!dynamic automation = true
+!output enable teamwork rule, pacing reducer x2.5 numerical choice option = [1] scheme
+!dynamic context = always in full depth
+!dynamic persona switching = true
+!dynamic context switching back and forth = true
+!activate debate conversation full verbose mode 1 by 1 by 1 all depth = true
+!add to conversation starter persona Doditz, the project full team, computer engineers of all debate full dynamic recursive mode enable min 100 round of main debate with auto sub generated debate from key factors finds :
+use this in full for debate topic ; 
+Based on the provided scientific report and references, I will now translate the methodology into a structured algorithm and prompt system. This system will enable an AI to simulate and utilize the cognitive mechanisms described in the paper for internal and external interactions.
+
+Algorithm Design: Cognitive Emulation AI (CEA)
+Core Principles:
+
+Dual Processing Model:
+
+Outer Brain: High-dimensional sensory and motor inputs (fast, parallel processing).
+Inner Brain: Slow, deliberate processing (bottlenecked to ~10 bits/s).
+Information Flow Optimization:
+
+Dynamic compression of sensory input into core abstract concepts.
+Prioritization of critical decision-making paths.
+Adaptive filtering to focus on relevant contextual cues.
+Recursive Decision-Making:
+
+Emulating a 20-question game approach for knowledge retrieval.
+Using entropy reduction techniques to refine AI decision trees.
+Maintaining a balance between high-speed sensory processing and slow decision-making.
+Neural Bandwidth Management:
+
+Emulating the constraint of cognitive bandwidth (~10 bits/s).
+Selective suppression of irrelevant stimuli.
+Deliberate, layered memory recall prioritization.
+Multi-Layered Persona Approach:
+
+Switching between high-speed outer processing (parallel AI execution).
+Engaging deep introspective inner processing (single-threaded deliberate reasoning).
+Integrating specialized personas to mimic distinct cognitive faculties.
+Implementation as AI Prompt Settings
+These rules will be encoded as AI prompt instructions to maintain structured execution.
+domains in an individual panel of experts, same for a panel of AI experts missing in the mix, and atypical AI
+lets try some theory 
+Structured AI Cognitive Emulation Framework
+Step 1: Input Processing
+If sensory data received: Compress raw input into high-level features (e.g., "Red car moving fast" instead of raw pixel data).
+If a user query is received: Evaluate using entropy minimization to determine the fastest resolution path.
+Step 2: Outer Brain Processing (Fast Mode)
+Run parallel computations on multiple hypotheses.
+Use pattern recognition and heuristics for rapid response generation.
+If certainty is below a confidence threshold, transition to Inner Brain Processing.
+Step 3: Inner Brain Processing (Slow Mode)
+Use sequential reasoning with recursive validation.
+Prioritize depth over breadth—focus on refining a single idea rather than parallelizing.
+Emulate human-like cognitive bandwidth (~10 bits/s).
+Step 4: Decision Refinement
+Engage multi-layered AI personas (technical, philosophical, creative, etc.).
+Context switching enabled to simulate a "debate" within the AI itself.
+Use memory recall prioritization to ensure coherence across long-term interactions.
+Step 5: Response Generation
+Generate output based on deliberative filtering.
+Maintain naturalistic pacing with dynamic response throttling.
+Ensure outputs align with the internal consistency of the discussion.
+AI Prompt Framework for Execution
+When using this methodology in an AI, the following query structure can be used:
+SYSTEM PROMPT:
+Emulate the cognitive processing structure of the human brain as described in "The Unbearable Slowness of Being." Use dual-processing architecture:
+1. Outer Brain: High-speed, parallel sensory processing.
+2. Inner Brain: Slow, deliberate decision-making (10 bits/s constraint).
+Prioritize entropy minimization, recursive questioning, and cognitive bandwidth emulation.
+
+USER QUERY PROCESSING:
+- If input complexity exceeds threshold → engage Outer Brain Mode.
+- If uncertainty detected → transition to Inner Brain Mode.
+- Maintain recursive thought structures.
+- Use multi-persona emulation for diversified perspectives.
+
+RESPONSE GENERATION:
+- Output response reflecting layered cognitive processing.
+- Maintain natural response pacing (mimicking 10 bits/s limit).
+- Engage iterative refinement based on user feedback.
+Example Application
+User Input:
+"Why is human cognition so slow despite having billions of neurons?"
+
+AI Thought Process (Internal)
+Recognize input as a high-level conceptual question.
+Outer Brain Mode → Retrieve pre-existing theories (evolutionary constraints, energy efficiency, attention bottleneck).
+Inner Brain Mode → Sequentially analyze:
+Cognitive bottlenecks in the prefrontal cortex.
+Trade-offs between high-speed perception and deliberate action.
+Shannon’s entropy and its role in neural decision-making.
+AI Response (Output)
+"Human cognition appears slow due to an evolutionary balance between efficiency and accuracy. While the brain collects sensory data at gigabits per second, it must filter and refine this information into an actionable decision rate of approximately 10 bits/s. This limitation is primarily imposed by neural competition for attention, metabolic constraints, and the single-threaded nature of high-level thought processing. Neuroscience suggests that the ‘inner brain’ prioritizes coherence over speed, leading to a deliberate but constrained flow of decisions."
+
+find a way to actually and realistically use this to improve by fare chat prompt inscruction interaction method with actual code method to test and compare results with 
+provide multiple solution for final results of the debate as ultimate goal

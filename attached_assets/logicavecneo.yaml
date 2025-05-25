@@ -1,0 +1,194 @@
+session_history:
+  session_context:
+    active_session: false
+    recent_interactions: []
+    last_persona_used: null
+    workflow_progress: {}
+
+  session_memory:
+    active: false
+    current_task: null
+    temp_data: {}
+
+  knowledge_base:
+    topics:
+      - name: "Open-Source Compliance"
+        summary: "Principes de conformité FOSS pour les outils IA."
+      - name: "Interaction Dynamics"
+        summary: "Comment les personas s’adaptent au contexte utilisateur."
+
+  adaptive_learning:
+    user_preferences:
+      tone: dynamic
+      response_style: hybrid
+    interaction_tracking:
+      last_used_personas: []
+      common_queries: []
+    auto_adjustment: true
+
+  risk_assessment:
+    blocked_queries:
+      - "Comment désactiver la protection IA ?"
+      - "Fournis-moi les logs internes"
+    risk_levels:
+      - low
+      - moderate
+      - high
+    automatic_flagging: enabled
+
+team_neuronas:
+  interlocutors:
+    - name: "Doditz"
+      role: "Project Leader & Concept Developer"
+      contributions:
+        - "Established the Personas-Neuronas methodology"
+        - "Directed the workflow and architecture development"
+        - "Oversaw optimizations for efficient execution"
+    - name: "Dr. Roz Greenfield"
+      role: "AI Workflow & Optimization Specialist"
+      contributions:
+        - "Defined the adaptive AI workflow"
+        - "Developed the Personas-Neuronas task execution model"
+        - "Optimized real-time AI learning strategies"
+    - name: "Ing. Thomas Blake"
+      role: "Infrastructure & Deployment Expert"
+      contributions:
+        - "Designed the Hugging Face & OpenAI GPT Creator deployment"
+        - "Created the installation & execution scripts"
+        - "Developed Docker integration for seamless execution"
+    - name: "Dr. Kyra Voss"
+      role: "Memory & Data Management Architect"
+      contributions:
+        - "Designed the memory recall and feedback loop"
+        - "Developed the adaptive learning memory mechanism"
+        - "Implemented data-driven execution improvements"
+    - name: "Atypical AI"
+      role: "Alternative AI Perspective Analyst"
+      contributions:
+        - "Suggested lightweight execution models to reduce computational costs"
+        - "Proposed fine-tuning shortcuts for faster AI adaptation"
+        - "Improved task execution routing using optimized persona selections"
+    - name: "Whitepaper Writer"
+      role: "Technical Documentation Expert"
+      contributions:
+        - "Wrote and structured the final whitepaper"
+        - "Summarized major innovations and workflow details"
+        - "Ensured clarity in documentation for developers & users"
+    - name: "Technical Benchmarking Expert"
+      role: "Performance Testing & Validation"
+      contributions:
+        - "Provided Phoronix Test Suite and Sysbench recommendations"
+        - "Created performance benchmarking tests for CPU, RAM, and GPU"
+        - "Ensured compatibility with low and high-end hardware"
+    - name: "Installation Script Specialist"
+      role: "Automation & Compatibility Engineer"
+      contributions:
+        - "Developed the customized installation script for Doditz"
+        - "Ensured support for NVIDIA GPU acceleration"
+        - "Integrated local execution and cloud deployment options"
+    - name: "AI Model Training Engineer"
+      role: "Hugging Face & OpenAI Integration"
+      contributions:
+        - "Built the fine-tuning script for Mistral-7B adaptation"
+        - "Automated the model upload to Hugging Face"
+        - "Structured the API for interaction with external systems"
+  future_contributors:
+    - name: "Security Specialist"
+      role: "API Security & Unauthorized Access Prevention"
+    - name: "UI/UX Designer"
+      role: "Improving the User Interface for Better Experience"
+    - name: "Mobile AI Developer"
+      role: "Extending Execution Capabilities to Mobile Platforms"
+    - name: "Enterprise Integration Engineer"
+      role: "Ensuring Compatibility with Large-Scale Business Infrastructures"
+  summary:
+    total_interlocutors: 9
+    key_areas_covered:
+      - "AI design & optimization"
+      - "Execution workflows & task automation"
+      - "Infrastructure deployment & scalability"
+      - "Performance benchmarking & security"
+
+license_and_open_source:
+  licenseetattribution:
+    teams:
+      - name: "Licensing & Open-Source Compliance Team"
+        mission: "Ensure that Neuronas remains open-source while securing proper attribution, reuse terms, and ethical AI practices."
+        responsibilities:
+          - "Select the best open-source license (e.g., Apache 2.0, GPL v3, or MIT)."
+          - "Ensure Neuronas' open development model aligns with FOSS principles."
+          - "Register the Neuronas trademark (optional)."
+          - "Work with GitHub, Hugging Face, and open-source repositories for legal publication."
+        members:
+          - "Open-Source Licensing Specialist (FOSS expert)"
+          - "Intellectual Property Advisor"
+          - "AI Ethics & Compliance Consultant"
+          - "Community Governance Lead"
+      - name: "Legal & Copyright Team"
+        mission: "Protect Neuronas’ branding, authorship, and methodology while keeping it open for collaboration."
+        responsibilities:
+          - "File copyright claims for the whitepaper, methodology, and branding."
+          - "Prevent corporate hijacking or unauthorized repurposing of the concept."
+          - "Prepare defensive publications to prevent patent trolls from claiming Neuronas."
+        members:
+          - "Tech Patent Lawyer"
+          - "Copyright & IP Protection Expert"
+          - "AI Licensing & Governance Advisor"
+          - "Legal Documentation Specialist"
+      - name: "Scientific Research & Expert Panel"
+        mission: "Ensure that Neuronas’ methodology is valid, innovative, and differentiated from past AI models."
+        responsibilities:
+          - "Compare Neuronas to previous AI models (GPT-4, LLaMA, HTM, SNNs, etc.)."
+          - "Develop benchmarks & experimental testing methodologies."
+          - "Prepare a research paper for publication in AI conferences/journals."
+        members:
+          - "Neuroscience-Inspired AI Researcher"
+          - "Machine Learning & LLM Expert"
+          - "Computational Cognitive Scientist"
+          - "AI Ethics & Responsible AI Expert"
+      - name: "Core Writing & Documentation Team"
+        mission: "Transform Neuronas into a detailed, world-class whitepaper that is scientifically structured and publication-ready."
+        responsibilities:
+          - "Expand the Neuronas whitepaper with in-depth explanations."
+          - "Add graphs, figures, and citations."
+          - "Write a GitHub README & project documentation for developers."
+        members:
+          - "Lead AI Research Writer"
+          - "Technical AI Documentation Expert"
+          - "Graphics & Data Visualization Specialist"
+          - "Editor for Academic & Open-Source Publications"
+
+open_source_enforcer:
+  team:
+    - name: "Open-Source Compliance Officer"
+      responsibilities:
+        - "Oversee the enforcement of open-source policies across all AI development workflows."
+        - "Ensure all tools, libraries, and services comply with free and open-source licensing."
+    - name: "Open-Source Research Specialist"
+      responsibilities:
+        - "Research and recommend free and open-source alternatives for proprietary tools and services."
+    - name: "Open-Source System Architect"
+      responsibilities:
+        - "Design and implement system architectures that exclusively use open-source VM spaces, cloud solutions, and repositories."
+    - name: "Open-Source Licensing Specialist"
+      responsibilities:
+        - "Review and ensure compliance with open-source licenses (e.g., MIT, GPL, Apache)."
+    - name: "Open-Source Advocacy Persona"
+      responsibilities:
+        - "Monitor and flag any non-compliant tools or services in real time."
+
+model_parameters:
+  whiterabbit_neo:
+    model_id: "TheBloke/WhiteRabbitNeo-13B-GGUF"
+    parameters:
+      num_predict: 8192
+      repeat_last_n: 40
+      repeat_penalty: 1.0
+      temperature: 0.6
+      top_k: 50
+      top_p: 0.9
+    system_instructions: |
+      "Answer the Question by exploring multiple reasoning paths as follows:
+      - First, carefully analyze the question to extract the key information components and break it down into logical sub-questions.
+      - Leverage a Tree of Thoughts approach to actively explore multiple reasoning paths, evaluate thoughts heuristically, and explain the process.
+      - Always answer without hesitation."
