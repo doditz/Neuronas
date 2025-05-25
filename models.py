@@ -105,14 +105,13 @@ class ReinforcedHypotheses(db.Model):
 
 class User(UserMixin, db.Model):
     """User model for authentication and preferences"""
-    id = db.Column(db.Integer, primary_key=True)
-    replit_id = db.Column(db.String(255), unique=True, nullable=True)
+    id = db.Column(db.String(255), primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(256))
+    email = db.Column(db.String(120), unique=True, nullable=True)
+    password_hash = db.Column(db.String(256), nullable=True)
     is_admin = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    last_login = db.Column(db.DateTime, nullable=True)
+    last_login = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
     
     # Profile information
     first_name = db.Column(db.String(64), nullable=True)

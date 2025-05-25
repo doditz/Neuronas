@@ -1,0 +1,105 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<style>
+    .landing-container {
+        min-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.5rem;
+        margin-bottom: 2rem;
+        color: #adb5bd;
+    }
+    
+    .feature-item {
+        margin-bottom: 1.5rem;
+        padding: 1.5rem;
+        border-radius: 8px;
+        background: rgba(44, 62, 80, 0.5);
+        transition: all 0.3s ease;
+    }
+    
+    .feature-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .feature-icon {
+        margin-bottom: 1rem;
+        color: #3498db;
+    }
+    
+    .cta-section {
+        margin-top: 3rem;
+        text-align: center;
+    }
+    
+    .btn-login {
+        padding: 0.8rem 2rem;
+        font-size: 1.2rem;
+        margin-top: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="landing-container">
+    <div class="container">
+        <div class="row text-center mb-5">
+            <div class="col-md-10 offset-md-1">
+                <h1 class="hero-title">
+                    <span class="text-info">Neuronas</span><span class="text-light">X</span>
+                </h1>
+                <p class="hero-subtitle">Bio-Inspired Cognitive Engine with Neuromorphic Architecture</p>
+                <div class="cta-section">
+                    <p class="lead">Sign in to experience advanced neuromorphic AI processing</p>
+                    <a href="{{ url_for('replit_auth.login') }}" class="btn btn-info btn-login">
+                        <i data-feather="log-in"></i> Sign in with Replit
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-5">
+            <div class="col-md-4">
+                <div class="feature-item">
+                    <div class="text-center feature-icon">
+                        <i data-feather="cpu" style="width: 48px; height: 48px;"></i>
+                    </div>
+                    <h3 class="text-center">Dual Hemisphere Processing</h3>
+                    <p>Experience cognitive processing with left analytical and right creative hemispheres working in perfect harmony.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-item">
+                    <div class="text-center feature-icon">
+                        <i data-feather="database" style="width: 48px; height: 48px;"></i>
+                    </div>
+                    <h3 class="text-center">Tiered Memory Architecture</h3>
+                    <p>Access information across short-term, medium-term, and long-term memory tiers for enhanced recall and context.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-item">
+                    <div class="text-center feature-icon">
+                        <i data-feather="shield" style="width: 48px; height: 48px;"></i>
+                    </div>
+                    <h3 class="text-center">BRONAS Ethical Framework</h3>
+                    <p>Interact with an AI system guided by Bio-inspired Reinforced Open Neural Alignment System for responsible AI.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

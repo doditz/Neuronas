@@ -21,11 +21,15 @@ def register_routes(app):
     @app.route('/')
     def index():
         """Main application page"""
-        # Détecter les appareils mobiles
+        # Show landing page for non-authenticated users
+        if not current_user.is_authenticated:
+            return render_template('landing.html')
+            
+        # Detect mobile devices
         user_agent = request.headers.get('User-Agent', '').lower()
         mobile_agents = ['iphone', 'android', 'mobile', 'samsung', 'lg', 'sony', 'nokia']
         
-        # Rediriger vers l'interface mobile si c'est un appareil mobile
+        # Redirect to mobile interface if it's a mobile device
         is_mobile = any(agent in user_agent for agent in mobile_agents)
         
         if is_mobile:
@@ -38,7 +42,8 @@ def register_routes(app):
         """Login page with authentication options"""
         if current_user.is_authenticated:
             return redirect(url_for('index'))
-        return render_template('login.html')
+        # Redirect to Replit auth
+        return redirect(url_for('replit_auth.login'))
             
     @app.route('/mobile')
     def mobile():
