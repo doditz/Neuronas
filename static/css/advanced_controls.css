@@ -1,0 +1,317 @@
+/* Advanced Controls CSS for NeuronasX */
+
+.advanced-controls {
+  position: fixed;
+  right: -320px;
+  top: 0;
+  width: 320px;
+  height: 100vh;
+  background: rgba(20, 25, 30, 0.95);
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  transition: right 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.advanced-controls.open {
+  right: 0;
+}
+
+.controls-toggle {
+  position: absolute;
+  left: -40px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 80px;
+  background: rgba(20, 25, 30, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 8px 0 0 8px;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.controls-toggle i {
+  color: #ddd;
+  font-size: 20px;
+}
+
+.controls-header {
+  padding: 15px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.controls-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #fff;
+}
+
+.controls-close {
+  color: #aaa;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.controls-close:hover {
+  color: #fff;
+}
+
+.controls-content {
+  padding: 15px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.control-section {
+  margin-bottom: 20px;
+}
+
+.control-section-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #fff;
+  margin-bottom: 10px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.control-row {
+  margin-bottom: 15px;
+}
+
+.control-label {
+  font-size: 0.9rem;
+  color: #aaa;
+  margin-bottom: 5px;
+}
+
+.control-value {
+  font-size: 0.8rem;
+  color: #eee;
+  font-family: monospace;
+  margin-top: 5px;
+}
+
+.slider-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.slider-input {
+  flex: 1;
+  height: 5px;
+  -webkit-appearance: none;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+}
+
+.slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #3498db;
+  cursor: pointer;
+}
+
+.slider-input::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #3498db;
+  cursor: pointer;
+}
+
+.slider-input.d2-slider::-webkit-slider-thumb {
+  background: linear-gradient(90deg, #3498db, #9b59b6);
+}
+
+.slider-input.d2-slider::-moz-range-thumb {
+  background: linear-gradient(90deg, #3498db, #9b59b6);
+}
+
+.slider-value {
+  width: 40px;
+  text-align: right;
+  font-family: monospace;
+  font-size: 0.9rem;
+  color: #eee;
+}
+
+.control-select {
+  width: 100%;
+  background: rgba(30, 40, 50, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #eee;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.control-btn {
+  background: rgba(52, 152, 219, 0.2);
+  border: 1px solid rgba(52, 152, 219, 0.3);
+  color: #eee;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.control-btn:hover {
+  background: rgba(52, 152, 219, 0.3);
+}
+
+.model-manager {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.model-list {
+  background: rgba(30, 40, 50, 0.5);
+  border-radius: 4px;
+  padding: 10px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.model-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.model-name {
+  font-size: 0.9rem;
+  color: #eee;
+}
+
+.model-source {
+  font-size: 0.7rem;
+  color: #aaa;
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.model-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.model-btn {
+  font-size: 0.8rem;
+  padding: 2px 5px;
+  background: rgba(52, 152, 219, 0.2);
+  border: none;
+  border-radius: 3px;
+  color: #eee;
+  cursor: pointer;
+}
+
+.model-btn:hover {
+  background: rgba(52, 152, 219, 0.4);
+}
+
+.model-btn.delete {
+  background: rgba(231, 76, 60, 0.2);
+}
+
+.model-btn.delete:hover {
+  background: rgba(231, 76, 60, 0.4);
+}
+
+.model-add {
+  display: flex;
+  gap: 5px;
+}
+
+.model-add-input {
+  flex: 1;
+  background: rgba(30, 40, 50, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #eee;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.status-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.status-indicator.active {
+  background-color: #2ecc71;
+}
+
+.status-indicator.inactive {
+  background-color: #e74c3c;
+}
+
+/* Hemisphere balance visualization */
+.hemisphere-balance {
+  position: relative;
+  height: 30px;
+  background: linear-gradient(90deg, rgba(41, 128, 185, 0.2), rgba(155, 89, 182, 0.2));
+  border-radius: 15px;
+  margin: 10px 0;
+}
+
+.balance-indicator {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  background: #ecf0f1;
+  border-radius: 3px;
+  transform: translateX(-50%);
+  transition: left 0.2s ease;
+}
+
+.hemisphere-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #aaa;
+  margin-top: 5px;
+}
+
+.temperature-slider {
+  margin-top: 10px;
+}
+
+.temperature-range {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #aaa;
+  margin-top: 5px;
+}
+
+/* Loading animation */
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(46, 204, 113, 0.3);
+  border-radius: 50%;
+  border-top-color: #2ecc71;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

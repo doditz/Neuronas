@@ -142,6 +142,10 @@ app.register_blueprint(agent_bp, url_prefix='/api/agent')
 from feature_routes import register_routes
 register_routes(app)
 
+# Register model management routes
+from model_routes import register_model_routes
+register_model_routes(app)
+
 # Error handlers
 @app.errorhandler(404)
 def not_found(error):

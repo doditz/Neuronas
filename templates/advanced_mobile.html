@@ -1,0 +1,978 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/advanced_controls.css') }}">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link href="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="neuronas-container">
+  <!-- Header with app name and status badges -->
+  <div class="neuronas-header">
+    <div>
+      <span class="neuronas-brand">NeuronasX</span>
+      <span class="neuronas-version">v3.0</span>
+    </div>
+    <div class="status-badges">
+      <div class="d2-badge" id="d2-status">D2: 0.50</div>
+      <div class="status-badge" id="mode-status">H: C</div>
+      <button class="login-button" id="login-button">
+        <i data-feather="log-in" class="feather-xs"></i> Connexion
+      </button>
+    </div>
+  </div>
+  
+  <!-- Advanced hemisphere balance control -->
+  <div class="hemisphere-balance-control">
+    <div class="control-header">
+      <div class="control-title">Hemisphere Balance</div>
+      <div class="control-value" id="balance-value">0.50</div>
+    </div>
+    <div class="hemisphere-balance">
+      <div class="balance-indicator" id="balance-indicator" style="left: 50%;"></div>
+    </div>
+    <div class="hemisphere-labels">
+      <div class="label-left">Left (Analytical)</div>
+      <div class="label-right">Right (Creative)</div>
+    </div>
+    <input type="range" min="0" max="1" step="0.01" value="0.5" class="slider-input d2-slider" id="balance-slider">
+  </div>
+  
+  <!-- Hemisphere containers -->
+  <div class="hemispheres">
+    <!-- Left hemisphere -->
+    <div class="hemisphere hemisphere-left">
+      <div class="hemisphere-header">
+        <div class="hemisphere-title">Hémisphère Gauche</div>
+        <div class="hemisphere-badge">Analytique</div>
+      </div>
+      <div class="memory-tier">L1: <span id="l1-count">4</span></div>
+      <div class="memory-tier">L2: <span id="l2-count">4</span></div>
+      <div class="memory-tier">L3: <span id="l3-count">10</span></div>
+      <div class="model-info" id="left-model-info">Model: <span>llama3:8b</span></div>
+    </div>
+    
+    <!-- Right hemisphere -->
+    <div class="hemisphere hemisphere-right">
+      <div class="hemisphere-header">
+        <div class="hemisphere-title">Hémisphère Droit</div>
+        <div class="hemisphere-badge">Créatif</div>
+      </div>
+      <div class="memory-tier">R1: <span id="r1-count">6</span></div>
+      <div class="memory-tier">R2: <span id="r2-count">2</span></div>
+      <div class="memory-tier">R3: <span id="r3-count">24</span></div>
+      <div class="model-info" id="right-model-info">Model: <span>mistral:7b</span></div>
+    </div>
+  </div>
+  
+  <!-- Cognitive metrics dashboard -->
+  <div class="cognitive-dashboard">
+    <div class="cognitive-metrics">
+      <div class="metric-item">
+        Activation G/D: <span class="metric-value" id="left-activation">47%</span>/<span class="metric-value" id="right-activation">53%</span>
+      </div>
+      <div class="metric-item">
+        Entropie: <span class="metric-value" id="entropy-value">0.33</span>
+      </div>
+      <div class="metric-item">
+        D2: <span class="metric-value" id="d2-value">0.45</span>
+      </div>
+    </div>
+    
+    <div class="module-chips">
+      <div class="module-chip active" data-module="D2Stim">D2Stim</div>
+      <div class="module-chip active" data-module="QRONAS">QRONAS</div>
+      <div class="module-chip active" data-module="BRONAS">BRONAS</div>
+      <div class="module-chip active" data-module="QuAC">QuAC</div>
+      <div class="module-chip active" data-module="D2Spin">D2Spin</div>
+      <div class="module-chip active" data-module="QkISM">QkISM</div>
+      <div class="module-chip active" data-module="SMAS">SMAS</div>
+    </div>
+  </div>
+  
+  <!-- Query input -->
+  <div class="query-container">
+    <input type="text" class="query-input" id="query-input" 
+           placeholder="Entrez votre requête cognitive..." autocomplete="off">
+    <div class="query-metrics">
+      <div>Focus: <span id="focus-value">0.72</span></div>
+      <div>Temps: <span id="time-value">1.5s</span></div>
+      <div>Type: <span id="type-value">Équilibré</span></div>
+    </div>
+  </div>
+  
+  <!-- AI Response output -->
+  <div class="response-container" id="response-container">
+    <div class="response-content" id="response-content">
+      <div class="response-placeholder">
+        Soumettez une requête pour recevoir une réponse...
+      </div>
+    </div>
+  </div>
+  
+  <!-- Footer with system status -->
+  <div class="neuronas-footer">
+    <div>NeuronasX v3.0 — Bio-Inspired Cognitive Engine</div>
+    <div class="system-status">
+      <div class="status-item">
+        <span class="status-indicator"></span> Cognitive Core: <span id="core-status">Active</span>
+      </div>
+      <div class="status-item">
+        <span class="status-indicator"></span> Memory System: <span id="memory-status">Active</span>
+      </div>
+      <div class="status-item">
+        <span class="status-indicator"></span> Ethical Framework: <span id="ethical-status">Active</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Advanced Controls Side Panel -->
+  <div class="advanced-controls" id="advanced-controls">
+    <div class="controls-toggle" id="controls-toggle">
+      <i data-feather="settings"></i>
+    </div>
+    
+    <div class="controls-header">
+      <div class="controls-title">Advanced Controls</div>
+      <div class="controls-close" id="controls-close">×</div>
+    </div>
+    
+    <div class="controls-content">
+      <!-- D2 Mechanism Controls -->
+      <div class="control-section">
+        <div class="control-section-title">D2 Mechanism</div>
+        
+        <div class="control-row">
+          <div class="control-label">D2 Activation Level</div>
+          <div class="slider-container">
+            <input type="range" min="0" max="1" step="0.01" value="0.5" class="slider-input" id="d2-activation-slider">
+            <div class="slider-value" id="d2-activation-value">0.50</div>
+          </div>
+          <div class="control-value">Controls dopamine D2 receptor influence</div>
+        </div>
+        
+        <div class="control-row">
+          <div class="control-label">Hemisphere Balance</div>
+          <div class="slider-container">
+            <input type="range" min="0" max="1" step="0.01" value="0.5" class="slider-input" id="hemisphere-balance-slider">
+            <div class="slider-value" id="hemisphere-balance-value">0.50</div>
+          </div>
+          <div class="control-value">Left (0.0) to Right (1.0) balance</div>
+        </div>
+      </div>
+      
+      <!-- Model Settings -->
+      <div class="control-section">
+        <div class="control-section-title">Model Settings</div>
+        
+        <!-- Left Hemisphere -->
+        <div class="control-row">
+          <div class="control-label">Left Hemisphere Model</div>
+          <select class="control-select" id="left-model-select">
+            <option value="llama3:8b">Llama 3 (8B) - Analytical</option>
+            <option value="phi3:3b">Phi-3 (3B) - Ethical</option>
+            <option value="nous-hermes2:7b">Nous Hermes 2 (7B) - Cognitive</option>
+            <option value="gemma:7b">Gemma (7B) - Balanced</option>
+            <option value="mixtral:8x7b">Mixtral (8x7B) - Comprehensive</option>
+          </select>
+        </div>
+        
+        <div class="control-row">
+          <div class="control-label">Left Hemisphere Temperature</div>
+          <div class="slider-container">
+            <input type="range" min="0" max="1" step="0.05" value="0.3" class="slider-input" id="left-temperature-slider">
+            <div class="slider-value" id="left-temperature-value">0.30</div>
+          </div>
+        </div>
+        
+        <!-- Right Hemisphere -->
+        <div class="control-row">
+          <div class="control-label">Right Hemisphere Model</div>
+          <select class="control-select" id="right-model-select">
+            <option value="mistral:7b">Mistral (7B) - Creative</option>
+            <option value="llava:7b">Llava (7B) - Visual</option>
+            <option value="solar:10.7b">Solar (10.7B) - Explorative</option>
+            <option value="nous-hermes2:7b">Nous Hermes 2 (7B) - Flexible</option>
+            <option value="mixtral:8x7b">Mixtral (8x7B) - Comprehensive</option>
+          </select>
+        </div>
+        
+        <div class="control-row">
+          <div class="control-label">Right Hemisphere Temperature</div>
+          <div class="slider-container">
+            <input type="range" min="0" max="1" step="0.05" value="0.7" class="slider-input" id="right-temperature-slider">
+            <div class="slider-value" id="right-temperature-value">0.70</div>
+          </div>
+        </div>
+        
+        <!-- Integration Model -->
+        <div class="control-row">
+          <div class="control-label">Integration Model</div>
+          <select class="control-select" id="integration-model-select">
+            <option value="gemma:7b">Gemma (7B)</option>
+            <option value="mixtral:8x7b">Mixtral (8x7B)</option>
+            <option value="llama3:8b">Llama 3 (8B)</option>
+            <option value="nous-hermes2:7b">Nous Hermes 2 (7B)</option>
+          </select>
+        </div>
+      </div>
+      
+      <!-- Agent Positioning -->
+      <div class="control-section">
+        <div class="control-section-title">Agent Positioning</div>
+        
+        <div class="control-row">
+          <div class="control-label">Agent Position</div>
+          <select class="control-select" id="agent-position-select">
+            <option value="central">SMAS Dispatcher (Central)</option>
+            <option value="left">Left Hemisphere</option>
+            <option value="right">Right Hemisphere</option>
+            <option value="hybrid">Hybrid (Adaptive)</option>
+          </select>
+        </div>
+        
+        <div class="control-row">
+          <div class="control-label">Lock Position</div>
+          <div>
+            <input type="checkbox" id="lock-position-checkbox">
+            <label for="lock-position-checkbox">Lock agent position</label>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Model Management -->
+      <div class="control-section">
+        <div class="control-section-title">Model Management</div>
+        
+        <div class="control-row">
+          <div class="control-label">Models Repository</div>
+          <select class="control-select" id="model-repo-select">
+            <option value="ollama">Ollama</option>
+            <option value="huggingface">HuggingFace</option>
+            <option value="github">GitHub</option>
+            <option value="local">Local Models</option>
+          </select>
+        </div>
+        
+        <div class="model-manager">
+          <div class="model-list" id="model-list">
+            <div class="model-item">
+              <div class="model-name">llama3:8b</div>
+              <div class="model-source">ollama</div>
+              <div class="model-actions">
+                <button class="model-btn use">Use</button>
+                <button class="model-btn delete">Delete</button>
+              </div>
+            </div>
+            <div class="model-item">
+              <div class="model-name">mistral:7b</div>
+              <div class="model-source">ollama</div>
+              <div class="model-actions">
+                <button class="model-btn use">Use</button>
+                <button class="model-btn delete">Delete</button>
+              </div>
+            </div>
+            <div class="model-item">
+              <div class="model-name">gemma:7b</div>
+              <div class="model-source">ollama</div>
+              <div class="model-actions">
+                <button class="model-btn use">Use</button>
+                <button class="model-btn delete">Delete</button>
+              </div>
+            </div>
+            <div class="model-item">
+              <div class="model-name">mixtral:8x7b</div>
+              <div class="model-source">ollama</div>
+              <div class="model-actions">
+                <button class="model-btn use">Use</button>
+                <button class="model-btn delete">Delete</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="model-add">
+            <input type="text" class="model-add-input" id="model-add-input" placeholder="Model name (e.g., llama3:8b)">
+            <button class="control-btn" id="model-add-btn">Download</button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- System Status -->
+      <div class="control-section">
+        <div class="control-section-title">System Status</div>
+        
+        <div class="control-row">
+          <div><span class="status-indicator active"></span> Ollama Server: <span id="ollama-status">Not Connected</span></div>
+        </div>
+        
+        <div class="control-row">
+          <div><span class="status-indicator active"></span> SMAS Dispatcher: <span id="smas-status">Active</span></div>
+        </div>
+        
+        <div class="control-row">
+          <div><span class="status-indicator active"></span> BRONAS Ethics: <span id="bronas-status">Active</span></div>
+        </div>
+        
+        <div class="control-row">
+          <div>Session ID: <span id="session-id">Loading...</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Feather icons
+    feather.replace();
+    
+    // DOM Elements - Main Interface
+    const d2Status = document.getElementById('d2-status');
+    const modeStatus = document.getElementById('mode-status');
+    const loginButton = document.getElementById('login-button');
+    const queryInput = document.getElementById('query-input');
+    const responseContainer = document.getElementById('response-container');
+    const responseContent = document.getElementById('response-content');
+    
+    // Memory counts
+    const l1Count = document.getElementById('l1-count');
+    const l2Count = document.getElementById('l2-count');
+    const l3Count = document.getElementById('l3-count');
+    const r1Count = document.getElementById('r1-count');
+    const r2Count = document.getElementById('r2-count');
+    const r3Count = document.getElementById('r3-count');
+    
+    // Metrics
+    const leftActivation = document.getElementById('left-activation');
+    const rightActivation = document.getElementById('right-activation');
+    const entropyValue = document.getElementById('entropy-value');
+    const d2Value = document.getElementById('d2-value');
+    const focusValue = document.getElementById('focus-value');
+    const timeValue = document.getElementById('time-value');
+    const typeValue = document.getElementById('type-value');
+    
+    // Balance slider elements
+    const balanceSlider = document.getElementById('balance-slider');
+    const balanceValue = document.getElementById('balance-value');
+    const balanceIndicator = document.getElementById('balance-indicator');
+    
+    // DOM Elements - Advanced Controls
+    const advancedControls = document.getElementById('advanced-controls');
+    const controlsToggle = document.getElementById('controls-toggle');
+    const controlsClose = document.getElementById('controls-close');
+    
+    // Advanced control elements
+    const d2ActivationSlider = document.getElementById('d2-activation-slider');
+    const d2ActivationValue = document.getElementById('d2-activation-value');
+    const hemisphereBalanceSlider = document.getElementById('hemisphere-balance-slider');
+    const hemisphereBalanceValue = document.getElementById('hemisphere-balance-value');
+    
+    const leftModelSelect = document.getElementById('left-model-select');
+    const leftTemperatureSlider = document.getElementById('left-temperature-slider');
+    const leftTemperatureValue = document.getElementById('left-temperature-value');
+    const rightModelSelect = document.getElementById('right-model-select');
+    const rightTemperatureSlider = document.getElementById('right-temperature-slider');
+    const rightTemperatureValue = document.getElementById('right-temperature-value');
+    const integrationModelSelect = document.getElementById('integration-model-select');
+    
+    const agentPositionSelect = document.getElementById('agent-position-select');
+    const lockPositionCheckbox = document.getElementById('lock-position-checkbox');
+    
+    const modelRepoSelect = document.getElementById('model-repo-select');
+    const modelList = document.getElementById('model-list');
+    const modelAddInput = document.getElementById('model-add-input');
+    const modelAddBtn = document.getElementById('model-add-btn');
+    
+    const ollamaStatus = document.getElementById('ollama-status');
+    const smasStatus = document.getElementById('smas-status');
+    const bronasStatus = document.getElementById('bronas-status');
+    const sessionId = document.getElementById('session-id');
+    
+    // Model info elements
+    const leftModelInfo = document.getElementById('left-model-info');
+    const rightModelInfo = document.getElementById('right-model-info');
+    
+    // Toggle advanced controls
+    controlsToggle.addEventListener('click', function() {
+      advancedControls.classList.add('open');
+    });
+    
+    controlsClose.addEventListener('click', function() {
+      advancedControls.classList.remove('open');
+    });
+    
+    // Balance slider handler
+    balanceSlider.addEventListener('input', function() {
+      const value = parseFloat(this.value);
+      balanceValue.textContent = value.toFixed(2);
+      
+      // Update balance indicator position (0-100%)
+      balanceIndicator.style.left = `${value * 100}%`;
+      
+      // Update D2 status
+      d2Status.textContent = `D2: ${value.toFixed(2)}`;
+      
+      // Update hemisphere mode
+      if (value < 0.3) {
+        modeStatus.textContent = 'H: L'; // Left hemisphere dominant
+      } else if (value > 0.7) {
+        modeStatus.textContent = 'H: R'; // Right hemisphere dominant
+      } else {
+        modeStatus.textContent = 'H: C'; // Central/balanced
+      }
+      
+      // Sync with advanced controls
+      d2ActivationSlider.value = value;
+      d2ActivationValue.textContent = value.toFixed(2);
+      hemisphereBalanceSlider.value = value;
+      hemisphereBalanceValue.textContent = value.toFixed(2);
+      
+      // Send to API
+      updateD2Mode(value);
+    });
+    
+    // D2 activation slider handler
+    d2ActivationSlider.addEventListener('input', function() {
+      const value = parseFloat(this.value);
+      d2ActivationValue.textContent = value.toFixed(2);
+      
+      // Sync with main balance slider
+      balanceSlider.value = value;
+      balanceValue.textContent = value.toFixed(2);
+      balanceIndicator.style.left = `${value * 100}%`;
+      
+      // Update D2 status
+      d2Status.textContent = `D2: ${value.toFixed(2)}`;
+      
+      // Send to API
+      updateD2Mode(value);
+    });
+    
+    // Hemisphere balance slider handler
+    hemisphereBalanceSlider.addEventListener('input', function() {
+      const value = parseFloat(this.value);
+      hemisphereBalanceValue.textContent = value.toFixed(2);
+      
+      // Send to API (separate from D2 activation)
+      updateHemisphereBalance(value);
+    });
+    
+    // Temperature sliders
+    leftTemperatureSlider.addEventListener('input', function() {
+      leftTemperatureValue.textContent = this.value;
+      updateModelSettings();
+    });
+    
+    rightTemperatureSlider.addEventListener('input', function() {
+      rightTemperatureValue.textContent = this.value;
+      updateModelSettings();
+    });
+    
+    // Model select handlers
+    leftModelSelect.addEventListener('change', function() {
+      leftModelInfo.querySelector('span').textContent = this.value;
+      updateModelSettings();
+    });
+    
+    rightModelSelect.addEventListener('change', function() {
+      rightModelInfo.querySelector('span').textContent = this.value;
+      updateModelSettings();
+    });
+    
+    integrationModelSelect.addEventListener('change', function() {
+      updateModelSettings();
+    });
+    
+    // Agent position handlers
+    agentPositionSelect.addEventListener('change', function() {
+      updateAgentPosition();
+    });
+    
+    lockPositionCheckbox.addEventListener('change', function() {
+      updateAgentPosition();
+    });
+    
+    // Model repository handler
+    modelRepoSelect.addEventListener('change', function() {
+      loadModelList(this.value);
+    });
+    
+    // Model add button
+    modelAddBtn.addEventListener('click', function() {
+      const modelName = modelAddInput.value.trim();
+      if (modelName) {
+        downloadModel(modelName);
+      }
+    });
+    
+    // Query input handler
+    queryInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        const query = queryInput.value.trim();
+        if (query) {
+          processQuery(query);
+          queryInput.value = '';
+        }
+      }
+    });
+    
+    // Initialize module chips
+    const moduleChips = document.querySelectorAll('.module-chip');
+    moduleChips.forEach(chip => {
+      chip.addEventListener('click', function() {
+        this.classList.toggle('active');
+        const module = this.dataset.module;
+        const active = this.classList.contains('active');
+        toggleModule(module, active);
+      });
+    });
+    
+    // Login handler
+    loginButton.addEventListener('click', function() {
+      window.location.href = '/login';
+    });
+    
+    // Helper functions
+    function updateD2Mode(value) {
+      // Update both D2 activation and hemisphere balance
+      fetch('/api/llm/parameters', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 
+          d2_activation: value,
+          hemisphere_balance: value
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          console.log('D2 mode updated:', data);
+          updateMetrics(data);
+        } else {
+          console.error('Error updating D2 mode:', data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error updating D2 mode:', error);
+      });
+    }
+    
+    function updateHemisphereBalance(value) {
+      // Update only hemisphere balance, not D2 activation
+      fetch('/api/llm/parameters', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 
+          hemisphere_balance: value
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          console.log('Hemisphere balance updated:', data);
+        } else {
+          console.error('Error updating hemisphere balance:', data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error updating hemisphere balance:', error);
+      });
+    }
+    
+    function updateModelSettings() {
+      // Update model settings
+      fetch('/api/llm/models', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          left_model: leftModelSelect.value,
+          right_model: rightModelSelect.value,
+          central_model: integrationModelSelect.value,
+          left_temperature: parseFloat(leftTemperatureSlider.value),
+          right_temperature: parseFloat(rightTemperatureSlider.value)
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          console.log('Model settings updated:', data);
+        } else {
+          console.error('Error updating model settings:', data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error updating model settings:', error);
+      });
+    }
+    
+    function updateAgentPosition() {
+      // Update agent position
+      fetch('/api/agent/position', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          position: agentPositionSelect.value,
+          lock_position: lockPositionCheckbox.checked
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          console.log('Agent position updated:', data);
+        } else {
+          console.error('Error updating agent position:', data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error updating agent position:', error);
+      });
+    }
+    
+    function loadModelList(repository) {
+      // Load model list from repository
+      fetch(`/api/models/list?repository=${repository}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            // Clear existing list
+            modelList.innerHTML = '';
+            
+            // Add models to list
+            data.models.forEach(model => {
+              const modelItem = document.createElement('div');
+              modelItem.className = 'model-item';
+              
+              const modelName = document.createElement('div');
+              modelName.className = 'model-name';
+              modelName.textContent = model.name;
+              
+              const modelSource = document.createElement('div');
+              modelSource.className = 'model-source';
+              modelSource.textContent = model.source;
+              
+              const modelActions = document.createElement('div');
+              modelActions.className = 'model-actions';
+              
+              const useBtn = document.createElement('button');
+              useBtn.className = 'model-btn use';
+              useBtn.textContent = 'Use';
+              useBtn.addEventListener('click', () => useModel(model.name, model.source));
+              
+              const deleteBtn = document.createElement('button');
+              deleteBtn.className = 'model-btn delete';
+              deleteBtn.textContent = 'Delete';
+              deleteBtn.addEventListener('click', () => deleteModel(model.name, model.source));
+              
+              modelActions.appendChild(useBtn);
+              modelActions.appendChild(deleteBtn);
+              
+              modelItem.appendChild(modelName);
+              modelItem.appendChild(modelSource);
+              modelItem.appendChild(modelActions);
+              
+              modelList.appendChild(modelItem);
+            });
+          } else {
+            console.error('Error loading model list:', data.error);
+            modelList.innerHTML = '<div class="model-item">Error loading models</div>';
+          }
+        })
+        .catch(error => {
+          console.error('Error loading model list:', error);
+          modelList.innerHTML = '<div class="model-item">Error loading models</div>';
+        });
+    }
+    
+    function downloadModel(modelName) {
+      // Download model
+      const repository = modelRepoSelect.value;
+      
+      // Show loading state
+      modelAddBtn.textContent = 'Downloading...';
+      modelAddBtn.disabled = true;
+      
+      fetch('/api/models/download', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model_name: modelName,
+          repository: repository
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          console.log('Model download started:', data);
+          alert(`Download started for ${modelName}. This may take some time.`);
+          
+          // Reload model list after a delay
+          setTimeout(() => {
+            loadModelList(repository);
+            modelAddBtn.textContent = 'Download';
+            modelAddBtn.disabled = false;
+            modelAddInput.value = '';
+          }, 2000);
+        } else {
+          console.error('Error downloading model:', data.error);
+          alert(`Error downloading model: ${data.error}`);
+          modelAddBtn.textContent = 'Download';
+          modelAddBtn.disabled = false;
+        }
+      })
+      .catch(error => {
+        console.error('Error downloading model:', error);
+        alert('Error downloading model. Please try again.');
+        modelAddBtn.textContent = 'Download';
+        modelAddBtn.disabled = false;
+      });
+    }
+    
+    function useModel(modelName, source) {
+      // Determine which dropdown to update based on model name
+      // (Simplified logic - in a real app, you'd have more sophisticated matching)
+      const isAnalytical = modelName.includes('llama') || 
+                          modelName.includes('phi') || 
+                          modelName.includes('hermes');
+                          
+      const isCreative = modelName.includes('mistral') || 
+                         modelName.includes('llava') || 
+                         modelName.includes('solar');
+      
+      if (isAnalytical) {
+        leftModelSelect.value = modelName;
+        leftModelInfo.querySelector('span').textContent = modelName;
+      } else if (isCreative) {
+        rightModelSelect.value = modelName;
+        rightModelInfo.querySelector('span').textContent = modelName;
+      } else {
+        // For models that could work in either hemisphere, ask user
+        const useAs = confirm(`Use ${modelName} as left (analytical) hemisphere model? Click Cancel to use as right (creative) hemisphere model.`);
+        
+        if (useAs) {
+          leftModelSelect.value = modelName;
+          leftModelInfo.querySelector('span').textContent = modelName;
+        } else {
+          rightModelSelect.value = modelName;
+          rightModelInfo.querySelector('span').textContent = modelName;
+        }
+      }
+      
+      // Update model settings
+      updateModelSettings();
+    }
+    
+    function deleteModel(modelName, source) {
+      // Confirm deletion
+      if (!confirm(`Are you sure you want to delete ${modelName}?`)) {
+        return;
+      }
+      
+      // Delete model
+      fetch('/api/models/delete', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          model_name: modelName,
+          repository: source
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          console.log('Model deleted:', data);
+          // Reload model list
+          loadModelList(modelRepoSelect.value);
+        } else {
+          console.error('Error deleting model:', data.error);
+          alert(`Error deleting model: ${data.error}`);
+        }
+      })
+      .catch(error => {
+        console.error('Error deleting model:', error);
+        alert('Error deleting model. Please try again.');
+      });
+    }
+    
+    function toggleModule(module, active) {
+      // Toggle module
+      fetch('/api/agent/smas/module', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          module: module,
+          active: active
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          console.log(`Module ${module} ${active ? 'activated' : 'deactivated'}`);
+        } else {
+          console.error('Error toggling module:', data.error);
+        }
+      })
+      .catch(error => {
+        console.error('Error toggling module:', error);
+      });
+    }
+    
+    function processQuery(query) {
+      // Show loading state
+      responseContent.innerHTML = `
+        <div style="text-align: center; margin-top: 2rem;">
+          <div class="spinner" style="display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(46, 204, 113, 0.3); border-radius: 50%; border-top-color: #2ecc71; animation: spin 1s linear infinite;"></div>
+          <p style="margin-top: 1rem; color: var(--text-muted);">Traitement en cours...</p>
+        </div>
+        <style>
+          @keyframes spin {
+            to { transform: rotate(360deg); }
+          }
+        </style>
+      `;
+      
+      // Process with agent positioning
+      fetch('/api/agent/process', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          query: query
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Update response content
+          responseContent.innerHTML = `<p>${data.response}</p>`;
+          
+          // Update metrics
+          timeValue.textContent = `${data.processing_time.toFixed(2)}s`;
+          typeValue.textContent = data.query_type || 'Équilibré';
+          focusValue.textContent = (Math.random() * 0.3 + 0.7).toFixed(2); // Simulated
+          
+          // Highlight hemisphere based on response
+          if (data.hemisphere_used === 'L') {
+            document.querySelector('.hemisphere-left').style.borderColor = 'rgba(46, 204, 113, 0.8)';
+            document.querySelector('.hemisphere-right').style.borderColor = 'rgba(155, 89, 182, 0.4)';
+          } else if (data.hemisphere_used === 'R') {
+            document.querySelector('.hemisphere-left').style.borderColor = 'rgba(41, 128, 185, 0.4)';
+            document.querySelector('.hemisphere-right').style.borderColor = 'rgba(46, 204, 113, 0.8)';
+          } else {
+            document.querySelector('.hemisphere-left').style.borderColor = 'rgba(41, 128, 185, 0.6)';
+            document.querySelector('.hemisphere-right').style.borderColor = 'rgba(155, 89, 182, 0.6)';
+          }
+          
+          // Update memory stats
+          fetchMemoryStats();
+          
+          // Update agent position in advanced controls if adjusted
+          if (data.position_adjusted) {
+            agentPositionSelect.value = data.agent_position;
+          }
+        } else {
+          responseContent.innerHTML = `
+            <p style="color: #e74c3c;">Une erreur s'est produite lors du traitement de votre requête: ${data.error}</p>
+          `;
+        }
+      })
+      .catch(error => {
+        console.error('Error processing query:', error);
+        responseContent.innerHTML = `
+          <p style="color: #e74c3c;">Une erreur s'est produite lors du traitement de votre requête. Veuillez réessayer.</p>
+        `;
+      });
+    }
+    
+    function fetchMemoryStats() {
+      fetch('/api/system/status')
+        .then(response => response.json())
+        .then(data => {
+          // Update memory counters
+          l1Count.textContent = data.memory_stats.L1;
+          l2Count.textContent = data.memory_stats.L2;
+          l3Count.textContent = data.memory_stats.L3;
+          r1Count.textContent = data.memory_stats.R1;
+          r2Count.textContent = data.memory_stats.R2;
+          r3Count.textContent = data.memory_stats.R3;
+          
+          // Update metrics
+          leftActivation.textContent = `${Math.floor(data.state.activation.left_hemisphere * 100)}%`;
+          rightActivation.textContent = `${Math.floor(data.state.activation.right_hemisphere * 100)}%`;
+          entropyValue.textContent = data.state.entropy.toFixed(2);
+          d2Value.textContent = data.state.d2_level.toFixed(2);
+        })
+        .catch(error => {
+          console.error('Error fetching memory stats:', error);
+        });
+    }
+    
+    function updateMetrics(data) {
+      if (data && data.state) {
+        entropyValue.textContent = data.state.entropy ? data.state.entropy.toFixed(2) : entropyValue.textContent;
+        d2Value.textContent = data.state.d2_level ? data.state.d2_level.toFixed(2) : d2Value.textContent;
+      }
+    }
+    
+    // Get session information
+    fetch('/api/session/info')
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          sessionId.textContent = data.session_id.substring(0, 8) + '...';
+        } else {
+          sessionId.textContent = 'Error';
+        }
+      })
+      .catch(error => {
+        console.error('Error getting session info:', error);
+        sessionId.textContent = 'Error';
+      });
+    
+    // Check Ollama server status
+    fetch('/api/llm/state')
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          if (data.state.simulation_mode) {
+            ollamaStatus.textContent = 'Simulation Mode';
+          } else {
+            ollamaStatus.textContent = 'Connected';
+          }
+        } else {
+          ollamaStatus.textContent = 'Error';
+        }
+      })
+      .catch(error => {
+        console.error('Error checking Ollama status:', error);
+        ollamaStatus.textContent = 'Error';
+      });
+    
+    // Initialize interface
+    fetchMemoryStats();
+    setInterval(fetchMemoryStats, 10000);
+    
+    // Initial model list load
+    loadModelList('ollama');
+  });
+</script>
+{% endblock %}
