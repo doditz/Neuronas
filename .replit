@@ -29,5 +29,22 @@ task = "shell.exec"
 args = "gunicorn --bind 0.0.0.0:5000 --reuse-port --reload main:app"
 waitForPort = 5000
 
+[[workflows.workflow]]
+name = "Test Neuronas"
+author = 42834174
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python -c \"from neuronas_architecture_config import neuronas_architecture; print('Architecture config initialized:', neuronas_architecture.config['name'])\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python -c \"from core_modules.core_engine import CoreEngine; engine = CoreEngine(); print('Core engine initialized:', engine.d2_activation)\""
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python -c \"from neuronas_api import neuronas; print('Neuronas API initialized:', neuronas.session_id)\""
+
 [[ports]]
 localPort = 5000
