@@ -1,0 +1,84 @@
+{
+  "name": "Neuronas AI",
+  "description": "Système d'intelligence artificielle révolutionnaire à inspiration cérébrale",
+  "cognitive_limit": "10 bits/seconde (Zheng & Meister)",
+  
+  "core_components": {
+    "D2STIB": {
+      "name": "Dynamic Derivative Semantic Token Information Bottleneck",
+      "description": "Applique des dérivées premières et secondes sur les mots pour détecter les frontières sémantiques",
+      "benefits": ["Saute ou simplifie le traitement de nombreux mots", "Réduit la charge informatique de plus de 60%"]
+    },
+    "SED": {
+      "name": "Semantic Efficiency Director",
+      "description": "Identifie les zones où le sens change rapidement",
+      "function": "Décide où allouer ou économiser du calcul"
+    },
+    "BRONAS": {
+      "name": "Réseau de Décision Biologique",
+      "description": "Applique des filtres inspirés du cerveau pour ne garder que ce qui est pertinent",
+      "ethics_rules": {
+        "principes_ethiques_globaux": ["équité", "respect culturel", "accessibilité"],
+        "lois": ["bien-être humain", "adaptabilité locale", "durabilité"]
+      }
+    },
+    "QRONAS": {
+      "name": "Réseau de Décision Quantique",
+      "description": "Émule un comportement quantique",
+      "function": "Évalue plusieurs réponses en parallèle, puis une seule est 'effondrée' (choisie) en fonction du contexte"
+    },
+    "DoditzAI": {
+      "name": "Modérateur visionnaire et éthique",
+      "function": "Assure que tout reste aligné avec l'objectif: efficacité, vérité, et alignement humain"
+    }
+  },
+  
+  "key_features": {
+    "neuromorphic_processing": {
+      "description": "Utilise des réseaux spikants (type SpiNNaker) pour moduler dynamiquement la puissance de calcul"
+    },
+    "decisional_superposition": {
+      "description": "Simule des états quantiques dans les réponses, tant qu'il n'est pas certain, la réponse reste en superposition"
+    },
+    "ethical_decision_making": {
+      "description": "Prise de décision éthique et optimisée via DoditzAI"
+    }
+  },
+  
+  "personas": {
+    "description": "Personas spécialisés qui s'activent selon le contexte",
+    "examples": ["TechnicalAI", "EthicalAI", "CreativeAI", "PsychologistAI"],
+    "activation": "Dynamique et contextuelle, gérée par des règles d'interaction"
+  },
+  
+  "security_memory": {
+    "encryption": "AES-256",
+    "logging": "Journalisation automatique",
+    "memory_system": "Mémoire contextuelle avec adaptation à court et long terme",
+    "safety_measures": ["Lockdown automatique", "Alerte admin"]
+  },
+  
+  "performance_metrics": {
+    "standard": {
+      "time_per_token": "26.8ms",
+      "ram_per_sequence": "2.3 KB",
+      "tokens_processed": "100%",
+      "semantic_fidelity": "Baseline"
+    },
+    "neuronas_d2stib": {
+      "time_per_token": "10.5ms",
+      "ram_per_sequence": "1.1 KB",
+      "tokens_processed": "~43% (restes prédits)",
+      "semantic_fidelity": "99.3%"
+    }
+  },
+  
+  "advantages": [
+    "Ne surcharge pas l'utilisateur",
+    "Ne génère pas de bruit inutile",
+    "Peut fonctionner sur des appareils à faible puissance (edge devices)",
+    "Est capable d'auto-optimisation sur le long terme"
+  ],
+  
+  "summary": "Neuronas AI est un cerveau artificiel ultra-efficace, qui comprend, filtre, et répond comme un humain lent mais intelligent, tout en étant capable de performances inégalées grâce au D²STIB"
+}

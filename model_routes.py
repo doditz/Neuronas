@@ -175,4 +175,10 @@ def register_model_routes(app):
         from flask import render_template
         return render_template('advanced_mobile.html')
     
+    @app.route('/architecture')
+    def architecture_view():
+        """View the Neuronas architecture details"""
+        from flask import render_template
+        return render_template('architecture.html')
+    
     return app
