@@ -114,6 +114,16 @@ def initialize_application():
     # Initialize SMAS dispatcher for agent positioning
     app.smas_dispatcher = SMASDispatcher()
     
+    # Initialize storage manager with proper configuration
+    try:
+        from core_modules.storage_manager import StorageManager
+        app.storage = StorageManager()
+        logger.info("Storage manager initialized successfully")
+    except Exception as e:
+        from core_modules.core_engine import CoreStorageManager
+        app.storage = CoreStorageManager()
+        logger.warning(f"Using fallback storage manager due to error: {e}")
+    
     # Initialize agent positioning system
     app.agent_positioning = AgentPositioningSystem(
         dual_llm_system=app.local_dual_system,  # Use our 100% free local system

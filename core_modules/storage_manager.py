@@ -941,4 +941,12 @@ class StorageManager(TieredMemoryManager):
 
     def __init__(self, db_path="cognitive_memory.db"):
         """Initialize with tiered memory system"""
+        # Initialize stats before calling super init
+        self.stats = {
+            "tier_counts": {"L1": 0, "L2": 0, "L3": 0},
+            "total_retrievals": {"L1": 0, "L2": 0, "L3": 0},
+            "successful_retrievals": {"L1": 0, "L2": 0, "L3": 0},
+            "compression_events": {"L1_to_L2": 0, "L2_to_L3": 0, "L3_to_disk": 0},
+            "cross_tier_retrievals": 0
+        }
         super().__init__()

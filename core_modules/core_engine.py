@@ -253,7 +253,17 @@ class CognitiveEngine:
         self.user_settings = settings
         return True
 
-class StorageManager:
+import importlib
+import os
+import logging
+import json
+import time
+import random
+import math
+
+logger = logging.getLogger(__name__)
+
+class CoreStorageManager:
     """
     Gestionnaire pour le stockage multi-tier et les opérations de mémoire.
     """
