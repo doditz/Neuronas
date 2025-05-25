@@ -147,65 +147,9 @@ def register_routes(app):
             ).first()
             
             # Création ou mise à jour des paramètres
-
-# Add these routes to the existing routes.py file
-
-@app.route('/api/cognitive/process', methods=['POST'])
-def process_cognitive():
-    """
-    Process a query through the 5-lobe cognitive model
-    """
-    data = request.get_json()
-    
-    if not data or 'query' not in data:
-        return jsonify({'error': 'Missing query parameter'}), 400
-    
-    query = data['query']
-    context = data.get('context', {})
-    
-    try:
-        result = cognitive_processor.process_query(query, context)
-        return jsonify({
-            'success': True,
-            'result': result,
-            'processing_time': result['processing_time']
-        })
-    except Exception as e:
-        app.logger.error(f"Error in cognitive processing: {str(e)}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
-
-@app.route('/api/cognitive/history', methods=['GET'])
-def get_cognitive_history():
-    """
-    Get cognitive processing history
-    """
-    try:
-        return jsonify({
-            'success': True,
-            'history': cognitive_processor.processing_history
-        })
-    except Exception as e:
-        app.logger.error(f"Error fetching cognitive history: {str(e)}")
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
-
             if setting_enabled:
                 setting_enabled.setting_value = str(module_enabled)
             else:
-
-# Add the route for the cognitive processing page
-@app.route('/cognitive')
-def cognitive_page():
-    """
-    Render cognitive processing visualization page
-    """
-    return render_template('cognitive_processing.html')
-
                 setting_enabled = UserSetting(
                     user_id=current_user.id,
                     module_name=module,
@@ -230,6 +174,59 @@ def cognitive_page():
         
         flash("Vos préférences ont été mises à jour avec succès", "success")
         return redirect(url_for('dashboard', section='profile'))
+        
+    # Add these routes to the existing routes.py file
+    @app.route('/api/cognitive/process', methods=['POST'])
+    def process_cognitive():
+        """
+        Process a query through the 5-lobe cognitive model
+        """
+        data = request.get_json()
+        
+        if not data or 'query' not in data:
+            return jsonify({'error': 'Missing query parameter'}), 400
+        
+        query = data['query']
+        context = data.get('context', {})
+        
+        try:
+            result = cognitive_processor.process_query(query, context)
+            return jsonify({
+                'success': True,
+                'result': result,
+                'processing_time': result['processing_time']
+            })
+        except Exception as e:
+            app.logger.error(f"Error in cognitive processing: {str(e)}")
+            return jsonify({
+                'success': False,
+                'error': str(e)
+            }), 500
+
+    @app.route('/api/cognitive/history', methods=['GET'])
+    def get_cognitive_history():
+        """
+        Get cognitive processing history
+        """
+        try:
+            return jsonify({
+                'success': True,
+                'history': cognitive_processor.processing_history
+            })
+        except Exception as e:
+            app.logger.error(f"Error fetching cognitive history: {str(e)}")
+            return jsonify({
+                'success': False,
+                'error': str(e)
+            }), 500
+            
+    # Add the route for the cognitive processing page
+    @app.route('/cognitive')
+    def cognitive_page():
+        """
+        Render cognitive processing visualization page
+        """
+        return render_template('cognitive_processing.html')
     
     @app.route('/api/query', methods=['POST'])
     def process_query():
