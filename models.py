@@ -86,6 +86,8 @@ class ReinforcedHypotheses(db.Model):
     hypothesis = db.Column(db.String(255))
     confidence = db.Column(db.Float, default=0.5)
     feedback_count = db.Column(db.Integer, default=0)
+    category = db.Column(db.String(50), default="general")  # Category for organizing ethical principles
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)  # User who contributed the principle
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     
@@ -95,6 +97,8 @@ class ReinforcedHypotheses(db.Model):
             'hypothesis': self.hypothesis,
             'confidence': self.confidence,
             'feedback_count': self.feedback_count,
+            'category': self.category,
+            'user_id': self.user_id,
             'created_at': self.created_at.isoformat(),
             'updated_at': self.updated_at.isoformat()
         }
