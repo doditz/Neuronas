@@ -97,10 +97,15 @@ Les contributions sont bienvenues! Consultez notre [guide de contribution](CONTR
 
 ## 📄 Licence
 
-Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de détails.
+Ce projet est sous licence CC BY-NC 4.0 International.
+Commercial use requires prior written consent and compensation.
+Contact: sebastienbrulotte@gmail.com
+Attribution: Sebastien Brulotte aka [ Doditz ]
 
 ## 🙏 Remerciements
 
 - Recherches sur les limitations cognitives de Zheng & Meister
 - Inspiration des réseaux SpiNNaker pour le traitement neuromorphique
 - Bibliothèques Python open-source utilisées dans ce projet
+- Tous les contributeurs directs et indirects (voir [CONTRIBUTORS.md](CONTRIBUTORS.md))
+- Attributions détaillées des composants (voir [ATTRIBUTIONS.md](ATTRIBUTIONS.md))
