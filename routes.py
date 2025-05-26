@@ -26,6 +26,10 @@ from models import User, UserSetting, QueryLog, CognitiveMemory, CognitiveMetric
 def register_routes(app):
     """Register all application routes"""
     
+    # Check if routes are already registered to prevent duplicates
+    if hasattr(app, '_routes_registered'):
+        return
+    
     # Import SMS service
     from sms_service import send_sms
     from models import SMSNotification
@@ -436,5 +440,8 @@ def register_routes(app):
     def notifications_page():
         """SMS Notifications management page"""
         return render_template('notifications.html')
+    
+    # Mark routes as registered to prevent duplicates
+    app._routes_registered = True
     
     return app
