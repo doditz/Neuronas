@@ -141,6 +141,45 @@ class CognitiveEngine:
         Returns:
             dict: Réponse et métadonnées associées
         """
+        # Import the three-step thinking process
+        try:
+            from core_modules.three_step_thinking import D2NeuronasThinkingProcess
+            thinking_processor = D2NeuronasThinkingProcess()
+            
+            # Set D2 modulation based on current state
+            thinking_processor.set_d2_modulation(
+                stim_level=self.state.get('d2stim', 0.0),
+                pin_level=self.state.get('d2pin', 0.0)
+            )
+            
+            # Process query through three-step thinking
+            thinking_result = thinking_processor.process_query(
+                query, 
+                context={'session_id': session_id}
+            )
+            
+            # Extract analysis from thinking process
+            analysis = {
+                'query_type': 'enhanced_cognitive',
+                'hemisphere_used': thinking_result['thinking_process']['step3']['dominant_pathway'][0] if thinking_result['thinking_process']['step3']['dominant_pathway'] else 'C',
+                'd2_activation': thinking_result['d2_metrics']['activation']
+            }
+            
+            return {
+                'response': thinking_result['final_response'],
+                'query_type': analysis['query_type'],
+                'hemisphere_used': analysis['hemisphere_used'],
+                'processing_time': thinking_result['processing_time'],
+                'd2_activation': analysis['d2_activation'],
+                'thinking_process': thinking_result['thinking_process'],
+                'confidence': thinking_result['confidence'],
+                'd2_metrics': thinking_result['d2_metrics']
+            }
+            
+        except ImportError:
+            logger.warning("Three-step thinking process not available, falling back to standard processing")
+            
+        # Fallback to original processing if three-step thinking unavailable
         # Vérifier les commandes spéciales
         if query.lower().startswith('modulate '):
             mode = query.lower().split(' ')[1]

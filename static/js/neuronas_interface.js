@@ -1,4 +1,3 @@
-
 /**
  * This work is licensed under CC BY-NC 4.0 International.
  * Commercial use requires prior written consent and compensation.
@@ -31,7 +30,7 @@ class NeuronasInterface {
         try {
             const response = await fetch(`${this.apiEndpoint}/status`);
             const data = await response.json();
-            
+
             if (data.success) {
                 this.sessionId = data.session_id;
                 this.d2Activation = data.d2_activation;
@@ -40,11 +39,11 @@ class NeuronasInterface {
                 this.attention = data.attention;
                 this.processingMetrics = data.metrics;
                 this.initialized = true;
-                
+
                 console.log(`Neuronas initialized with session ID: ${this.sessionId}`);
                 return true;
             }
-            
+
             console.error('Failed to initialize Neuronas:', data.error);
             return false;
         } catch (error) {
@@ -63,12 +62,12 @@ class NeuronasInterface {
         if (!this.initialized) {
             await this.initialize();
         }
-        
+
         const d2Params = options.d2Params || {
             stim: this.d2Stim,
             pin: this.d2Pin
         };
-        
+
         try {
             const response = await fetch(`${this.apiEndpoint}/process`, {
                 method: 'POST',
@@ -81,25 +80,129 @@ class NeuronasInterface {
                     context: options.context || null
                 })
             });
-            
+
             const data = await response.json();
-            
+
             if (data.success) {
                 // Update internal state with new values
                 this.d2Activation = data.response.d2_activation;
                 this.d2Stim = data.response.d2stim_level;
                 this.d2Pin = data.response.d2pin_level;
                 this.processingMetrics = data.response.system_metrics;
-                
+
                 return data.response;
             }
-            
+
             console.error('Failed to process query:', data.error);
             return { error: data.error };
         } catch (error) {
             console.error('Error processing query:', error);
             return { error: error.message };
         }
+    }
+
+    async processQuery(query, d2Params = null) {
+        try {
+            const response = await fetch('/api/neuronas/process', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    query: query,
+                    d2_params: d2Params
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                this.updateMetrics(data.result);
+                return data.result;
+            } else {
+                throw new Error(data.error || 'Unknown error');
+            }
+        } catch (error) {
+            console.error('Error processing query:', error);
+            throw error;
+        }
+    }
+
+    async processWithThinking(query, d2Params = null, context = {}) {
+        try {
+            const response = await fetch('/api/neuronas/thinking', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    query: query,
+                    d2_params: d2Params,
+                    context: context
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                this.updateMetrics(data.result);
+                return data.result;
+            } else {
+                throw new Error(data.error || 'Unknown error');
+            }
+        } catch (error) {
+            console.error('Error in thinking process:', error);
+            throw error;
+        }
+    }
+
+    displayThinkingProcess(thinkingData) {
+        const container = document.getElementById('thinking-display');
+        if (!container) return;
+
+        let html = '<div class="thinking-process">';
+
+        // Step 1: Initial Formation
+        html += '<div class="thinking-step">';
+        html += '<h4>Step 1: Initial Thought Formation (Divergent Thinking)</h4>';
+        html += '<div class="persona-thoughts">';
+
+        Object.entries(thinkingData.thinking_process.step1.thoughts).forEach(([persona, data]) => {
+            html += `<div class="persona-thought">
+                <strong>${persona} (${data.role}):</strong>
+                <p>${data.thought}</p>
+                <small>Confidence: ${(data.confidence * 100).toFixed(1)}%</small>
+            </div>`;
+        });
+
+        html += '</div></div>';
+
+        // Step 2: Refinement
+        html += '<div class="thinking-step">';
+        html += '<h4>Step 2: Thought Refinement (Convergent Filtering)</h4>';
+        html += '<div class="persona-thoughts">';
+
+        Object.entries(thinkingData.thinking_process.step2.thoughts).forEach(([persona, data]) => {
+            html += `<div class="persona-thought refined">
+                <strong>${persona}:</strong>
+                <p>${data.thought}</p>
+                <small>Confidence: ${(data.confidence * 100).toFixed(1)}% | Refinement: ${data.refinement_applied}</small>
+            </div>`;
+        });
+
+        html += '</div></div>';
+
+        // Step 3: Synthesis
+        html += '<div class="thinking-step">';
+        html += '<h4>Step 3: Final Synthesis (Response Structuring)</h4>';
+        html += `<div class="synthesis-info">
+            <p><strong>Dominant Pathway:</strong> ${thinkingData.thinking_process.step3.dominant_pathway}</p>
+            <p><strong>Final Confidence:</strong> ${thinkingData.confidence}</p>
+        </div>`;
+        html += '</div>';
+
+        html += '</div>';
+        container.innerHTML = html;
     }
 
     /**
@@ -120,17 +223,17 @@ class NeuronasInterface {
                     pin_level: pinLevel
                 })
             });
-            
+
             const data = await response.json();
-            
+
             if (data.success) {
                 this.d2Activation = data.d2_activation;
                 this.d2Stim = data.d2stim_level;
                 this.d2Pin = data.d2pin_level;
-                
+
                 return data;
             }
-            
+
             console.error('Failed to set D2 modulation:', data.error);
             return { error: data.error };
         } catch (error) {
@@ -155,14 +258,14 @@ class NeuronasInterface {
                     level: level
                 })
             });
-            
+
             const data = await response.json();
-            
+
             if (data.success) {
                 this.attention = data.attention;
                 return data;
             }
-            
+
             console.error('Failed to adjust attention:', data.error);
             return { error: data.error };
         } catch (error) {
@@ -179,12 +282,12 @@ class NeuronasInterface {
         try {
             const response = await fetch(`${this.apiEndpoint}/metrics`);
             const data = await response.json();
-            
+
             if (data.success) {
                 this.processingMetrics = data.metrics;
                 return data.metrics;
             }
-            
+
             console.error('Failed to get system metrics:', data.error);
             return { error: data.error };
         } catch (error) {
@@ -202,18 +305,18 @@ class NeuronasInterface {
             const response = await fetch(`${this.apiEndpoint}/reset`, {
                 method: 'POST'
             });
-            
+
             const data = await response.json();
-            
+
             if (data.success) {
                 this.d2Activation = data.d2_activation;
                 this.d2Stim = 0.0;
                 this.d2Pin = 0.0;
                 this.attention = 1.0;
-                
+
                 return data;
             }
-            
+
             console.error('Failed to reset system:', data.error);
             return { error: data.error };
         } catch (error) {

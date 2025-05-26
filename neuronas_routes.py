@@ -32,7 +32,7 @@ def get_status():
     """Get current Neuronas system status"""
     try:
         metrics = neuronas.get_system_metrics()
-        
+
         return jsonify({
             "success": True,
             "session_id": neuronas.session_id,
@@ -54,19 +54,19 @@ def process_query():
     """Process a query through Neuronas"""
     try:
         data = request.json
-        
+
         if not data or 'query' not in data:
             return jsonify({
                 "success": False,
                 "error": "Missing required parameter: 'query'"
             })
-            
+
         query_text = data['query']
         d2_params = data.get('d2_params')
         context = data.get('context')
-        
+
         response = neuronas.process_query(query_text, d2_params, context)
-        
+
         return jsonify({
             "success": True,
             "response": response
@@ -83,24 +83,24 @@ def set_d2_modulation():
     """Set D2 receptor modulation levels"""
     try:
         data = request.json
-        
+
         if not data:
             return jsonify({
                 "success": False,
                 "error": "Missing required parameters"
             })
-            
+
         stim_level = data.get('stim_level')
         pin_level = data.get('pin_level')
-        
+
         if stim_level is None or pin_level is None:
             return jsonify({
                 "success": False,
                 "error": "Missing required parameters: 'stim_level' and/or 'pin_level'"
             })
-            
+
         result = neuronas.set_d2_modulation(stim_level, pin_level)
-        
+
         return jsonify({
             "success": True,
             **result
@@ -117,17 +117,17 @@ def adjust_attention():
     """Adjust system attention level"""
     try:
         data = request.json
-        
+
         if not data or 'level' not in data:
             return jsonify({
                 "success": False,
                 "error": "Missing required parameter: 'level'"
             })
-            
+
         level = data['level']
-        
+
         result = neuronas.adjust_attention(level)
-        
+
         return jsonify({
             "success": True,
             **result
@@ -144,7 +144,7 @@ def get_metrics():
     """Get system metrics"""
     try:
         metrics = neuronas.get_system_metrics()
-        
+
         return jsonify({
             "success": True,
             "metrics": metrics
@@ -156,12 +156,53 @@ def get_metrics():
             "error": str(e)
         })
 
+@neuronas_bp.route('/thinking', methods=['POST'])
+def process_with_thinking():
+    """Process query using enhanced three-step thinking process"""
+    try:
+        data = request.get_json()
+        if not data or 'query' not in data:
+            return jsonify({
+                "success": False,
+                "error": "Query is required"
+            }), 400
+
+        # Import and use three-step thinking process
+        from core_modules.three_step_thinking import D2NeuronasThinkingProcess
+        thinking_processor = D2NeuronasThinkingProcess()
+
+        # Set D2 modulation if provided
+        d2_params = data.get('d2_params', {})
+        if d2_params:
+            thinking_processor.set_d2_modulation(
+                stim_level=d2_params.get('stim'),
+                pin_level=d2_params.get('pin')
+            )
+
+        # Process the query
+        result = thinking_processor.process_query(
+            data['query'],
+            context=data.get('context', {})
+        )
+
+        return jsonify({
+            "success": True,
+            "result": result
+        })
+
+    except Exception as e:
+        logger.error(f"Error in thinking process: {e}")
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
 @neuronas_bp.route('/memory', methods=['GET'])
 def get_memory_stats():
     """Get memory system statistics"""
     try:
         stats = neuronas.get_memory_stats()
-        
+
         return jsonify({
             "success": True,
             "stats": stats
@@ -178,7 +219,7 @@ def get_architecture():
     """Get architecture configuration"""
     try:
         config = neuronas.get_architecture_config()
-        
+
         return jsonify({
             "success": True,
             "config": config
@@ -195,7 +236,7 @@ def reset_system():
     """Reset the system to default state"""
     try:
         result = neuronas.reset_system()
-        
+
         return jsonify({
             "success": True,
             **result
