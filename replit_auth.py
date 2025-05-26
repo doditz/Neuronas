@@ -112,6 +112,11 @@ def make_replit_blueprint():
         g.browser_session_key = session['_browser_session_key']
         g.flask_dance_replit = replit_bp.session
 
+    @replit_bp.route("/login")
+    def login():
+        """Redirect to Replit OAuth for authentication"""
+        return redirect(url_for("replit_auth.authorize"))
+
     @replit_bp.route("/logout")
     def logout():
         del replit_bp.token

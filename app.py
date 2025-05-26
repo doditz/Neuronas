@@ -142,9 +142,10 @@ with app.app_context():
     db.create_all()
     initialize_application()
 
-# Import and initialize authentication
-from auth import init_auth
-login_manager = init_auth()
+# Import and initialize authentication after app context
+with app.app_context():
+    from auth import init_auth
+    login_manager = init_auth()
 
 # Register routes
 register_routes(app)
