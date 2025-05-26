@@ -68,67 +68,86 @@ def callback():
         flash("Identifiants Google OAuth non configurés", "warning")
         return redirect(url_for('index'))
     
-    # Récupération du code d'autorisation
-    code = request.args.get("code")
-    google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
-    token_endpoint = google_provider_cfg["token_endpoint"]
+    try:
+        # Récupération du code d'autorisation
+        code = request.args.get("code")
+        if not code:
+            flash("Code d'autorisation manquant", "danger")
+            return redirect(url_for('index'))
+            
+        google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
+        token_endpoint = google_provider_cfg["token_endpoint"]
 
-    # Préparation de la requête d'échange de token
-    token_url, headers, body = client.prepare_token_request(
-        token_endpoint,
-        authorization_response=request.url.replace('http://', 'https://'),
-        redirect_url=REDIRECT_URL,
-        code=code,
-    )
-    
-    # Échange du code contre un token
-    token_response = requests.post(
-        token_url,
-        headers=headers,
-        data=body,
-        auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET),
-    )
-
-    # Analyse de la réponse
-    client.parse_request_body_response(json.dumps(token_response.json()))
-
-    # Récupération des informations utilisateur
-    userinfo_endpoint = google_provider_cfg["userinfo_endpoint"]
-    uri, headers, body = client.add_token(userinfo_endpoint)
-    userinfo_response = requests.get(uri, headers=headers, data=body)
-    userinfo = userinfo_response.json()
-
-    # Vérification et traitement des informations utilisateur
-    if userinfo.get("email_verified"):
-        user_email = userinfo["email"]
-        user_name = userinfo.get("given_name", user_email.split('@')[0])
-    else:
-        flash("L'adresse email n'est pas vérifiée par Google", "danger")
-        return redirect(url_for('index'))
-
-    # Recherche ou création de l'utilisateur
-    user = User.query.filter_by(email=user_email).first()
-    if not user:
-        user = User(
-            username=user_name,
-            email=user_email,
-            oauth_provider="google",
-            oauth_id=userinfo.get("sub")
+        # Préparation de la requête d'échange de token
+        token_url, headers, body = client.prepare_token_request(
+            token_endpoint,
+            authorization_response=request.url.replace('http://', 'https://'),
+            redirect_url=REDIRECT_URL,
+            code=code,
         )
-        db.session.add(user)
-        db.session.commit()
-    
-    # Mise à jour de la dernière connexion
-    user.last_login = datetime.utcnow()
-    db.session.commit()
+        
+        # Échange du code contre un token
+        token_response = requests.post(
+            token_url,
+            headers=headers,
+            data=body,
+            auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET),
+        )
 
-    # Connexion de l'utilisateur
-    login_user(user)
-    flash(f"Bienvenue, {user.username}!", "success")
-    
-    # Redirection vers la page demandée ou la page d'accueil
-    next_page = session.get('next_url', url_for('index'))
-    return redirect(next_page)
+        if token_response.status_code != 200:
+            flash("Erreur lors de l'échange du token", "danger")
+            return redirect(url_for('index'))
+
+        # Analyse de la réponse
+        client.parse_request_body_response(json.dumps(token_response.json()))
+
+        # Récupération des informations utilisateur
+        userinfo_endpoint = google_provider_cfg["userinfo_endpoint"]
+        uri, headers, body = client.add_token(userinfo_endpoint)
+        userinfo_response = requests.get(uri, headers=headers, data=body)
+        
+        if userinfo_response.status_code != 200:
+            flash("Erreur lors de la récupération des informations utilisateur", "danger")
+            return redirect(url_for('index'))
+            
+        userinfo = userinfo_response.json()
+
+        # Vérification et traitement des informations utilisateur
+        if userinfo.get("email_verified"):
+            user_email = userinfo["email"]
+            user_name = userinfo.get("given_name", user_email.split('@')[0])
+        else:
+            flash("L'adresse email n'est pas vérifiée par Google", "danger")
+            return redirect(url_for('index'))
+
+        # Recherche ou création de l'utilisateur
+        user = User.query.filter_by(email=user_email).first()
+        if not user:
+            user = User(
+                username=user_name,
+                email=user_email,
+                oauth_provider="google",
+                oauth_id=userinfo.get("sub")
+            )
+            db.session.add(user)
+            db.session.commit()
+        
+        # Mise à jour de la dernière connexion
+        user.last_login = datetime.utcnow()
+        db.session.commit()
+
+        # Connexion de l'utilisateur
+        login_user(user)
+        flash(f"Bienvenue, {user.username}!", "success")
+        
+        # Redirection vers la page demandée ou la page d'accueil
+        next_page = session.get('next_url', url_for('index'))
+        return redirect(next_page)
+        
+    except Exception as e:
+        app.logger.error(f"Erreur OAuth Google: {e}")
+        flash("Erreur de connexion. Veuillez réessayer.", "danger")
+        return redirect(url_for('index'))
 
 @auth_bp.route('/logout')
 @login_required

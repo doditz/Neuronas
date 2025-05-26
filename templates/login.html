@@ -26,13 +26,21 @@
                     </div>
                     
                     <div class="d-grid gap-3">
-                        <a href="{{ url_for('replit_auth.login') }}" class="btn btn-dark btn-lg">
-                            <i data-feather="code"></i> Login with Replit
+                        {% if config.get('REPLIT_AUTH_ENABLED', True) %}
+                        <a href="/auth/replit_auth/login" class="btn btn-dark btn-lg">
+                            <i data-feather="code"></i> Connexion avec Replit
                         </a>
+                        {% endif %}
                         
+                        {% if config.get('GOOGLE_OAUTH_CLIENT_ID') %}
                         <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg">
-                            <i data-feather="mail"></i> Login with Google
+                            <i data-feather="mail"></i> Connexion avec Google
                         </a>
+                        {% else %}
+                        <div class="alert alert-warning">
+                            <small>L'authentification Google n'est pas configurée</small>
+                        </div>
+                        {% endif %}
                         
                         <div class="text-center mt-3">
                             <small class="text-muted">

@@ -76,8 +76,7 @@ def register_routes(app):
         """Login page with authentication options"""
         if current_user.is_authenticated:
             return redirect(url_for('index'))
-        # Redirect to Replit auth
-        return redirect(url_for('replit_auth.login'))
+        return render_template('login.html')
 
     @app.route('/mobile')
     def mobile():

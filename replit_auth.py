@@ -179,6 +179,10 @@ def logged_in(blueprint, token):
         return
         
     try:
+        if not token:
+            flash("Token d'authentification manquant", "danger")
+            return redirect(url_for('index'))
+            
         # Decode the JWT token without verification first to get user info
         user_claims = jwt.decode(
             token['id_token'],
@@ -190,15 +194,15 @@ def logged_in(blueprint, token):
         login_user(user)
         blueprint.token = token
         
-        flash(f"Welcome, {user.username}!", "success")
+        flash(f"Bienvenue, {user.username}!", "success")
         
         next_url = session.pop("next_url", None)
         if next_url is not None:
             return redirect(next_url)
         return redirect(url_for('index'))
     except Exception as e:
-        app.logger.error(f"Error during Replit authentication: {e}")
-        flash("Authentication error. Please try again.", "danger")
+        app.logger.error(f"Erreur lors de l'authentification Replit: {e}")
+        flash("Erreur d'authentification. Veuillez réessayer.", "danger")
         return redirect(url_for('index'))
 
 @oauth_error.connect
