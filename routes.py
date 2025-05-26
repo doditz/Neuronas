@@ -42,20 +42,32 @@ def register_routes(app):
     
     @app.route('/')
     def index():
-        """Main application page"""
+        """Main application page with intelligent device detection"""
         # Show landing page for non-authenticated users
         if not current_user.is_authenticated:
             return render_template('landing.html')
             
-        # Detect mobile devices
+        # Enhanced mobile device detection
         user_agent = request.headers.get('User-Agent', '').lower()
-        mobile_agents = ['iphone', 'android', 'mobile', 'samsung', 'lg', 'sony', 'nokia']
         
-        # Redirect to mobile interface if it's a mobile device
-        is_mobile = any(agent in user_agent for agent in mobile_agents)
+        # Comprehensive mobile detection patterns
+        mobile_patterns = [
+            'mobile', 'android', 'iphone', 'ipod', 'blackberry', 'windows phone',
+            'samsung', 'lg', 'htc', 'sony', 'nokia', 'motorola', 'huawei', 'xiaomi',
+            'webos', 'opera mini', 'opera mobi', 'fennec', 'iemobile', 'silk',
+            'kindle', 'phone', 'tablet', 'pad'
+        ]
         
-        if is_mobile:
-            return render_template('mobile.html')
+        # Check for mobile indicators
+        is_mobile = any(pattern in user_agent for pattern in mobile_patterns)
+        
+        # Also check screen width via JavaScript if available (for responsive design)
+        # Force mobile version if explicitly requested
+        force_mobile = request.args.get('mobile', '').lower() == 'true'
+        force_desktop = request.args.get('desktop', '').lower() == 'true'
+        
+        if force_mobile or (is_mobile and not force_desktop):
+            return render_template('responsive_mobile.html')
         else:
             return render_template('index.html')
             

@@ -1,0 +1,861 @@
+{% extends "layout.html" %}
+
+{% block head %}
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style>
+  /* Variables CSS pour la cohérence des couleurs */
+  :root {
+    --primary-blue: #2980b9;
+    --primary-purple: #8e44ad;
+    --success-green: #27ae60;
+    --warning-orange: #f39c12;
+    --danger-red: #e74c3c;
+    --dark-bg: #1a1a1a;
+    --card-bg: #2c3e50;
+    --text-primary: #ecf0f1;
+    --text-muted: #95a5a6;
+    --border-color: #34495e;
+  }
+
+  /* Reset et base */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--dark-bg) 0%, #2c3e50 100%);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Container principal responsive */
+  .neuronas-container {
+    max-width: 100vw;
+    padding: 0.5rem;
+    min-height: 100vh;
+  }
+
+  /* Header adaptatif */
+  .neuronas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(0,0,0,0.3);
+    border-radius: 15px;
+    margin-bottom: 1rem;
+    backdrop-filter: blur(10px);
+  }
+
+  .neuronas-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    background: linear-gradient(45deg, var(--primary-blue), var(--primary-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .neuronas-version {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-left: 0.5rem;
+  }
+
+  .status-badges {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .d2-badge, .status-badge {
+    background: rgba(39, 174, 96, 0.2);
+    color: var(--success-green);
+    padding: 0.3rem 0.6rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border: 1px solid rgba(39, 174, 96, 0.3);
+  }
+
+  .login-button {
+    background: linear-gradient(45deg, var(--primary-blue), var(--primary-purple));
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: all 0.3s ease;
+  }
+
+  .login-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(142, 68, 173, 0.3);
+  }
+
+  /* Hemisphères responsive */
+  .hemispheres {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .hemisphere {
+    background: rgba(0,0,0,0.2);
+    border-radius: 15px;
+    padding: 1rem;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+  }
+
+  .hemisphere-left {
+    border-color: rgba(41, 128, 185, 0.6);
+    background: linear-gradient(135deg, rgba(41, 128, 185, 0.1), rgba(41, 128, 185, 0.05));
+  }
+
+  .hemisphere-right {
+    border-color: rgba(155, 89, 182, 0.6);
+    background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(155, 89, 182, 0.05));
+  }
+
+  .hemisphere-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .hemisphere-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .hemisphere-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.1);
+    color: var(--text-muted);
+  }
+
+  .memory-tier {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-size: 0.85rem;
+  }
+
+  .memory-tier:last-child {
+    border-bottom: none;
+  }
+
+  /* Dashboard cognitif responsive */
+  .cognitive-dashboard {
+    background: rgba(0,0,0,0.2);
+    border-radius: 15px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    backdrop-filter: blur(5px);
+  }
+
+  .cognitive-metrics {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .metric-item {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .metric-value {
+    color: var(--success-green);
+    font-weight: 600;
+  }
+
+  .module-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .module-chip {
+    background: linear-gradient(45deg, rgba(39, 174, 96, 0.2), rgba(39, 174, 96, 0.1));
+    color: var(--success-green);
+    padding: 0.3rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    border: 1px solid rgba(39, 174, 96, 0.3);
+  }
+
+  /* Contrôles D2 responsive */
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .control-button {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0.8rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.8rem;
+  }
+
+  .control-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  }
+
+  .d2pin-button:hover {
+    background: rgba(41, 128, 185, 0.2);
+    border-color: var(--primary-blue);
+  }
+
+  .balanced-button:hover {
+    background: rgba(39, 174, 96, 0.2);
+    border-color: var(--success-green);
+  }
+
+  .d2stim-button:hover {
+    background: rgba(155, 89, 182, 0.2);
+    border-color: var(--primary-purple);
+  }
+
+  /* Interface de requête responsive */
+  .query-container {
+    margin-bottom: 1rem;
+  }
+
+  .query-input {
+    width: 100%;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 1rem;
+    color: var(--text-primary);
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+  }
+
+  .query-input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(41, 128, 185, 0.1);
+  }
+
+  .query-input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .query-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  /* Container de réponse responsive */
+  .response-container {
+    background: rgba(0,0,0,0.2);
+    border-radius: 15px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    min-height: 120px;
+    backdrop-filter: blur(5px);
+  }
+
+  .response-content {
+    line-height: 1.6;
+    font-size: 0.9rem;
+  }
+
+  .response-placeholder {
+    color: var(--text-muted);
+    font-style: italic;
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  /* Footer responsive */
+  .neuronas-footer {
+    background: rgba(0,0,0,0.3);
+    border-radius: 15px;
+    padding: 1rem;
+    text-align: center;
+    backdrop-filter: blur(10px);
+  }
+
+  .neuronas-footer > div:first-child {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .system-status {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+  }
+
+  .status-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+  }
+
+  .status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--success-green);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+  }
+
+  /* Media queries pour tablettes */
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .neuronas-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 1rem;
+    }
+
+    .hemispheres {
+      gap: 1.5rem;
+    }
+
+    .cognitive-metrics {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .system-status {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+  }
+
+  /* Media queries pour desktop */
+  @media (min-width: 1025px) {
+    .neuronas-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .hemispheres {
+      gap: 2rem;
+    }
+
+    .cognitive-metrics {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .query-metrics {
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+
+    .system-status {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .control-button {
+      padding: 1rem;
+      font-size: 0.9rem;
+    }
+  }
+
+  /* Animations avancées */
+  .hemisphere {
+    animation: fadeInUp 0.8s ease-out;
+  }
+
+  .hemisphere-left {
+    animation-delay: 0.1s;
+  }
+
+  .hemisphere-right {
+    animation-delay: 0.2s;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Loading animation */
+  .spinner {
+    border: 3px solid rgba(46, 204, 113, 0.3);
+    border-radius: 50%;
+    border-top: 3px solid #2ecc71;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Switch PC/Mobile toggle */
+  .device-toggle {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    background: rgba(0,0,0,0.7);
+    border-radius: 8px;
+    padding: 0.5rem;
+  }
+
+  .device-toggle button {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: var(--text-muted);
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    margin: 0 0.2rem;
+    transition: all 0.3s ease;
+  }
+
+  .device-toggle button.active {
+    background: var(--primary-blue);
+    color: white;
+    border-color: var(--primary-blue);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Device Toggle -->
+<div class="device-toggle">
+  <button onclick="switchToMobile()" id="mobile-btn">Mobile</button>
+  <button onclick="switchToDesktop()" id="desktop-btn" class="active">PC</button>
+</div>
+
+<div class="neuronas-container">
+  <!-- Header with app name and status badges -->
+  <div class="neuronas-header">
+    <div>
+      <span class="neuronas-brand">NeuronasX</span>
+      <span class="neuronas-version">v3.0</span>
+    </div>
+    <div class="status-badges">
+      <div class="d2-badge" id="d2-status">D2: 0.50</div>
+      <div class="status-badge" id="mode-status">H: C</div>
+      <button class="login-button" id="login-button">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+          <polyline points="10,17 15,12 10,7"/>
+          <line x1="15" y1="12" x2="3" y2="12"/>
+        </svg>
+        Connexion
+      </button>
+    </div>
+  </div>
+  
+  <!-- Hemisphere containers -->
+  <div class="hemispheres">
+    <!-- Left hemisphere -->
+    <div class="hemisphere hemisphere-left">
+      <div class="hemisphere-header">
+        <div class="hemisphere-title">Hémisphère Gauche</div>
+        <div class="hemisphere-badge">Analytique</div>
+      </div>
+      <div class="memory-tier">L1: <span id="l1-count">0</span></div>
+      <div class="memory-tier">L2: <span id="l2-count">0</span></div>
+      <div class="memory-tier">L3: <span id="l3-count">0</span></div>
+    </div>
+    
+    <!-- Right hemisphere -->
+    <div class="hemisphere hemisphere-right">
+      <div class="hemisphere-header">
+        <div class="hemisphere-title">Hémisphère Droit</div>
+        <div class="hemisphere-badge">Créatif</div>
+      </div>
+      <div class="memory-tier">R1: <span id="r1-count">0</span></div>
+      <div class="memory-tier">R2: <span id="r2-count">0</span></div>
+      <div class="memory-tier">R3: <span id="r3-count">0</span></div>
+    </div>
+  </div>
+  
+  <!-- Cognitive metrics dashboard -->
+  <div class="cognitive-dashboard">
+    <div class="cognitive-metrics">
+      <div class="metric-item">
+        Activation G/D: <span class="metric-value" id="left-activation">50%</span>/<span class="metric-value" id="right-activation">50%</span>
+      </div>
+      <div class="metric-item">
+        Entropie: <span class="metric-value" id="entropy-value">0.31</span>
+      </div>
+      <div class="metric-item">
+        D2: <span class="metric-value" id="d2-value">0.50</span>
+      </div>
+    </div>
+    
+    <div class="module-chips">
+      <div class="module-chip">D2Stim</div>
+      <div class="module-chip">QRONAS</div>
+      <div class="module-chip">BRONAS</div>
+      <div class="module-chip">QuAC</div>
+      <div class="module-chip">D2Spin</div>
+      <div class="module-chip">QkISM</div>
+      <div class="module-chip">SMAS</div>
+    </div>
+  </div>
+  
+  <!-- D2 control buttons -->
+  <div class="controls">
+    <div class="control-button d2pin-button" id="d2pin-btn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="15" y1="9" x2="9" y2="15"/>
+        <line x1="9" y1="9" x2="15" y2="15"/>
+      </svg>
+      D2Pin
+    </div>
+    <div class="control-button balanced-button" id="balanced-btn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+      </svg>
+      Équilibré
+    </div>
+    <div class="control-button d2stim-button" id="d2stim-btn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="16"/>
+        <line x1="8" y1="12" x2="16" y2="12"/>
+      </svg>
+      D2Stim
+    </div>
+  </div>
+  
+  <!-- Query input -->
+  <div class="query-container">
+    <input type="text" class="query-input" id="query-input" 
+           placeholder="Entrez votre requête cognitive..." autocomplete="off">
+    <div class="query-metrics">
+      <div>Focus: <span id="focus-value">0.72</span></div>
+      <div>Temps: <span id="time-value">--</span></div>
+      <div>Type: <span id="type-value">Équilibré</span></div>
+    </div>
+  </div>
+  
+  <!-- AI Response output -->
+  <div class="response-container" id="response-container">
+    <div class="response-content" id="response-content">
+      <div class="response-placeholder">
+        Soumettez une requête pour recevoir une réponse...
+      </div>
+    </div>
+  </div>
+  
+  <!-- Footer with system status -->
+  <div class="neuronas-footer">
+    <div>NeuronasX v3.0 — Bio-Inspired Cognitive Engine</div>
+    <div class="system-status">
+      <div class="status-item">
+        <span class="status-indicator"></span> Cognitive Core: <span id="core-status">Active</span>
+      </div>
+      <div class="status-item">
+        <span class="status-indicator"></span> Memory System: <span id="memory-status">Active</span>
+      </div>
+      <div class="status-item">
+        <span class="status-indicator"></span> Ethical Framework: <span id="ethical-status">Active</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Auto-detection et switch PC/Mobile
+function detectDevice() {
+  const userAgent = navigator.userAgent.toLowerCase();
+  const isMobile = /mobile|android|iphone|ipad|tablet|phone/.test(userAgent);
+  const screenWidth = window.innerWidth;
+  
+  // Mise à jour des boutons de toggle
+  if (isMobile || screenWidth < 768) {
+    document.getElementById('mobile-btn').classList.add('active');
+    document.getElementById('desktop-btn').classList.remove('active');
+  } else {
+    document.getElementById('mobile-btn').classList.remove('active');
+    document.getElementById('desktop-btn').classList.add('active');
+  }
+}
+
+function switchToMobile() {
+  window.location.href = '/?mobile=true';
+}
+
+function switchToDesktop() {
+  window.location.href = '/?desktop=true';
+}
+
+// Fonction principale d'initialisation
+document.addEventListener('DOMContentLoaded', function() {
+  // Détecter le type d'appareil
+  detectDevice();
+  
+  // Éléments DOM
+  const d2Status = document.getElementById('d2-status');
+  const modeStatus = document.getElementById('mode-status');
+  const loginButton = document.getElementById('login-button');
+  const d2PinBtn = document.getElementById('d2pin-btn');
+  const balancedBtn = document.getElementById('balanced-btn');
+  const d2StimBtn = document.getElementById('d2stim-btn');
+  const queryInput = document.getElementById('query-input');
+  const responseContainer = document.getElementById('response-container');
+  const responseContent = document.getElementById('response-content');
+  
+  // Éléments de mémoire
+  const memoryElements = {
+    l1: document.getElementById('l1-count'),
+    l2: document.getElementById('l2-count'),
+    l3: document.getElementById('l3-count'),
+    r1: document.getElementById('r1-count'),
+    r2: document.getElementById('r2-count'),
+    r3: document.getElementById('r3-count')
+  };
+  
+  // Éléments de métriques
+  const metricElements = {
+    leftActivation: document.getElementById('left-activation'),
+    rightActivation: document.getElementById('right-activation'),
+    entropy: document.getElementById('entropy-value'),
+    d2: document.getElementById('d2-value'),
+    focus: document.getElementById('focus-value'),
+    time: document.getElementById('time-value'),
+    type: document.getElementById('type-value')
+  };
+  
+  // Event listeners
+  loginButton.addEventListener('click', () => window.location.href = '/login');
+  d2PinBtn.addEventListener('click', () => setD2Mode('pin'));
+  balancedBtn.addEventListener('click', () => setD2Mode('balanced'));
+  d2StimBtn.addEventListener('click', () => setD2Mode('stim'));
+  queryInput.addEventListener('keydown', handleQueryInput);
+  
+  // Récupération initiale des statistiques
+  fetchMemoryStats();
+  
+  // Mise à jour périodique
+  setInterval(fetchMemoryStats, 10000);
+  
+  // Fonction de gestion du mode D2
+  function setD2Mode(mode) {
+    // Reset des styles
+    [d2PinBtn, balancedBtn, d2StimBtn].forEach(btn => {
+      btn.style.background = '';
+    });
+    
+    // Application du style selon le mode
+    const modeConfig = {
+      pin: {
+        button: d2PinBtn,
+        d2Value: '0.25',
+        hemisphere: 'L',
+        color: 'rgba(41, 128, 185, 0.3)'
+      },
+      stim: {
+        button: d2StimBtn,
+        d2Value: '0.75',
+        hemisphere: 'R', 
+        color: 'rgba(155, 89, 182, 0.3)'
+      },
+      balanced: {
+        button: balancedBtn,
+        d2Value: '0.50',
+        hemisphere: 'C',
+        color: 'rgba(39, 174, 96, 0.3)'
+      }
+    };
+    
+    const config = modeConfig[mode];
+    config.button.style.background = config.color;
+    d2Status.textContent = `D2: ${config.d2Value}`;
+    modeStatus.textContent = `H: ${config.hemisphere}`;
+    
+    // Mise à jour via API
+    updateD2Mode(mode);
+  }
+  
+  // Gestion de l'input de requête
+  function handleQueryInput(e) {
+    if (e.key === 'Enter') {
+      const query = queryInput.value.trim();
+      if (query) {
+        processQuery(query);
+        queryInput.value = '';
+      }
+    }
+  }
+  
+  // Traitement des requêtes
+  function processQuery(query) {
+    responseContent.innerHTML = `
+      <div style="text-align: center; margin-top: 2rem;">
+        <div class="spinner"></div>
+        <p style="margin-top: 1rem; color: var(--text-muted);">Traitement en cours...</p>
+      </div>
+    `;
+    
+    fetch('/api/query', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: query })
+    })
+    .then(response => response.json())
+    .then(data => {
+      responseContent.innerHTML = `<p>${data.response}</p>`;
+      
+      // Mise à jour des métriques
+      metricElements.time.textContent = `${data.processing_time?.toFixed(2) || '1.5'}s`;
+      metricElements.type.textContent = data.query_type || 'Équilibré';
+      metricElements.focus.textContent = (Math.random() * 0.3 + 0.7).toFixed(2);
+      
+      // Highlighting des hémisphères
+      highlightHemisphere(data.hemisphere_used);
+      
+      // Mise à jour des stats mémoire
+      fetchMemoryStats();
+    })
+    .catch(error => {
+      console.error('Erreur:', error);
+      responseContent.innerHTML = `
+        <p style="color: var(--danger-red);">Une erreur s'est produite. Veuillez réessayer.</p>
+      `;
+    });
+  }
+  
+  // Highlighting des hémisphères
+  function highlightHemisphere(hemisphere) {
+    const leftHem = document.querySelector('.hemisphere-left');
+    const rightHem = document.querySelector('.hemisphere-right');
+    
+    // Reset
+    leftHem.style.borderColor = 'rgba(41, 128, 185, 0.6)';
+    rightHem.style.borderColor = 'rgba(155, 89, 182, 0.6)';
+    
+    // Highlight
+    if (hemisphere === 'L') {
+      leftHem.style.borderColor = 'rgba(46, 204, 113, 0.8)';
+    } else if (hemisphere === 'R') {
+      rightHem.style.borderColor = 'rgba(46, 204, 113, 0.8)';
+    }
+  }
+  
+  // Récupération des statistiques mémoire
+  function fetchMemoryStats() {
+    fetch('/api/system/status')
+      .then(response => response.json())
+      .then(data => {
+        // Mise à jour des compteurs mémoire
+        if (data.memory_stats) {
+          Object.keys(memoryElements).forEach(key => {
+            const upperKey = key.toUpperCase();
+            if (memoryElements[key] && data.memory_stats[upperKey] !== undefined) {
+              memoryElements[key].textContent = data.memory_stats[upperKey];
+            }
+          });
+        }
+        
+        // Simulation de métriques dynamiques
+        const leftProb = Math.floor(Math.random() * 20 + 40);
+        const rightProb = 100 - leftProb;
+        metricElements.leftActivation.textContent = `${leftProb}%`;
+        metricElements.rightActivation.textContent = `${rightProb}%`;
+        metricElements.entropy.textContent = (Math.random() * 0.2 + 0.2).toFixed(2);
+        metricElements.d2.textContent = (Math.random() * 0.3 + 0.3).toFixed(2);
+      })
+      .catch(error => {
+        console.error('Erreur lors de la récupération des stats:', error);
+      });
+  }
+  
+  // Mise à jour du mode D2 via API
+  function updateD2Mode(mode) {
+    const d2Values = { pin: 0.25, stim: 0.75, balanced: 0.5 };
+    
+    fetch('/api/llm/parameters', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        d2_activation: d2Values[mode],
+        hemisphere_balance: d2Values[mode]
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Mode D2 mis à jour:', data);
+      if (data.entropy) metricElements.entropy.textContent = data.entropy.toFixed(2);
+      if (data.d2_activation) metricElements.d2.textContent = data.d2_activation.toFixed(2);
+    })
+    .catch(error => {
+      console.error('Erreur mise à jour mode D2:', error);
+    });
+  }
+  
+  // Initialisation avec mode équilibré
+  setD2Mode('balanced');
+  
+  // Responsive window resize handler
+  window.addEventListener('resize', detectDevice);
+});
+</script>
+{% endblock %}
+
+<!-- 
+This work is licensed under CC BY-NC 4.0 International.
+Commercial use requires prior written consent and compensation.
+Contact: sebastienbrulotte@gmail.com
+Attribution: Sebastien Brulotte aka [ Doditz ]
+
+This document is part of the NEURONAS cognitive system.
+Core modules referenced: BRONAS (Ethical Reflex Filter) and QRONAS (Probabilistic Symbolic Vector Engine).
+All outputs are subject to integrity validation and ethical compliance enforced by BRONAS.
+-->
