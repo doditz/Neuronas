@@ -31,8 +31,8 @@ except Exception as e:
     logger.error(f"Error initializing Neuronas system: {e}")
 
 # Register all routes
-register_routes(app)
 register_neuronas_routes(app)
+register_routes(app)
 
 # Log system initialization
 logger.info("Neuronas system initialized successfully")

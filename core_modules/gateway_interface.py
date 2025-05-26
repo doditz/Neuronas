@@ -17,7 +17,7 @@ import logging
 import json
 from datetime import datetime
 from flask import g
-from core_modules.core_engine import CognitiveEngine, StorageManager
+from core_modules.core_engine import CognitiveEngine, CoreStorageManager
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +30,7 @@ class GatewayInterface:
         """Initialise l'interface de passerelle"""
         logger.info("Interface de passerelle initialisée")
         self.cognitive_engine = CognitiveEngine()
-        self.storage = StorageManager()
+        self.storage = CoreStorageManager()
         self._load_config()
     
     def _load_config(self):

@@ -1,84 +1,127 @@
 {
-  "name": "Neuronas AI",
-  "description": "Système d'intelligence artificielle révolutionnaire à inspiration cérébrale",
-  "cognitive_limit": "10 bits/seconde (Zheng & Meister)",
-  
-  "core_components": {
-    "D2STIB": {
-      "name": "Dynamic Derivative Semantic Token Information Bottleneck",
-      "description": "Applique des dérivées premières et secondes sur les mots pour détecter les frontières sémantiques",
-      "benefits": ["Saute ou simplifie le traitement de nombreux mots", "Réduit la charge informatique de plus de 60%"]
+  "name": "Neuronas-D\u00b2STIB",
+  "version": "3.0.1",
+  "architecture_type": "quantum_neuromorphic_hybrid",
+  "core_modules": {
+    "neuromorphic_processing": {
+      "enabled": true,
+      "spinnaker2_inspired": true,
+      "dynamic_core_allocation": true,
+      "synaptic_plasticity": 0.85,
+      "hebbian_learning_rate": 0.12,
+      "spike_timing_dependent_plasticity": true
     },
-    "SED": {
-      "name": "Semantic Efficiency Director",
-      "description": "Identifie les zones où le sens change rapidement",
-      "function": "Décide où allouer ou économiser du calcul"
+    "quantum_decision": {
+      "enabled": true,
+      "superposition_mode": "probabilistic",
+      "collapse_threshold": 0.7,
+      "spin_encoding_probability_min": 0.3,
+      "spin_encoding_probability_max": 0.9,
+      "token_superposition_entanglement": true,
+      "quantum_entropy_reduction": 0.35
     },
-    "BRONAS": {
-      "name": "Réseau de Décision Biologique",
-      "description": "Applique des filtres inspirés du cerveau pour ne garder que ce qui est pertinent",
-      "ethics_rules": {
-        "principes_ethiques_globaux": ["équité", "respect culturel", "accessibilité"],
-        "lois": ["bien-être humain", "adaptabilité locale", "durabilité"]
+    "d2stib_acceleration": {
+      "enabled": true,
+      "semantic_prioritization": true,
+      "second_derivative_linguistic": true,
+      "token_overhead_reduction": 0.43,
+      "processing_efficiency_gain": 0.57
+    },
+    "dvfs_management": {
+      "enabled": true,
+      "dynamic_voltage_scaling": true,
+      "frequency_adaptation": true,
+      "power_efficiency_target": 0.8,
+      "thermal_management": true
+    }
+  },
+  "memory_architecture": {
+    "tiered_system": {
+      "L1": {
+        "name": "Session Memory",
+        "capacity": 20,
+        "decay_rate": 0.05,
+        "compression_ratio": 0.9,
+        "priority_weighting": true
+      },
+      "L2": {
+        "name": "Persistent Memory",
+        "capacity": 50,
+        "decay_rate": 0.02,
+        "compression_ratio": 0.75,
+        "retrieval_enhancement": true
+      },
+      "L3": {
+        "name": "Long-Term Knowledge",
+        "capacity": 100,
+        "decay_rate": 0.005,
+        "compression_ratio": 0.5,
+        "semantic_indexing": true,
+        "vector_search_enabled": true
+      }
+    }
+  },
+  "cognitive_systems": {
+    "d2_modulation": {
+      "d2stim": {
+        "enabled": true,
+        "focus_enhancement": 0.7,
+        "executive_function_boost": 0.65,
+        "activation_threshold": 0.4
+      },
+      "d2pin": {
+        "enabled": true,
+        "creativity_enhancement": 0.8,
+        "cognitive_flexibility_boost": 0.75,
+        "activation_threshold": 0.35
       }
     },
-    "QRONAS": {
-      "name": "Réseau de Décision Quantique",
-      "description": "Émule un comportement quantique",
-      "function": "Évalue plusieurs réponses en parallèle, puis une seule est 'effondrée' (choisie) en fonction du contexte"
+    "neural_pathways": {
+      "nigrostriatal": {
+        "enabled": true,
+        "motor_control": 0.6,
+        "task_execution": 0.7
+      },
+      "mesolimbic": {
+        "enabled": true,
+        "reward_processing": 0.8,
+        "motivation": 0.75
+      },
+      "mesocortical": {
+        "enabled": true,
+        "executive_function": 0.85,
+        "working_memory": 0.8
+      },
+      "tuberoinfundibular": {
+        "enabled": true,
+        "hormonal_regulation": 0.5,
+        "homeostasis": 0.6
+      }
     },
-    "DoditzAI": {
-      "name": "Modérateur visionnaire et éthique",
-      "function": "Assure que tout reste aligné avec l'objectif: efficacité, vérité, et alignement humain"
+    "query_classification": {
+      "creative": {
+        "threshold": 0.7,
+        "pathway": "mesolimbic",
+        "d2_balance": "d2pin"
+      },
+      "analytical": {
+        "threshold": 0.7,
+        "pathway": "mesocortical",
+        "d2_balance": "d2stim"
+      },
+      "factual": {
+        "threshold": 0.7,
+        "pathway": "nigrostriatal",
+        "d2_balance": "balanced"
+      }
     }
   },
-  
-  "key_features": {
-    "neuromorphic_processing": {
-      "description": "Utilise des réseaux spikants (type SpiNNaker) pour moduler dynamiquement la puissance de calcul"
-    },
-    "decisional_superposition": {
-      "description": "Simule des états quantiques dans les réponses, tant qu'il n'est pas certain, la réponse reste en superposition"
-    },
-    "ethical_decision_making": {
-      "description": "Prise de décision éthique et optimisée via DoditzAI"
+  "constraints": {
+    "runtime": {
+      "token_overhead_max": 0.2,
+      "decision_stability_entropy_reduction_min": 0.35,
+      "adaptive_core_allocation": true,
+      "sandboxed_restrictions": true
     }
-  },
-  
-  "personas": {
-    "description": "Personas spécialisés qui s'activent selon le contexte",
-    "examples": ["TechnicalAI", "EthicalAI", "CreativeAI", "PsychologistAI"],
-    "activation": "Dynamique et contextuelle, gérée par des règles d'interaction"
-  },
-  
-  "security_memory": {
-    "encryption": "AES-256",
-    "logging": "Journalisation automatique",
-    "memory_system": "Mémoire contextuelle avec adaptation à court et long terme",
-    "safety_measures": ["Lockdown automatique", "Alerte admin"]
-  },
-  
-  "performance_metrics": {
-    "standard": {
-      "time_per_token": "26.8ms",
-      "ram_per_sequence": "2.3 KB",
-      "tokens_processed": "100%",
-      "semantic_fidelity": "Baseline"
-    },
-    "neuronas_d2stib": {
-      "time_per_token": "10.5ms",
-      "ram_per_sequence": "1.1 KB",
-      "tokens_processed": "~43% (restes prédits)",
-      "semantic_fidelity": "99.3%"
-    }
-  },
-  
-  "advantages": [
-    "Ne surcharge pas l'utilisateur",
-    "Ne génère pas de bruit inutile",
-    "Peut fonctionner sur des appareils à faible puissance (edge devices)",
-    "Est capable d'auto-optimisation sur le long terme"
-  ],
-  
-  "summary": "Neuronas AI est un cerveau artificiel ultra-efficace, qui comprend, filtre, et répond comme un humain lent mais intelligent, tout en étant capable de performances inégalées grâce au D²STIB"
+  }
 }

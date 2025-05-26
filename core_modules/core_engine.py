@@ -309,7 +309,7 @@ class GatewayInterface:
         """Initialise l'interface de passerelle"""
         logger.info("Interface de passerelle initialisée")
         self.cognitive_engine = CognitiveEngine()
-        self.storage = StorageManager()
+        self.storage = CoreStorageManager()
 
     def process_query(self, query, session_id=None):
         """
