@@ -5,6 +5,7 @@ import lzma
 import bz2
 import pickle
 import os
+import time
 from typing import Dict, Any, Optional, Union, List
 import numpy as np
 
@@ -156,8 +157,13 @@ class NeuroRNASStorageManager:
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
-        # Insert into appropriate table
-        table_name = f"memory_{tier.lower()}"
+        # Safe table name mapping to prevent SQL injection
+        table_mapping = {
+            'L1': 'memory_l1',
+            'L2': 'memory_l2', 
+            'L3': 'memory_l3'
+        }
+        table_name = table_mapping[tier]
         if tier == 'L1':
             cursor.execute(
                 f"INSERT INTO {table_name} (user_id, timestamp, data, score, compression, metadata) "
@@ -227,8 +233,13 @@ class NeuroRNASStorageManager:
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
-        # Query the appropriate table
-        table_name = f"memory_{tier.lower()}"
+        # Safe table name mapping to prevent SQL injection
+        table_mapping = {
+            'L1': 'memory_l1',
+            'L2': 'memory_l2', 
+            'L3': 'memory_l3'
+        }
+        table_name = table_mapping[tier]
         query = f"SELECT id, timestamp, data, score, compression, metadata FROM {table_name} WHERE user_id = ?"
         params = [user_id]
         
