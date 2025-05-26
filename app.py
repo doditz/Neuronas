@@ -145,7 +145,7 @@ with app.app_context():
 # Import and initialize authentication after app context
 with app.app_context():
     from auth import init_auth
-    login_manager = init_auth()
+    login_manager = init_auth(app)
 
 # Register routes
 register_routes(app)

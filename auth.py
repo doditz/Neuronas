@@ -12,68 +12,152 @@ All outputs are subject to integrity validation and ethical compliance enforced 
 import json
 import os
 import requests
-from flask import Blueprint, redirect, request, url_for, flash, session, current_app
+from flask import Blueprint, redirect, request, url_for, flash, session, render_template
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from oauthlib.oauth2 import WebApplicationClient
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
 
-# Configuration OAuth2 pour Google
+# OAuth2 Configuration for Google
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_OAUTH_CLIENT_ID")
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET")
 GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
 
 # Get the redirect domain from environment
 REPLIT_DOMAIN = os.environ.get("REPLIT_DEV_DOMAIN", "localhost:5000")
-REDIRECT_URL = f"https://{REPLIT_DOMAIN}/google_login/callback"
+if REPLIT_DOMAIN.startswith("http"):
+    REDIRECT_URL = f"{REPLIT_DOMAIN}/auth/google_callback"
+else:
+    REDIRECT_URL = f"https://{REPLIT_DOMAIN}/auth/google_callback"
 
-# Créer un blueprint pour l'authentification
+# Create authentication blueprint
 auth_bp = Blueprint('auth', __name__)
 
-# Client OAuth2
-client = WebApplicationClient(GOOGLE_CLIENT_ID) if GOOGLE_CLIENT_ID else None)
-
-# Initialiser le client OAuth2
+# OAuth2 Client
 client = WebApplicationClient(GOOGLE_CLIENT_ID) if GOOGLE_CLIENT_ID else None
 
-@login_manager.user_loader
-def load_user(user_id):
-    return db.session.get(User, int(user_id))
-
-@auth_bp.route('/login')
+@auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    if not GOOGLE_CLIENT_ID:
-        flash("Identifiants Google OAuth non configurés", "warning")
-        return redirect(url_for('index'))
+    if request.method == 'POST':
+        # Handle traditional email/password login
+        email = request.form.get('email')
+        password = request.form.get('password')
+        remember = bool(request.form.get('remember'))
+        
+        if not email or not password:
+            flash("Please enter both email and password", "error")
+            return render_template('auth/login.html')
+        
+        from models import User, db
+        user = User.query.filter_by(email=email).first()
+        
+        if user and user.check_password(password):
+            login_user(user, remember=remember)
+            user.last_login = datetime.utcnow()
+            db.session.commit()
+            flash(f"Welcome back, {user.username}!", "success")
+            
+            # Redirect to next page or dashboard
+            next_page = request.args.get('next', url_for('index'))
+            return redirect(next_page)
+        else:
+            flash("Invalid email or password", "error")
     
-    # Authentification Google
-    google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
-    authorization_endpoint = google_provider_cfg["authorization_endpoint"]
+    return render_template('auth/login.html')
 
-    # Préparation de la requête d'autorisation
-    request_uri = client.prepare_request_uri(
-        authorization_endpoint,
-        redirect_uri=REDIRECT_URL,
-        scope=["openid", "email", "profile"],
-    )
-    return redirect(request_uri)
+@auth_bp.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+        
+        # Validation
+        if not all([username, email, password, confirm_password]):
+            flash("All fields are required", "error")
+            return render_template('auth/signup.html')
+        
+        if password != confirm_password:
+            flash("Passwords do not match", "error")
+            return render_template('auth/signup.html')
+        
+        if len(password) < 6:
+            flash("Password must be at least 6 characters long", "error")
+            return render_template('auth/signup.html')
+        
+        from models import User, db
+        
+        # Check if user already exists
+        if User.query.filter_by(email=email).first():
+            flash("Email already registered", "error")
+            return render_template('auth/signup.html')
+        
+        if User.query.filter_by(username=username).first():
+            flash("Username already taken", "error")
+            return render_template('auth/signup.html')
+        
+        # Create new user
+        user = User(
+            username=username,
+            email=email
+        )
+        user.set_password(password)
+        user.created_at = datetime.utcnow()
+        user.last_login = datetime.utcnow()
+        
+        try:
+            db.session.add(user)
+            db.session.commit()
+            
+            login_user(user)
+            flash(f"Welcome to NeuronasX, {user.username}!", "success")
+            return redirect(url_for('index'))
+        except Exception as e:
+            db.session.rollback()
+            flash("Error creating account. Please try again.", "error")
+    
+    return render_template('auth/signup.html')
 
-@auth_bp.route('/google_login/callback')
-def callback():
+@auth_bp.route('/google_login')
+def google_login():
     if not GOOGLE_CLIENT_ID:
-        flash("Identifiants Google OAuth non configurés", "warning")
-        return redirect(url_for('index'))
+        flash("Google OAuth is not configured. Please contact support.", "warning")
+        return redirect(url_for('auth.login'))
     
     try:
-        # Récupération du code d'autorisation
+        # Get Google's OpenID configuration
+        google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
+        authorization_endpoint = google_provider_cfg["authorization_endpoint"]
+
+        # Prepare authorization request
+        request_uri = client.prepare_request_uri(
+            authorization_endpoint,
+            redirect_uri=REDIRECT_URL,
+            scope=["openid", "email", "profile"],
+        )
+        return redirect(request_uri)
+    except Exception as e:
+        flash("Error connecting to Google. Please try again.", "error")
+        return redirect(url_for('auth.login'))
+
+@auth_bp.route('/google_callback')
+def google_callback():
+    if not GOOGLE_CLIENT_ID:
+        flash("Google OAuth is not configured", "warning")
+        return redirect(url_for('auth.login'))
+    
+    try:
+        # Get authorization code
         code = request.args.get("code")
         if not code:
-            flash("Code d'autorisation manquant", "danger")
-            return redirect(url_for('index'))
+            flash("Authorization failed", "error")
+            return redirect(url_for('auth.login'))
             
         google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
         token_endpoint = google_provider_cfg["token_endpoint"]
 
-        # Préparation de la requête d'échange de token
+        # Prepare token exchange request
         token_url, headers, body = client.prepare_token_request(
             token_endpoint,
             authorization_response=request.url.replace('http://', 'https://'),
@@ -81,7 +165,7 @@ def callback():
             code=code,
         )
         
-        # Échange du code contre un token
+        # Exchange code for token
         token_response = requests.post(
             token_url,
             headers=headers,
@@ -90,190 +174,131 @@ def callback():
         )
 
         if token_response.status_code != 200:
-            flash("Erreur lors de l'échange du token", "danger")
-            return redirect(url_for('index'))
+            flash("Failed to authenticate with Google", "error")
+            return redirect(url_for('auth.login'))
 
-        # Analyse de la réponse
+        # Parse token response
         client.parse_request_body_response(json.dumps(token_response.json()))
 
-        # Récupération des informations utilisateur
+        # Get user info from Google
         userinfo_endpoint = google_provider_cfg["userinfo_endpoint"]
         uri, headers, body = client.add_token(userinfo_endpoint)
         userinfo_response = requests.get(uri, headers=headers, data=body)
         
         if userinfo_response.status_code != 200:
-            flash("Erreur lors de la récupération des informations utilisateur", "danger")
-            return redirect(url_for('index'))
+            flash("Failed to get user information from Google", "error")
+            return redirect(url_for('auth.login'))
             
         userinfo = userinfo_response.json()
 
-        # Vérification et traitement des informations utilisateur
-        if userinfo.get("email_verified"):
-            user_email = userinfo["email"]
-            user_name = userinfo.get("given_name", user_email.split('@')[0])
-        else:
-            flash("L'adresse email n'est pas vérifiée par Google", "danger")
-            return redirect(url_for('index'))
+        # Verify email
+        if not userinfo.get("email_verified"):
+            flash("Email not verified with Google", "error")
+            return redirect(url_for('auth.login'))
 
-        # Recherche ou création de l'utilisateur
+        user_email = userinfo["email"]
+        user_name = userinfo.get("given_name", user_email.split('@')[0])
+        oauth_id = userinfo.get("sub")
+
+        # Find or create user
+        from models import User, db
         user = User.query.filter_by(email=user_email).first()
+        
         if not user:
+            # Create new user
             user = User(
+                id=str(len(User.query.all()) + 1),  # Simple ID generation
                 username=user_name,
                 email=user_email,
                 oauth_provider="google",
-                oauth_id=userinfo.get("sub")
+                oauth_id=oauth_id,
+                created_at=datetime.utcnow()
             )
             db.session.add(user)
-            db.session.commit()
+        else:
+            # Update OAuth info if needed
+            if not user.oauth_provider:
+                user.oauth_provider = "google"
+                user.oauth_id = oauth_id
         
-        # Mise à jour de la dernière connexion
+        # Update last login
         user.last_login = datetime.utcnow()
         db.session.commit()
 
-        # Connexion de l'utilisateur
+        # Log in user
         login_user(user)
-        flash(f"Bienvenue, {user.username}!", "success")
+        flash(f"Welcome, {user.username}!", "success")
         
-        # Redirection vers la page demandée ou la page d'accueil
+        # Redirect to intended page or home
         next_page = session.get('next_url', url_for('index'))
         return redirect(next_page)
         
     except Exception as e:
-        app.logger.error(f"Erreur OAuth Google: {e}")
-        flash("Erreur de connexion. Veuillez réessayer.", "danger")
-        return redirect(url_for('index'))
-
-@auth_bp.route('/@auth_bp.route('/login')
-def login():
-    if not GOOGLE_CLIENT_ID:
-        flash("Identifiants Google OAuth non configurés", "warning")
-        return redirect(url_for('index'))
-    
-    # Authentification Google
-    google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
-    authorization_endpoint = google_provider_cfg["authorization_endpoint"]
-
-    # Préparation de la requête d'autorisation
-    request_uri = client.prepare_request_uri(
-        authorization_endpoint,
-        redirect_uri=REDIRECT_URL,
-        scope=["openid", "email", "profile"],
-    )
-    return redirect(request_uri)
-
-@auth_bp.route('/google_login/callback')
-def callback():
-    if not GOOGLE_CLIENT_ID:
-        flash("Identifiants Google OAuth non configurés", "warning")
-        return redirect(url_for('index'))
-    
-    try:
-        # Récupération du code d'autorisation
-        code = request.args.get("code")
-        if not code:
-            flash("Code d'autorisation manquant", "danger")
-            return redirect(url_for('index'))
-            
-        google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
-        token_endpoint = google_provider_cfg["token_endpoint"]
-
-        # Préparation de la requête d'échange de token
-        token_url, headers, body = client.prepare_token_request(
-            token_endpoint,
-            authorization_response=request.url.replace('http://', 'https://'),
-            redirect_url=REDIRECT_URL,
-            code=code,
-        )
-        
-        # Échange du code contre un token
-        token_response = requests.post(
-            token_url,
-            headers=headers,
-            data=body,
-            auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET),
-        )
-
-        if token_response.status_code != 200:
-            flash("Erreur lors de l'échange du token", "danger")
-            return redirect(url_for('index'))
-
-        # Analyse de la réponse
-        client.parse_request_body_response(json.dumps(token_response.json()))
-        
-        # Récupération des informations utilisateur
-        userinfo_endpoint = google_provider_cfg["userinfo_endpoint"]
-        uri, headers, body = client.add_token(userinfo_endpoint)
-        userinfo_response = requests.get(uri, headers=headers, data=body)
-        
-        if userinfo_response.json().get("email_verified"):
-            unique_id = userinfo_response.json()["sub"]
-            users_email = userinfo_response.json()["email"]
-            users_name = userinfo_response.json()["given_name"]
-            
-            # Créer ou récupérer l'utilisateur
-            from models import User, db
-            user = User.query.filter_by(oauth_id=unique_id).first()
-            if not user:
-                user = User(
-                    oauth_id=unique_id,
-                    username=users_name,
-                    email=users_email,
-                    oauth_provider="google",
-                    created_at=datetime.utcnow()
-                )
-                db.session.add(user)
-                db.session.commit()
-            
-            login_user(user)
-            flash(f"Bienvenue, {users_name}!", "success")
-            return redirect(url_for('index'))
-        else:
-            flash("Email non vérifié par Google", "danger")
-            return redirect(url_for('index'))
-            
-    except Exception as e:
-        flash(f"Erreur d'authentification: {str(e)}", "danger")
-        return redirect(url_for('index'))
+        flash("Authentication error. Please try again.", "error")
+        return redirect(url_for('auth.login'))
 
 @auth_bp.route('/logout')
 @login_required
 def logout():
+    username = current_user.username
     logout_user()
-    flash("Vous êtes déconnecté", "info")
+    flash(f"Goodbye, {username}!", "info")
     return redirect(url_for('index'))
 
 @auth_bp.route('/profile')
 @login_required
 def profile():
-    return redirect(url_for('dashboard', section='profile'))
+    return render_template('auth/profile.html', user=current_user)
 
-# Enregistrer le blueprint
-def init_auth():
-    from flask_login import LoginManager
-    from replit_auth import make_replit_blueprint
+@auth_bp.route('/update_profile', methods=['POST'])
+@login_required
+def update_profile():
+    username = request.form.get('username')
+    email = request.form.get('email')
     
-    # Initialiser le gestionnaire de connexion
+    from models import User, db
+    
+    # Check if username/email already exists (excluding current user)
+    if username != current_user.username:
+        if User.query.filter_by(username=username).first():
+            flash("Username already taken", "error")
+            return redirect(url_for('auth.profile'))
+    
+    if email != current_user.email:
+        if User.query.filter_by(email=email).first():
+            flash("Email already registered", "error")
+            return redirect(url_for('auth.profile'))
+    
+    # Update user info
+    current_user.username = username
+    current_user.email = email
+    
+    try:
+        db.session.commit()
+        flash("Profile updated successfully!", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash("Error updating profile", "error")
+    
+    return redirect(url_for('auth.profile'))
+
+def init_auth(app):
+    """Initialize authentication for the Flask app"""
+    from flask_login import LoginManager
+    
+    # Initialize login manager
     login_manager = LoginManager()
-    login_manager.init_app(current_app)
-    login_manager.login_view = 'replit_auth.login'
+    login_manager.init_app(app)
+    login_manager.login_view = 'auth.login'
+    login_manager.login_message = "Please log in to access this page"
+    login_manager.login_message_category = "info"
     
     @login_manager.user_loader
     def load_user(user_id):
         from models import User
         return User.query.get(user_id)
     
-    # Enregistrer le blueprint d'authentification Google
-    current_app.register_blueprint(auth_bp, url_prefix='/auth')
-    
-    # Ajouter l'authentification Replit
-    replit_bp = make_replit_blueprint()
-    if replit_bp:
-        current_app.register_blueprint(replit_bp, url_prefix='/auth')
-        current_app.logger.info("Authentification Replit configurée avec succès")
-    else:
-        current_app.logger.warning("L'authentification Replit n'a pas pu être configurée")
-    
-    return login_manager")
+    # Register authentication blueprint
+    app.register_blueprint(auth_bp, url_prefix='/auth')
     
     return login_manager

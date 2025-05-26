@@ -116,7 +116,7 @@ class ReinforcedHypotheses(db.Model):
 
 class User(UserMixin, db.Model):
     """User model for authentication and preferences"""
-    id = db.Column(db.String(255), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=True)
     password_hash = db.Column(db.String(256), nullable=True)
