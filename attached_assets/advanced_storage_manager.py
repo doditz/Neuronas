@@ -158,30 +158,24 @@ class NeuroRNASStorageManager:
         cursor = conn.cursor()
         
         # Safe table name mapping to prevent SQL injection
-        table_mapping = {
-            'L1': 'memory_l1',
-            'L2': 'memory_l2', 
-            'L3': 'memory_l3'
-        }
-        table_name = table_mapping[tier]
         if tier == 'L1':
             cursor.execute(
-                f"INSERT INTO {table_name} (user_id, timestamp, data, score, compression, metadata) "
-                f"VALUES (?, ?, ?, ?, ?, ?)",
+                "INSERT INTO memory_l1 (user_id, timestamp, data, score, compression, metadata) "
+                "VALUES (?, ?, ?, ?, ?, ?)",
                 (user_id, time.time(), compressed_data, score, compression, 
                  json.dumps(metadata) if metadata else None)
             )
         elif tier == 'L2':
             cursor.execute(
-                f"INSERT INTO {table_name} (user_id, timestamp, data, score, compression, access_count, metadata) "
-                f"VALUES (?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO memory_l2 (user_id, timestamp, data, score, compression, access_count, metadata) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?)",
                 (user_id, time.time(), compressed_data, score, compression, 1,
                  json.dumps(metadata) if metadata else None)
             )
         elif tier == 'L3':
             cursor.execute(
-                f"INSERT INTO {table_name} (user_id, timestamp, data, score, compression, access_count, embedding, metadata) "
-                f"VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO memory_l3 (user_id, timestamp, data, score, compression, access_count, embedding, metadata) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
                 (user_id, time.time(), compressed_data, score, compression, 1, embedding_blob,
                  json.dumps(metadata) if metadata else None)
             )
@@ -191,30 +185,30 @@ class NeuroRNASStorageManager:
         
         # Implement size limits - remove oldest entries if table exceeds size limit
         if tier == 'L1':
-            cursor.execute(f"SELECT COUNT(*) FROM {table_name} WHERE user_id = ?", (user_id,))
+            cursor.execute("SELECT COUNT(*) FROM memory_l1 WHERE user_id = ?", (user_id,))
             count = cursor.fetchone()[0]
             if count > 20:  # L1 limit per user
                 cursor.execute(
-                    f"DELETE FROM {table_name} WHERE id IN "
-                    f"(SELECT id FROM {table_name} WHERE user_id = ? ORDER BY timestamp ASC LIMIT ?)",
+                    "DELETE FROM memory_l1 WHERE id IN "
+                    "(SELECT id FROM memory_l1 WHERE user_id = ? ORDER BY timestamp ASC LIMIT ?)",
                     (user_id, count - 20)
                 )
         elif tier == 'L2':
-            cursor.execute(f"SELECT COUNT(*) FROM {table_name} WHERE user_id = ?", (user_id,))
+            cursor.execute("SELECT COUNT(*) FROM memory_l2 WHERE user_id = ?", (user_id,))
             count = cursor.fetchone()[0]
             if count > 50:  # L2 limit per user
                 cursor.execute(
-                    f"DELETE FROM {table_name} WHERE id IN "
-                    f"(SELECT id FROM {table_name} WHERE user_id = ? ORDER BY score ASC, timestamp ASC LIMIT ?)",
+                    "DELETE FROM memory_l2 WHERE id IN "
+                    "(SELECT id FROM memory_l2 WHERE user_id = ? ORDER BY score ASC, timestamp ASC LIMIT ?)",
                     (user_id, count - 50)
                 )
         elif tier == 'L3':
-            cursor.execute(f"SELECT COUNT(*) FROM {table_name} WHERE user_id = ?", (user_id,))
+            cursor.execute("SELECT COUNT(*) FROM memory_l3 WHERE user_id = ?", (user_id,))
             count = cursor.fetchone()[0]
             if count > 100:  # L3 limit per user
                 cursor.execute(
-                    f"DELETE FROM {table_name} WHERE id IN "
-                    f"(SELECT id FROM {table_name} WHERE user_id = ? ORDER BY score ASC LIMIT ?)",
+                    "DELETE FROM memory_l3 WHERE id IN "
+                    "(SELECT id FROM memory_l3 WHERE user_id = ? ORDER BY score ASC LIMIT ?)",
                     (user_id, count - 100)
                 )
         
@@ -234,34 +228,69 @@ class NeuroRNASStorageManager:
         cursor = conn.cursor()
         
         # Safe table name mapping to prevent SQL injection
-        table_mapping = {
-            'L1': 'memory_l1',
-            'L2': 'memory_l2', 
-            'L3': 'memory_l3'
-        }
-        table_name = table_mapping[tier]
-        query = f"SELECT id, timestamp, data, score, compression, metadata FROM {table_name} WHERE user_id = ?"
-        params = [user_id]
-        
-        if min_score is not None:
-            query += " AND score >= ?"
-            params.append(min_score)
-        
-        query += " ORDER BY timestamp DESC LIMIT ?"
-        params.append(limit)
-        
-        cursor.execute(query, params)
-        results = cursor.fetchall()
-        
-        # Update access count for L2 and L3
-        if tier in ['L2', 'L3'] and results:
-            ids = [row[0] for row in results]
-            placeholders = ','.join('?' for _ in ids)
-            cursor.execute(
-                f"UPDATE {table_name} SET access_count = access_count + 1 "
-                f"WHERE id IN ({placeholders})",
-                ids
-            )
+        if tier == 'L1':
+            query = "SELECT id, timestamp, data, score, compression, metadata FROM memory_l1 WHERE user_id = ?"
+            params = [user_id]
+            
+            if min_score is not None:
+                query += " AND score >= ?"
+                params.append(min_score)
+            
+            query += " ORDER BY timestamp DESC LIMIT ?"
+            params.append(limit)
+            
+            cursor.execute(query, params)
+            results = cursor.fetchall()
+            
+        elif tier == 'L2':
+            query = "SELECT id, timestamp, data, score, compression, metadata FROM memory_l2 WHERE user_id = ?"
+            params = [user_id]
+            
+            if min_score is not None:
+                query += " AND score >= ?"
+                params.append(min_score)
+            
+            query += " ORDER BY timestamp DESC LIMIT ?"
+            params.append(limit)
+            
+            cursor.execute(query, params)
+            results = cursor.fetchall()
+            
+            # Update access count for L2
+            if results:
+                ids = [row[0] for row in results]
+                placeholders = ','.join('?' for _ in ids)
+                cursor.execute(
+                    f"UPDATE memory_l2 SET access_count = access_count + 1 "
+                    f"WHERE id IN ({placeholders})",
+                    ids
+                )
+                conn.commit()
+                
+        elif tier == 'L3':
+            query = "SELECT id, timestamp, data, score, compression, metadata FROM memory_l3 WHERE user_id = ?"
+            params = [user_id]
+            
+            if min_score is not None:
+                query += " AND score >= ?"
+                params.append(min_score)
+            
+            query += " ORDER BY timestamp DESC LIMIT ?"
+            params.append(limit)
+            
+            cursor.execute(query, params)
+            results = cursor.fetchall()
+            
+            # Update access count for L3
+            if results:
+                ids = [row[0] for row in results]
+                placeholders = ','.join('?' for _ in ids)
+                cursor.execute(
+                    f"UPDATE memory_l3 SET access_count = access_count + 1 "
+                    f"WHERE id IN ({placeholders})",
+                    ids
+                )
+                conn.commit()
             conn.commit()
         
         # Decompress and return results
