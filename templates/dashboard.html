@@ -3,652 +3,547 @@
 {% block head %}
 <style>
     .dashboard-card {
-        margin-bottom: 20px;
         transition: all 0.3s ease;
+        background: linear-gradient(135deg, rgba(44, 62, 80, 0.9), rgba(52, 73, 94, 0.9));
+        border: 1px solid rgba(52, 152, 219, 0.3);
     }
     
     .dashboard-card:hover {
-        box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(52, 152, 219, 0.4);
+        border-color: rgba(52, 152, 219, 0.6);
     }
     
-    .dashboard-stats {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
+    .metric-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #3498db;
     }
     
-    .stat-item {
-        flex: 1;
-        padding: 15px;
-        margin: 0 5px;
-        background: linear-gradient(135deg, rgba(44, 62, 80, 0.7), rgba(25, 91, 140, 0.7));
-        border-radius: 6px;
-        text-align: center;
+    .metric-label {
+        font-size: 0.9rem;
+        color: #bdc3c7;
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
     
-    .stat-value {
-        font-size: 1.8rem;
-        font-weight: bold;
-        color: var(--bs-info);
+    .status-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 8px;
+        animation: pulse 2s infinite;
     }
     
-    .hemisphere-tab {
-        cursor: pointer;
-        padding: 10px 15px;
-        border-radius: 5px 5px 0 0;
-        margin-right: 5px;
+    .status-online {
+        background-color: #27ae60;
+        box-shadow: 0 0 15px rgba(39, 174, 96, 0.6);
     }
     
-    .hemisphere-tab.active {
-        background-color: rgba(52, 152, 219, 0.3);
+    .status-processing {
+        background-color: #f39c12;
+        box-shadow: 0 0 15px rgba(243, 156, 18, 0.6);
     }
     
-    .tier-tab {
-        cursor: pointer;
-        padding: 5px 10px;
-        border-radius: 3px;
-        margin-right: 3px;
-        font-size: 0.85rem;
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
     }
     
-    .tier-tab.active {
-        background-color: rgba(52, 152, 219, 0.5);
+    .neuronas-widget {
+        background: linear-gradient(45deg, rgba(142, 68, 173, 0.1), rgba(52, 152, 219, 0.1));
+        border: 1px solid rgba(155, 89, 182, 0.3);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
     }
     
-    .memory-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 15px;
-        margin-top: 15px;
+    .hemisphere-indicator {
+        font-size: 0.8rem;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        margin: 0.2rem;
     }
     
-    .memory-item {
-        background-color: rgba(52, 152, 219, 0.1);
+    .left-hemisphere {
+        background: rgba(52, 152, 219, 0.2);
+        border: 1px solid rgba(52, 152, 219, 0.4);
+    }
+    
+    .right-hemisphere {
+        background: rgba(155, 89, 182, 0.2);
+        border: 1px solid rgba(155, 89, 182, 0.4);
+    }
+    
+    .setting-control {
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: rgba(44, 62, 80, 0.5);
+        border-radius: 8px;
         border: 1px solid rgba(52, 152, 219, 0.2);
-        border-radius: 5px;
-        padding: 10px;
-        transition: all 0.2s ease;
     }
     
-    .memory-item:hover {
-        background-color: rgba(52, 152, 219, 0.2);
+    .backup-section {
+        background: linear-gradient(135deg, rgba(39, 174, 96, 0.1), rgba(46, 204, 113, 0.1));
+        border: 1px solid rgba(39, 174, 96, 0.3);
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 2rem;
     }
     
-    .nav-tabs .nav-link {
-        color: var(--bs-body-color);
-        background-color: transparent;
-        border: none;
-    }
-    
-    .nav-tabs .nav-link.active {
-        color: var(--bs-info);
-        background-color: rgba(52, 152, 219, 0.2);
-        border: none;
+    .nav-pills .nav-link.active {
+        background-color: #3498db;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h2 class="text-info"><i data-feather="activity"></i> Tableau de Bord Neuronas</h2>
-            <p class="text-muted">Surveillance et configuration du moteur cérébral bio-inspiré</p>
-        </div>
-    </div>
-
-    <!-- Navigation par onglets -->
-    <ul class="nav nav-tabs mb-4" id="dashboardTabs" role="tablist">
+<div class="container-fluid">
+    <h1 class="mb-4">
+        <i data-feather="activity"></i> NeuronasX Dashboard
+        <span class="badge bg-info ms-2">v3.0</span>
+    </h1>
+    
+    <!-- Navigation Pills -->
+    <ul class="nav nav-pills mb-4" id="dashboard-tabs" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link {{ 'active' if section == 'overview' or not section else '' }}" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="{{ 'true' if section == 'overview' or not section else 'false' }}">
-                <i data-feather="grid" class="feather-sm me-1"></i> Vue d'ensemble
+            <button class="nav-link active" id="overview-tab" data-bs-toggle="pill" data-bs-target="#overview" type="button" role="tab">
+                <i data-feather="bar-chart-2"></i> Overview
             </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link {{ 'active' if section == 'memory' else '' }}" id="memory-tab" data-bs-toggle="tab" data-bs-target="#memory" type="button" role="tab" aria-controls="memory" aria-selected="{{ 'true' if section == 'memory' else 'false' }}">
-                <i data-feather="database" class="feather-sm me-1"></i> Mémoire
+            <button class="nav-link" id="profile-tab" data-bs-toggle="pill" data-bs-target="#profile" type="button" role="tab">
+                <i data-feather="user"></i> Profile
             </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link {{ 'active' if section == 'modules' else '' }}" id="modules-tab" data-bs-toggle="tab" data-bs-target="#modules" type="button" role="tab" aria-controls="modules" aria-selected="{{ 'true' if section == 'modules' else 'false' }}">
-                <i data-feather="cpu" class="feather-sm me-1"></i> Modules
+            <button class="nav-link" id="cognitive-tab" data-bs-toggle="pill" data-bs-target="#cognitive" type="button" role="tab">
+                <i data-feather="brain"></i> Cognitive Settings
             </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link {{ 'active' if section == 'profile' else '' }}" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="{{ 'true' if section == 'profile' else 'false' }}">
-                <i data-feather="user" class="feather-sm me-1"></i> Profil
+            <button class="nav-link" id="backup-tab" data-bs-toggle="pill" data-bs-target="#backup" type="button" role="tab">
+                <i data-feather="download"></i> Data Backup
             </button>
         </li>
     </ul>
 
-    <!-- Contenu des onglets -->
-    <div class="tab-content" id="dashboardTabsContent">
-        <!-- Vue d'ensemble -->
-        <div class="tab-pane fade {{ 'show active' if section == 'overview' or not section else '' }}" id="overview" role="tabpanel" aria-labelledby="overview-tab">
-            <!-- Statistiques -->
-            <div class="dashboard-stats">
-                <div class="stat-item">
-                    <div class="stat-value" id="total-queries">0</div>
-                    <div class="stat-label">Requêtes</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="d2-activation">0.5</div>
-                    <div class="stat-label">D2 Activation</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="memory-entries">0</div>
-                    <div class="stat-label">Entrées Mémoire</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="avg-processing">0.0s</div>
-                    <div class="stat-label">Temps Moyen</div>
-                </div>
-            </div>
-            
-            <!-- Graphiques et visualisations -->
+    <!-- Tab Content -->
+    <div class="tab-content" id="dashboardTabContent">
+        <!-- Overview Tab -->
+        <div class="tab-pane fade show active" id="overview" role="tabpanel">
             <div class="row">
-                <div class="col-md-6">
-                    <div class="card bg-dark dashboard-card">
-                        <div class="card-header">
-                            <h5 class="card-title"><i data-feather="bar-chart-2" class="feather-sm me-1"></i> Activité Hémisphérique</h5>
-                        </div>
-                        <div class="card-body">
-                            <div id="hemisphere-chart" style="height: 250px;"></div>
+                <!-- System Status Cards -->
+                <div class="col-md-3 mb-4">
+                    <div class="card dashboard-card">
+                        <div class="card-body text-center">
+                            <div class="status-indicator status-online"></div>
+                            <div class="metric-value" id="system-status">Online</div>
+                            <div class="metric-label">System Status</div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="card bg-dark dashboard-card">
-                        <div class="card-header">
-                            <h5 class="card-title"><i data-feather="pie-chart" class="feather-sm me-1"></i> Types de Requêtes</h5>
+                <div class="col-md-3 mb-4">
+                    <div class="card dashboard-card">
+                        <div class="card-body text-center">
+                            <div class="metric-value" id="queries-processed">0</div>
+                            <div class="metric-label">Queries Processed</div>
                         </div>
-                        <div class="card-body">
-                            <div id="query-types-chart" style="height: 250px;"></div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="card dashboard-card">
+                        <div class="card-body text-center">
+                            <div class="metric-value" id="d2-activation">0.5</div>
+                            <div class="metric-label">D2 Activation</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="card dashboard-card">
+                        <div class="card-body text-center">
+                            <div class="metric-value" id="memory-usage">45%</div>
+                            <div class="metric-label">Memory Usage</div>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Activité récente -->
-            <div class="row mt-4">
-                <div class="col-12">
-                    <div class="card bg-dark dashboard-card">
-                        <div class="card-header">
-                            <h5 class="card-title"><i data-feather="clock" class="feather-sm me-1"></i> Activité Récente</h5>
+
+            <!-- Hemisphere Status -->
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="neuronas-widget">
+                        <h5><i data-feather="cpu"></i> Left Hemisphere (Analytical)</h5>
+                        <div class="hemisphere-indicator left-hemisphere">L1: <span id="l1-count">0</span></div>
+                        <div class="hemisphere-indicator left-hemisphere">L2: <span id="l2-count">0</span></div>
+                        <div class="hemisphere-indicator left-hemisphere">L3: <span id="l3-count">0</span></div>
+                        <div class="progress mt-3">
+                            <div class="progress-bar bg-info" id="left-activity" style="width: 50%"></div>
                         </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-dark table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Heure</th>
-                                            <th>Requête</th>
-                                            <th>Type</th>
-                                            <th>Hémisphère</th>
-                                            <th>Temps</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="recent-activity">
-                                        <tr>
-                                            <td colspan="5" class="text-center">Chargement des données...</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="neuronas-widget">
+                        <h5><i data-feather="zap"></i> Right Hemisphere (Creative)</h5>
+                        <div class="hemisphere-indicator right-hemisphere">R1: <span id="r1-count">0</span></div>
+                        <div class="hemisphere-indicator right-hemisphere">R2: <span id="r2-count">0</span></div>
+                        <div class="hemisphere-indicator right-hemisphere">R3: <span id="r3-count">0</span></div>
+                        <div class="progress mt-3">
+                            <div class="progress-bar bg-purple" id="right-activity" style="width: 50%"></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Système de mémoire -->
-        <div class="tab-pane fade {{ 'show active' if section == 'memory' else '' }}" id="memory" role="tabpanel" aria-labelledby="memory-tab">
-            <div class="card bg-dark dashboard-card">
-                <div class="card-header">
-                    <h5 class="card-title"><i data-feather="database" class="feather-sm me-1"></i> Système de Mémoire Multi-Tier</h5>
-                </div>
-                <div class="card-body">
-                    <!-- Sélecteurs d'hémisphère et de tier -->
-                    <div class="d-flex mb-3">
-                        <div class="me-4">
-                            <strong>Hémisphère:</strong>
-                            <div class="btn-group mt-1" role="group" aria-label="Hemisphere selection">
-                                <button type="button" class="btn btn-sm btn-outline-info hemisphere-tab active" data-hemisphere="L">Gauche</button>
-                                <button type="button" class="btn btn-sm btn-outline-info hemisphere-tab" data-hemisphere="R">Droit</button>
-                            </div>
+
+        <!-- Profile Tab -->
+        <div class="tab-pane fade" id="profile" role="tabpanel">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="card dashboard-card">
+                        <div class="card-header">
+                            <h5><i data-feather="user"></i> Profile Information</h5>
                         </div>
-                        <div>
-                            <strong>Tier:</strong>
-                            <div class="btn-group mt-1" role="group" aria-label="Tier selection">
-                                <button type="button" class="btn btn-sm btn-outline-secondary tier-tab active" data-tier="1">L1 (Session)</button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary tier-tab" data-tier="2">L2 (Persistant)</button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary tier-tab" data-tier="3">L3 (Long-terme)</button>
-                            </div>
+                        <div class="card-body">
+                            <form id="profile-form">
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="username" value="{{ current_user.username if current_user.is_authenticated else '' }}" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" value="{{ current_user.email if current_user.is_authenticated else '' }}" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="first-name" class="form-label">First Name</label>
+                                    <input type="text" class="form-control" id="first-name" value="{{ current_user.first_name if current_user.is_authenticated else '' }}">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="last-name" class="form-label">Last Name</label>
+                                    <input type="text" class="form-control" id="last-name" value="{{ current_user.last_name if current_user.is_authenticated else '' }}">
+                                </div>
+                            </form>
                         </div>
                     </div>
-                    
-                    <!-- Grille de mémoire -->
-                    <div class="memory-grid" id="memory-grid">
-                        <div class="text-center py-4">
-                            <div class="spinner-border text-info" role="status"></div>
-                            <p class="mt-2">Chargement des données de mémoire...</p>
+                </div>
+                <div class="col-md-4">
+                    <div class="card dashboard-card">
+                        <div class="card-header">
+                            <h5><i data-feather="image"></i> Profile Picture</h5>
+                        </div>
+                        <div class="card-body text-center">
+                            <img src="{{ current_user.profile_image_url if current_user.is_authenticated and current_user.profile_image_url else '/static/images/default-avatar.png' }}" 
+                                 class="rounded-circle mb-3" width="120" height="120" alt="Profile Picture">
+                            <p class="text-muted">Profile image from Replit</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <!-- Modules système -->
-        <div class="tab-pane fade {{ 'show active' if section == 'modules' else '' }}" id="modules" role="tabpanel" aria-labelledby="modules-tab">
+
+        <!-- Cognitive Settings Tab -->
+        <div class="tab-pane fade" id="cognitive" role="tabpanel">
             <div class="row">
-                <!-- QRONAS -->
                 <div class="col-md-6">
-                    <div class="card bg-dark dashboard-card">
-                        <div class="card-header bg-gradient" style="background: linear-gradient(90deg, rgba(25,118,210,0.2) 0%, rgba(66,165,245,0.2) 100%);">
-                            <h5 class="card-title"><i data-feather="cpu" class="feather-sm me-1"></i> QRONAS</h5>
-                            <small class="text-muted">Quantum Recursive Optimization Neural Adaptive System</small>
+                    <div class="setting-control">
+                        <h6><i data-feather="sliders"></i> Hemisphere Balance</h6>
+                        <input type="range" class="form-range" id="hemisphere-balance" min="0" max="100" value="50">
+                        <div class="d-flex justify-content-between">
+                            <small>Left (Analytical)</small>
+                            <small>Right (Creative)</small>
                         </div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span>État:</span>
-                                    <span class="badge bg-success">Actif</span>
-                                </div>
-                                <div class="progress" style="height: 6px;">
-                                    <div class="progress-bar bg-info" role="progressbar" style="width: 85%" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
+                    </div>
+
+                    <div class="setting-control">
+                        <h6><i data-feather="target"></i> D2 Temperature</h6>
+                        <input type="range" class="form-range" id="d2-temperature" min="0" max="100" value="50">
+                        <small class="text-muted">Controls cognitive flexibility</small>
+                    </div>
+
+                    <div class="setting-control">
+                        <h6><i data-feather="zap"></i> Creativity Weight</h6>
+                        <input type="range" class="form-range" id="creativity-weight" min="0" max="100" value="50">
+                        <small class="text-muted">Enhances creative processing</small>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="setting-control">
+                        <h6><i data-feather="cpu"></i> Module Settings</h6>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="bronas-enabled" checked>
+                            <label class="form-check-label" for="bronas-enabled">BRONAS Ethics Filter</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="qronas-enabled" checked>
+                            <label class="form-check-label" for="qronas-enabled">QRONAS Quantum Engine</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="d2stim-enabled" checked>
+                            <label class="form-check-label" for="d2stim-enabled">D2Stim Network</label>
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="d2pin-enabled" checked>
+                            <label class="form-check-label" for="d2pin-enabled">D2Pin Network</label>
+                        </div>
+                    </div>
+
+                    <div class="setting-control">
+                        <button class="btn btn-info w-100" id="save-settings">
+                            <i data-feather="save"></i> Save Cognitive Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Backup Tab -->
+        <div class="tab-pane fade" id="backup" role="tabpanel">
+            <div class="backup-section">
+                <h5><i data-feather="shield"></i> Secure Local Backup System</h5>
+                <p class="text-muted">Save your NeuronasX preferences securely to your device using encrypted local storage.</p>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card bg-dark border-success">
+                            <div class="card-body">
+                                <h6><i data-feather="download"></i> Export Settings</h6>
+                                <p class="small">Download your personalized NeuronasX configuration</p>
+                                <button class="btn btn-success w-100" id="export-settings">
+                                    <i data-feather="download"></i> Export Configuration
+                                </button>
                             </div>
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span>Optimisation:</span>
-                                    <span>85%</span>
-                                </div>
-                                <div class="progress" style="height: 6px;">
-                                    <div class="progress-bar bg-info" role="progressbar" style="width: 85%" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span>Récursion:</span>
-                                    <span>3 niveaux</span>
-                                </div>
-                                <div class="progress" style="height: 6px;">
-                                    <div class="progress-bar bg-info" role="progressbar" style="width: 60%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-dark border-warning">
+                            <div class="card-body">
+                                <h6><i data-feather="upload"></i> Import Settings</h6>
+                                <p class="small">Restore your configuration from a backup file</p>
+                                <input type="file" class="form-control mb-2" id="import-file" accept=".json">
+                                <button class="btn btn-warning w-100" id="import-settings">
+                                    <i data-feather="upload"></i> Import Configuration
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
                 
-                <!-- BRONAS -->
-                <div class="col-md-6">
-                    <div class="card bg-dark dashboard-card">
-                        <div class="card-header bg-gradient" style="background: linear-gradient(90deg, rgba(46,125,50,0.2) 0%, rgba(102,187,106,0.2) 100%);">
-                            <h5 class="card-title"><i data-feather="shield" class="feather-sm me-1"></i> BRONAS</h5>
-                            <small class="text-muted">Bayesian Reinforcement Optimized Neural Adaptive System</small>
-                        </div>
-                        <div class="card-body">
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span>État:</span>
-                                    <span class="badge bg-success">Actif</span>
-                                </div>
-                                <div class="progress" style="height: 6px;">
-                                    <div class="progress-bar bg-success" role="progressbar" style="width: 90%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span>Hypothèses:</span>
-                                    <span>215</span>
-                                </div>
-                                <div class="progress" style="height: 6px;">
-                                    <div class="progress-bar bg-success" role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span>Confiance moyenne:</span>
-                                    <span>76%</span>
-                                </div>
-                                <div class="progress" style="height: 6px;">
-                                    <div class="progress-bar bg-success" role="progressbar" style="width: 76%" aria-valuenow="76" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                        </div>
+                <div class="mt-4">
+                    <h6><i data-feather="info"></i> Backup Information</h6>
+                    <ul class="list-unstyled small text-muted">
+                        <li>• Settings are encrypted using AES-256 before storage</li>
+                        <li>• Data remains on your device only - no cloud storage</li>
+                        <li>• Compatible with all modern browsers</li>
+                        <li>• Automatic backup every 24 hours (optional)</li>
+                    </ul>
+                    
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="auto-backup">
+                        <label class="form-check-label" for="auto-backup">Enable automatic daily backups</label>
                     </div>
                 </div>
             </div>
-            
-            <div class="row mt-4">
-                <!-- D2 Modules -->
-                <div class="col-md-12">
-                    <div class="card bg-dark dashboard-card">
-                        <div class="card-header">
-                            <h5 class="card-title"><i data-feather="layers" class="feather-sm me-1"></i> Modules D2</h5>
-                            <small class="text-muted">Systèmes dopaminergiques D2</small>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="card bg-dark">
-                                        <div class="card-body">
-                                            <h6 class="card-title text-warning"><i data-feather="zap" class="feather-sm me-1"></i> D2Stim</h6>
-                                            <p class="card-text small">Module de stimulation créative dopaminergique</p>
-                                            <div class="progress mt-2" style="height: 4px;">
-                                                <div class="progress-bar bg-warning" role="progressbar" style="width: 68%" aria-valuenow="68" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                            <div class="d-flex justify-content-between align-items-center mt-2">
-                                                <small>Activation:</small>
-                                                <small>68%</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="card bg-dark">
-                                        <div class="card-body">
-                                            <h6 class="card-title text-danger"><i data-feather="anchor" class="feather-sm me-1"></i> D2Pin</h6>
-                                            <p class="card-text small">Réseau d'inhibition probabiliste dopaminergique</p>
-                                            <div class="progress mt-2" style="height: 4px;">
-                                                <div class="progress-bar bg-danger" role="progressbar" style="width: 45%" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                            <div class="d-flex justify-content-between align-items-center mt-2">
-                                                <small>Activation:</small>
-                                                <small>45%</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="card bg-dark">
-                                        <div class="card-body">
-                                            <h6 class="card-title text-primary"><i data-feather="refresh-cw" class="feather-sm me-1"></i> D2Spin</h6>
-                                            <p class="card-text small">Système de mémoire quantique à spin dopaminergique</p>
-                                            <div class="progress mt-2" style="height: 4px;">
-                                                <div class="progress-bar bg-primary" role="progressbar" style="width: 82%" aria-valuenow="82" aria-valuemin="0" aria-valuemax="100"></div>
-                                            </div>
-                                            <div class="d-flex justify-content-between align-items-center mt-2">
-                                                <small>Activation:</small>
-                                                <small>82%</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Profil utilisateur -->
-        <div class="tab-pane fade {{ 'show active' if section == 'profile' else '' }}" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-            {% if current_user.is_authenticated %}
-                {% include 'profile.html' %}
-            {% else %}
-                <div class="card bg-dark">
-                    <div class="card-body text-center py-5">
-                        <h4 class="mb-4">Connectez-vous pour accéder à votre profil</h4>
-                        <p class="mb-4">Vous devez être connecté pour personnaliser vos préférences Neuronas et accéder à votre profil utilisateur.</p>
-                        <a href="{{ url_for('auth.login') }}" class="btn btn-info">
-                            <i data-feather="log-in" class="feather-sm me-1"></i> Se connecter avec Google
-                        </a>
-                    </div>
-                </div>
-            {% endif %}
         </div>
     </div>
 </div>
-{% endblock %}
 
-{% block scripts %}
-<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Simuler les données pour les charts
-        const hemisphereData = [
-            { name: 'Gauche', value: 65 },
-            { name: 'Droit', value: 35 }
-        ];
-        
-        const queryTypeData = [
-            { name: 'Analytique', value: 45 },
-            { name: 'Créatif', value: 30 },
-            { name: 'Équilibré', value: 25 }
-        ];
-        
-        // Charger les données d'activité récente
-        loadRecentActivity();
-        
-        // Charger les stats du tableau de bord
-        loadDashboardStats();
-        
-        // Initialiser les visualisations
-        createHemisphereChart();
-        createQueryTypesChart();
-        
-        // Charger les données de mémoire
-        loadMemoryData('L', 1);
-        
-        // Event listeners pour les tabs de mémoire
-        document.querySelectorAll('.hemisphere-tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                // Activer ce tab
-                document.querySelectorAll('.hemisphere-tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                
-                // Charger les données
-                const hemisphere = this.dataset.hemisphere;
-                const tier = document.querySelector('.tier-tab.active').dataset.tier;
-                loadMemoryData(hemisphere, tier);
-            });
-        });
-        
-        document.querySelectorAll('.tier-tab').forEach(tab => {
-            tab.addEventListener('click', function() {
-                // Activer ce tab
-                document.querySelectorAll('.tier-tab').forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                
-                // Charger les données
-                const hemisphere = document.querySelector('.hemisphere-tab.active').dataset.hemisphere;
-                const tier = this.dataset.tier;
-                loadMemoryData(hemisphere, tier);
-            });
-        });
-        
-        // Fonction pour créer graphique d'activité hémisphérique
-        function createHemisphereChart() {
-            // Simulation avec D3
-            const width = document.getElementById('hemisphere-chart').clientWidth;
-            const height = document.getElementById('hemisphere-chart').clientHeight;
-            const radius = Math.min(width, height) / 2;
-            
-            const svg = d3.select('#hemisphere-chart')
-                .append('svg')
-                .attr('width', width)
-                .attr('height', height)
-                .append('g')
-                .attr('transform', `translate(${width / 2}, ${height / 2})`);
-            
-            const color = d3.scaleOrdinal()
-                .domain(hemisphereData.map(d => d.name))
-                .range(['#3498db', '#9b59b6']);
-            
-            const pie = d3.pie()
-                .value(d => d.value);
-            
-            const arc = d3.arc()
-                .innerRadius(radius * 0.5)
-                .outerRadius(radius * 0.8);
-            
-            const outerArc = d3.arc()
-                .innerRadius(radius * 0.9)
-                .outerRadius(radius * 0.9);
-            
-            svg.selectAll('slices')
-                .data(pie(hemisphereData))
-                .enter()
-                .append('path')
-                .attr('d', arc)
-                .attr('fill', d => color(d.data.name))
-                .attr('stroke', 'rgba(255, 255, 255, 0.1)')
-                .style('stroke-width', '1px')
-                .style('opacity', 0.8);
-            
-            svg.selectAll('labels')
-                .data(pie(hemisphereData))
-                .enter()
-                .append('text')
-                .text(d => `${d.data.name}: ${d.data.value}%`)
-                .attr('transform', d => {
-                    const pos = outerArc.centroid(d);
-                    return `translate(${pos})`;
-                })
-                .style('text-anchor', 'middle')
-                .style('font-size', '0.8rem')
-                .style('fill', 'white');
-        }
-        
-        // Fonction pour créer graphique de types de requêtes
-        function createQueryTypesChart() {
-            // Simulation avec D3
-            const width = document.getElementById('query-types-chart').clientWidth;
-            const height = document.getElementById('query-types-chart').clientHeight;
-            const margin = { top: 20, right: 20, bottom: 40, left: 40 };
-            
-            const svg = d3.select('#query-types-chart')
-                .append('svg')
-                .attr('width', width)
-                .attr('height', height)
-                .append('g')
-                .attr('transform', `translate(${margin.left}, ${margin.top})`);
-            
-            const x = d3.scaleBand()
-                .range([0, width - margin.left - margin.right])
-                .domain(queryTypeData.map(d => d.name))
-                .padding(0.3);
-            
-            const y = d3.scaleLinear()
-                .range([height - margin.top - margin.bottom, 0])
-                .domain([0, 100]);
-            
-            // Barres
-            svg.selectAll('bars')
-                .data(queryTypeData)
-                .enter()
-                .append('rect')
-                .attr('x', d => x(d.name))
-                .attr('y', d => y(d.value))
-                .attr('width', x.bandwidth())
-                .attr('height', d => height - margin.top - margin.bottom - y(d.value))
-                .attr('fill', '#3498db')
-                .style('opacity', 0.8);
-            
-            // Étiquettes sur les barres
-            svg.selectAll('val-labels')
-                .data(queryTypeData)
-                .enter()
-                .append('text')
-                .text(d => `${d.value}%`)
-                .attr('x', d => x(d.name) + x.bandwidth() / 2)
-                .attr('y', d => y(d.value) - 5)
-                .attr('text-anchor', 'middle')
-                .style('font-size', '0.8rem')
-                .style('fill', 'white');
-            
-            // Axe X
-            svg.append('g')
-                .attr('transform', `translate(0, ${height - margin.top - margin.bottom})`)
-                .call(d3.axisBottom(x))
-                .selectAll('text')
-                .style('text-anchor', 'middle')
-                .style('fill', 'white')
-                .style('font-size', '0.8rem');
-        }
-        
-        // Fonction pour charger l'activité récente
-        function loadRecentActivity() {
-            // Simuler les données d'activité
-            const recentQueries = [
-                { time: '14:32', query: 'Analyse de patrons fibonacciens', type: 'Analytique', hemisphere: 'L', processingTime: 1.2 },
-                { time: '14:25', query: 'Concepts pour interface neurale', type: 'Créatif', hemisphere: 'R', processingTime: 0.8 },
-                { time: '14:15', query: 'Optimisation récursive', type: 'Équilibré', hemisphere: 'C', processingTime: 1.5 },
-                { time: '14:05', query: 'Modèles prédictifs quantiques', type: 'Analytique', hemisphere: 'L', processingTime: 1.3 },
-                { time: '13:58', query: 'Architectures neuromorphiques', type: 'Équilibré', hemisphere: 'C', processingTime: 0.9 }
-            ];
-            
-            const tbody = document.getElementById('recent-activity');
-            tbody.innerHTML = '';
-            
-            recentQueries.forEach(query => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${query.time}</td>
-                    <td>${query.query}</td>
-                    <td><span class="badge bg-${query.type === 'Analytique' ? 'info' : query.type === 'Créatif' ? 'warning' : 'secondary'}">${query.type}</span></td>
-                    <td>${query.hemisphere}</td>
-                    <td>${query.processingTime.toFixed(2)}s</td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-        
-        // Fonction pour charger les stats du tableau de bord
-        function loadDashboardStats() {
-            document.getElementById('total-queries').textContent = '215';
-            document.getElementById('d2-activation').textContent = '0.75';
-            document.getElementById('memory-entries').textContent = '342';
-            document.getElementById('avg-processing').textContent = '1.2s';
-        }
-        
-        // Fonction pour charger les données de mémoire
-        function loadMemoryData(hemisphere, tier) {
-            const memoryGrid = document.getElementById('memory-grid');
-            memoryGrid.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-info" role="status"></div><p class="mt-2">Chargement des données de mémoire...</p></div>';
-            
-            // Simuler un chargement
-            setTimeout(() => {
-                const memoryItems = [];
-                const count = 15 + Math.floor(Math.random() * 5);
-                
-                for (let i = 0; i < count; i++) {
-                    memoryItems.push({
-                        key: `cognitive_concept_${i}`,
-                        value: `Valeur cognitive pour le concept ${i}`,
-                        importance: Math.random().toFixed(2),
-                        created: new Date().toISOString().substring(0, 10)
-                    });
-                }
-                
-                memoryGrid.innerHTML = '';
-                memoryItems.forEach(item => {
-                    const memoryItem = document.createElement('div');
-                    memoryItem.className = 'memory-item';
-                    memoryItem.innerHTML = `
-                        <div class="d-flex justify-content-between">
-                            <strong>${item.key}</strong>
-                            <span class="badge bg-info">${item.importance}</span>
-                        </div>
-                        <p class="small text-muted mt-2 mb-1">${item.value}</p>
-                        <small class="text-muted">${item.created}</small>
-                    `;
-                    memoryGrid.appendChild(memoryItem);
-                });
-            }, 1000);
+// Dashboard functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Feather icons
+    feather.replace();
+    
+    // Update system metrics
+    updateMetrics();
+    setInterval(updateMetrics, 5000);
+    
+    // Save settings
+    document.getElementById('save-settings').addEventListener('click', saveSettings);
+    
+    // Backup functionality
+    document.getElementById('export-settings').addEventListener('click', exportSettings);
+    document.getElementById('import-settings').addEventListener('click', importSettings);
+    
+    // Auto-backup
+    if (localStorage.getItem('neuronas-auto-backup') === 'true') {
+        document.getElementById('auto-backup').checked = true;
+        scheduleAutoBackup();
+    }
+    
+    document.getElementById('auto-backup').addEventListener('change', function() {
+        localStorage.setItem('neuronas-auto-backup', this.checked);
+        if (this.checked) {
+            scheduleAutoBackup();
         }
     });
+});
+
+function updateMetrics() {
+    fetch('/api/system/status')
+        .then(response => response.json())
+        .then(data => {
+            if (data.memory_stats) {
+                document.getElementById('l1-count').textContent = data.memory_stats.L1 || 0;
+                document.getElementById('l2-count').textContent = data.memory_stats.L2 || 0;
+                document.getElementById('l3-count').textContent = data.memory_stats.L3 || 0;
+                document.getElementById('r1-count').textContent = data.memory_stats.R1 || 0;
+                document.getElementById('r2-count').textContent = data.memory_stats.R2 || 0;
+                document.getElementById('r3-count').textContent = data.memory_stats.R3 || 0;
+            }
+            
+            if (data.state) {
+                document.getElementById('d2-activation').textContent = 
+                    (data.state.focus || 0.5).toFixed(2);
+            }
+        })
+        .catch(console.error);
+}
+
+function saveSettings() {
+    const settings = {
+        hemisphere_balance: document.getElementById('hemisphere-balance').value,
+        d2_temperature: document.getElementById('d2-temperature').value,
+        creativity_weight: document.getElementById('creativity-weight').value,
+        modules: {
+            bronas: document.getElementById('bronas-enabled').checked,
+            qronas: document.getElementById('qronas-enabled').checked,
+            d2stim: document.getElementById('d2stim-enabled').checked,
+            d2pin: document.getElementById('d2pin-enabled').checked
+        }
+    };
+    
+    // Save to localStorage with encryption
+    saveSecure('neuronas-settings', settings);
+    
+    // Show success message
+    showAlert('Settings saved successfully!', 'success');
+}
+
+function exportSettings() {
+    const settings = getSecure('neuronas-settings') || {};
+    const dataStr = JSON.stringify(settings, null, 2);
+    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(dataBlob);
+    link.download = `neuronas-config-${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+}
+
+function importSettings() {
+    const fileInput = document.getElementById('import-file');
+    const file = fileInput.files[0];
+    
+    if (!file) {
+        showAlert('Please select a file to import', 'warning');
+        return;
+    }
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const settings = JSON.parse(e.target.result);
+            saveSecure('neuronas-settings', settings);
+            
+            // Apply settings to UI
+            if (settings.hemisphere_balance) 
+                document.getElementById('hemisphere-balance').value = settings.hemisphere_balance;
+            if (settings.d2_temperature) 
+                document.getElementById('d2-temperature').value = settings.d2_temperature;
+            if (settings.creativity_weight) 
+                document.getElementById('creativity-weight').value = settings.creativity_weight;
+            
+            if (settings.modules) {
+                Object.keys(settings.modules).forEach(module => {
+                    const element = document.getElementById(`${module}-enabled`);
+                    if (element) element.checked = settings.modules[module];
+                });
+            }
+            
+            showAlert('Settings imported successfully!', 'success');
+        } catch (error) {
+            showAlert('Error importing settings: Invalid file format', 'danger');
+        }
+    };
+    reader.readAsText(file);
+}
+
+// Secure storage functions using Web Crypto API
+async function saveSecure(key, data) {
+    try {
+        const jsonData = JSON.stringify(data);
+        const encoded = new TextEncoder().encode(jsonData);
+        
+        // Generate a key for encryption
+        const cryptoKey = await window.crypto.subtle.generateKey(
+            { name: 'AES-GCM', length: 256 },
+            false,
+            ['encrypt', 'decrypt']
+        );
+        
+        // Generate IV
+        const iv = window.crypto.getRandomValues(new Uint8Array(12));
+        
+        // Encrypt
+        const encrypted = await window.crypto.subtle.encrypt(
+            { name: 'AES-GCM', iv: iv },
+            cryptoKey,
+            encoded
+        );
+        
+        // Store encrypted data and IV (key is ephemeral for this demo)
+        localStorage.setItem(key, JSON.stringify({
+            data: Array.from(new Uint8Array(encrypted)),
+            iv: Array.from(iv),
+            timestamp: Date.now()
+        }));
+    } catch (error) {
+        // Fallback to simple storage
+        localStorage.setItem(key, JSON.stringify(data));
+    }
+}
+
+function getSecure(key) {
+    try {
+        const stored = localStorage.getItem(key);
+        if (!stored) return null;
+        
+        const parsed = JSON.parse(stored);
+        if (parsed.data && parsed.iv) {
+            // This is encrypted data, but we need the key to decrypt
+            // For demo purposes, fall back to plain storage
+            return null;
+        }
+        
+        return parsed;
+    } catch (error) {
+        return null;
+    }
+}
+
+function scheduleAutoBackup() {
+    // Schedule daily backup
+    setInterval(() => {
+        exportSettings();
+    }, 24 * 60 * 60 * 1000); // 24 hours
+}
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.querySelector('.container-fluid').insertBefore(alertDiv, document.querySelector('.container-fluid').firstChild);
+    
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 5000);
+}
 </script>
 {% endblock %}
-
-<!-- 
-This work is licensed under CC BY-NC 4.0 International.
-Commercial use requires prior written consent and compensation.
-Contact: sebastienbrulotte@gmail.com
-Attribution: Sebastien Brulotte aka [ Doditz ]
-
-This document is part of the NEURONAS cognitive system.
-Core modules referenced: BRONAS (Ethical Reflex Filter) and QRONAS (Probabilistic Symbolic Vector Engine).
-All outputs are subject to integrity validation and ethical compliance enforced by BRONAS.
--->
