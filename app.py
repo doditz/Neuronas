@@ -142,20 +142,24 @@ with app.app_context():
     db.create_all()
     initialize_application()
 
-# Import and initialize Replit authentication after app context
-with app.app_context():
-    from replit_auth import make_replit_blueprint, login_manager
-    
-    # Register Replit Auth blueprint
-    replit_bp = make_replit_blueprint()
-    if replit_bp:
-        app.register_blueprint(replit_bp, url_prefix="/auth")
-        logger.info("Replit Auth initialized successfully")
-    else:
-        logger.warning("Replit Auth not available - REPL_ID environment variable missing")
+# Authentication will be added once route conflicts are resolved
+# with app.app_context():
+#     from replit_auth import make_replit_blueprint, login_manager
+#     replit_bp = make_replit_blueprint()
+#     if replit_bp:
+#         app.register_blueprint(replit_bp, url_prefix="/auth")
+        
+# Make session permanent for user sessions
+@app.before_request  
+def make_session_permanent():
+    session.permanent = True
 
 # Register routes
 register_routes(app)
+
+# Temporarily disable old auth to avoid conflicts
+# from auth import init_auth
+# login_manager = init_auth(app)
 
 # Register memory routes blueprint
 app.register_blueprint(memory_bp, url_prefix='/api/memory')

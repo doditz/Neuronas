@@ -36,8 +36,8 @@ auth_bp = Blueprint('auth', __name__)
 # OAuth2 Client
 client = WebApplicationClient(GOOGLE_CLIENT_ID) if GOOGLE_CLIENT_ID else None
 
-@auth_bp.route('/login', methods=['GET', 'POST'])
-def login():
+@auth_bp.route('/old_login', methods=['GET', 'POST'])
+def old_login():
     if request.method == 'POST':
         # Handle traditional email/password login
         email = request.form.get('email')
