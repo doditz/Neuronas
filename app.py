@@ -142,10 +142,17 @@ with app.app_context():
     db.create_all()
     initialize_application()
 
-# Import and initialize authentication after app context
+# Import and initialize Replit authentication after app context
 with app.app_context():
-    from auth import init_auth
-    login_manager = init_auth(app)
+    from replit_auth import make_replit_blueprint, login_manager
+    
+    # Register Replit Auth blueprint
+    replit_bp = make_replit_blueprint()
+    if replit_bp:
+        app.register_blueprint(replit_bp, url_prefix="/auth")
+        logger.info("Replit Auth initialized successfully")
+    else:
+        logger.warning("Replit Auth not available - REPL_ID environment variable missing")
 
 # Register routes
 register_routes(app)
@@ -161,8 +168,8 @@ from agent_routes import agent_bp
 app.register_blueprint(agent_bp, url_prefix='/api/agent')
 
 # Register new feature routes (BRONAS, geolocation, session, progress)
-from feature_routes import register_routes
-register_routes(app)
+from feature_routes import register_routes as register_feature_routes
+register_feature_routes(app)
 
 # Register model management routes
 from model_routes import register_model_routes
