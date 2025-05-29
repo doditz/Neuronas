@@ -67,16 +67,34 @@
             color: #4ecdc4;
         }
         
+        .auth-options {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+        
         .login-btn {
-            display: inline-block;
-            padding: 15px 30px;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 15px 25px;
             color: white;
             text-decoration: none;
             border-radius: 50px;
             font-weight: bold;
             transition: transform 0.3s ease;
-            margin-top: 2rem;
+            min-width: 200px;
+            justify-content: center;
+        }
+        
+        .replit-btn {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+        }
+        
+        .google-btn {
+            background: linear-gradient(45deg, #4285f4, #34a853);
         }
         
         .login-btn:hover {
@@ -125,7 +143,14 @@
             </div>
         </div>
         
-        <a href="/auth/signin" class="login-btn">Sign In with Replit</a>
+        <div class="auth-options">
+            <a href="/auth/signin" class="login-btn replit-btn">
+                <span>🔗</span> Sign In with Replit
+            </a>
+            <a href="/auth/google/signin" class="login-btn google-btn">
+                <span>🔍</span> Sign In with Google
+            </a>
+        </div>
         
         <p style="margin-top: 2rem; opacity: 0.7; font-size: 0.9rem;">
             Experience the next generation of AI cognitive processing

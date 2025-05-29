@@ -114,8 +114,8 @@ def make_replit_blueprint():
 
     @replit_bp.route("/signin")
     def signin():
-        """Redirect to Replit OAuth for authentication"""
-        return redirect(url_for("replit_auth.authorize"))
+        """Start Replit OAuth authentication"""
+        return replit_bp.authorize()
 
     @replit_bp.route("/logout")
     def logout():

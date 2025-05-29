@@ -146,13 +146,19 @@ with app.app_context():
 with app.app_context():
     from replit_auth import make_replit_blueprint, login_manager
     
-    # Register Replit Auth blueprint with unique endpoint names
+    # Register Replit Auth blueprint
     replit_bp = make_replit_blueprint()
     if replit_bp:
         app.register_blueprint(replit_bp, url_prefix="/auth")
         logger.info("Replit Auth initialized successfully")
     else:
         logger.warning("Replit Auth not available - REPL_ID environment variable missing")
+    
+    # Register Google Auth blueprint
+    from google_auth import create_google_blueprint
+    google_bp = create_google_blueprint()
+    app.register_blueprint(google_bp, url_prefix="/auth")
+    logger.info("Google Auth blueprint registered")
         
 # Make session permanent for user sessions
 @app.before_request  
