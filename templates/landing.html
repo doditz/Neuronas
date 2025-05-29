@@ -1,35 +1,36 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NeuronasX - Neuromorphic AI System</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1e1e2e">
+    <title>NeuronasX - Bio-Inspired Cognitive Engine</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Feather Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <style>        
+        .landing-container {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            text-align: center;
+            padding: 2rem;
         }
         
-        .container {
-            text-align: center;
+        .welcome-card {
             max-width: 800px;
-            padding: 2rem;
-            background: rgba(15, 52, 96, 0.3);
+            background: rgba(30, 30, 46, 0.95);
             backdrop-filter: blur(15px);
             border-radius: 20px;
             border: 1px solid rgba(79, 172, 254, 0.2);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            padding: 3rem;
         }
         
         .logo {
@@ -75,31 +76,20 @@
             margin-top: 2rem;
         }
         
-        .login-btn {
+        .btn-auth {
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 15px 25px;
-            color: white;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: bold;
-            transition: transform 0.3s ease;
-            min-width: 200px;
-            justify-content: center;
+            gap: 8px;
         }
         
-        .replit-btn {
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-        }
-        
-        .google-btn {
-            background: linear-gradient(45deg, #4285f4, #34a853);
-        }
-        
-        .login-btn:hover {
+        .btn-auth:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            text-decoration: none;
         }
         
         .neural-animation {
@@ -119,42 +109,54 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="neural-animation"></div>
-        <h1 class="logo">NeuronasX</h1>
-        <p class="subtitle">Advanced Neuromorphic AI with Quantum-Enhanced Cognitive Processing</p>
-        
-        <div class="features">
-            <div class="feature">
-                <h3>🧠 Dual Hemisphere</h3>
-                <p>Analytical & Creative processing</p>
+    <div class="landing-container">
+        <div class="welcome-card">
+            <div class="neural-animation"></div>
+            
+            <div class="logo">
+                <span class="text-info fw-bold">Neuronas</span><span class="text-light">X</span>
+                <small class="text-muted ms-2">v3.0</small>
             </div>
-            <div class="feature">
-                <h3>⚡ Quantum Routing</h3>
-                <p>QRONAS decision system</p>
+            <div class="subtitle">Bio-Inspired Cognitive Engine</div>
+            
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">🧠</div>
+                    <h3>Neuromorphic D²STIB</h3>
+                    <p>Advanced semantic processing</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Quantum QRONAS</h3>
+                    <p>Decision routing system</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Adaptive Memory</h3>
+                    <p>Advanced cognitive storage</p>
+                </div>
             </div>
-            <div class="feature">
-                <h3>🛡️ Ethical AI</h3>
-                <p>BRONAS compliance filter</p>
+            
+            <div class="auth-options">
+                <a href="/auth/signin" class="btn btn-primary btn-auth">
+                    <i data-feather="link"></i> Sign In with Replit
+                </a>
+                <a href="/auth/google/signin" class="btn btn-info btn-auth">
+                    <i data-feather="globe"></i> Sign In with Google
+                </a>
             </div>
-            <div class="feature">
-                <h3>🧮 Memory Tiers</h3>
-                <p>Advanced cognitive storage</p>
-            </div>
+            
+            <p class="text-muted mt-4">
+                Experience the next generation of AI cognitive processing
+            </p>
         </div>
-        
-        <div class="auth-options">
-            <a href="/auth/signin" class="login-btn replit-btn">
-                <span>🔗</span> Sign In with Replit
-            </a>
-            <a href="/auth/google/signin" class="login-btn google-btn">
-                <span>🔍</span> Sign In with Google
-            </a>
-        </div>
-        
-        <p style="margin-top: 2rem; opacity: 0.7; font-size: 0.9rem;">
-            Experience the next generation of AI cognitive processing
-        </p>
     </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize Feather icons
+        feather.replace();
+    </script>
 </body>
 </html>
