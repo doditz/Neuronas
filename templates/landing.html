@@ -1,119 +1,135 @@
-{% extends "layout.html" %}
-
-{% block head %}
-<style>
-    .landing-container {
-        min-height: 80vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-    }
-    
-    .hero-title {
-        font-size: 3rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 1.5rem;
-        margin-bottom: 2rem;
-        color: #adb5bd;
-    }
-    
-    .feature-item {
-        margin-bottom: 1.5rem;
-        padding: 1.5rem;
-        border-radius: 8px;
-        background: rgba(44, 62, 80, 0.5);
-        transition: all 0.3s ease;
-    }
-    
-    .feature-item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    }
-    
-    .feature-icon {
-        margin-bottom: 1rem;
-        color: #3498db;
-    }
-    
-    .cta-section {
-        margin-top: 3rem;
-        text-align: center;
-    }
-    
-    .btn-login {
-        padding: 0.8rem 2rem;
-        font-size: 1.2rem;
-        margin-top: 1rem;
-    }
-</style>
-{% endblock %}
-
-{% block content %}
-<div class="landing-container">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuronasX - Neuromorphic AI System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 800px;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .logo {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .feature {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .feature h3 {
+            margin-bottom: 0.5rem;
+            color: #4ecdc4;
+        }
+        
+        .login-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+            margin-top: 2rem;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .neural-animation {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 2rem;
+            border: 3px solid #4ecdc4;
+            border-radius: 50%;
+            border-top: 3px solid transparent;
+            animation: spin 2s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
     <div class="container">
-        <div class="row text-center mb-5">
-            <div class="col-md-10 offset-md-1">
-                <h1 class="hero-title">
-                    <span class="text-info">Neuronas</span><span class="text-light">X</span>
-                </h1>
-                <p class="hero-subtitle">Bio-Inspired Cognitive Engine with Neuromorphic Architecture</p>
-                <div class="cta-section">
-                    <p class="lead">Sign in to experience advanced neuromorphic AI processing</p>
-                    <a href="/auth/replit_auth/login" class="btn btn-info btn-login">
-                        <i data-feather="log-in"></i> Sign in with Replit
-                    </a>
-                    <div class="mt-3">
-                        <small class="text-muted">New to NeuronasX? Signing in will create your account automatically</small>
-                    </div>
-                </div>
+        <div class="neural-animation"></div>
+        <h1 class="logo">NeuronasX</h1>
+        <p class="subtitle">Advanced Neuromorphic AI with Quantum-Enhanced Cognitive Processing</p>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>🧠 Dual Hemisphere</h3>
+                <p>Analytical & Creative processing</p>
+            </div>
+            <div class="feature">
+                <h3>⚡ Quantum Routing</h3>
+                <p>QRONAS decision system</p>
+            </div>
+            <div class="feature">
+                <h3>🛡️ Ethical AI</h3>
+                <p>BRONAS compliance filter</p>
+            </div>
+            <div class="feature">
+                <h3>🧮 Memory Tiers</h3>
+                <p>Advanced cognitive storage</p>
             </div>
         </div>
         
-        <div class="row mt-5">
-            <div class="col-md-4">
-                <div class="feature-item">
-                    <div class="text-center feature-icon">
-                        <i data-feather="cpu" style="width: 48px; height: 48px;"></i>
-                    </div>
-                    <h3 class="text-center">Dual Hemisphere Processing</h3>
-                    <p>Experience cognitive processing with left analytical and right creative hemispheres working in perfect harmony.</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="feature-item">
-                    <div class="text-center feature-icon">
-                        <i data-feather="database" style="width: 48px; height: 48px;"></i>
-                    </div>
-                    <h3 class="text-center">Tiered Memory Architecture</h3>
-                    <p>Access information across short-term, medium-term, and long-term memory tiers for enhanced recall and context.</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="feature-item">
-                    <div class="text-center feature-icon">
-                        <i data-feather="shield" style="width: 48px; height: 48px;"></i>
-                    </div>
-                    <h3 class="text-center">BRONAS Ethical Framework</h3>
-                    <p>Interact with an AI system guided by Bio-inspired Reinforced Open Neural Alignment System for responsible AI.</p>
-                </div>
-            </div>
-        </div>
+        <a href="/auth/signin" class="login-btn">Sign In with Replit</a>
+        
+        <p style="margin-top: 2rem; opacity: 0.7; font-size: 0.9rem;">
+            Experience the next generation of AI cognitive processing
+        </p>
     </div>
-</div>
-{% endblock %}
-
-<!-- 
-This work is licensed under CC BY-NC 4.0 International.
-Commercial use requires prior written consent and compensation.
-Contact: sebastienbrulotte@gmail.com
-Attribution: Sebastien Brulotte aka [ Doditz ]
-
-This document is part of the NEURONAS cognitive system.
-Core modules referenced: BRONAS (Ethical Reflex Filter) and QRONAS (Probabilistic Symbolic Vector Engine).
-All outputs are subject to integrity validation and ethical compliance enforced by BRONAS.
--->
+</body>
+</html>

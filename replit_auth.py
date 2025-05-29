@@ -31,7 +31,7 @@ from app import app, db
 from models import OAuth, User
 
 login_manager = LoginManager(app)
-login_manager.login_view = "replit_auth.login"
+login_manager.login_view = "replit_auth.signin"
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -112,8 +112,8 @@ def make_replit_blueprint():
         g.browser_session_key = session['_browser_session_key']
         g.flask_dance_replit = replit_bp.session
 
-    @replit_bp.route("/login")
-    def login():
+    @replit_bp.route("/signin")
+    def signin():
         """Redirect to Replit OAuth for authentication"""
         return redirect(url_for("replit_auth.authorize"))
 
