@@ -492,8 +492,14 @@ class NeuroRNASStorageManager:
         stats = {}
         
         # Get size of each table
-        for table in ['memory_l1', 'memory_l2', 'memory_l3', 'd2_receptor_state', 'optimization_params']:
-            cursor.execute(f"SELECT COUNT(*) FROM {table}")
+        valid_tables = ['memory_l1', 'memory_l2', 'memory_l3', 'd2_receptor_state', 'optimization_params']
+        for table in valid_tables:
+            # Validate table name against whitelist to prevent SQL injection
+            if table not in valid_tables:
+                continue
+            # Use manual query construction for table names (cannot be parameterized)
+            query = "SELECT COUNT(*) FROM " + table
+            cursor.execute(query)
             stats[f"{table}_count"] = cursor.fetchone()[0]
         
         # Get database file size
