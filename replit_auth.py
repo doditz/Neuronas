@@ -115,8 +115,8 @@ def make_replit_blueprint():
     @replit_bp.route("/signin")
     def signin():
         """Start Replit OAuth authentication"""
-        # Redirect to the Flask-Dance OAuth login endpoint
-        return redirect("/auth/login")
+        # Redirect to Flask-Dance OAuth endpoint
+        return redirect(url_for("replit_auth.authorized"))
 
     @replit_bp.route("/logout")
     def logout():
