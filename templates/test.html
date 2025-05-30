@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeuronasX Test Page</title>
+    <style>
+        body {
+            background: #1e1e2e;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            margin: 0;
+        }
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .test-box {
+            background: #2a2a3e;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #4ecdc4;
+        }
+        h1 { color: #4ecdc4; }
+        .status { 
+            color: #00ff00; 
+            font-size: 18px; 
+            font-weight: bold;
+        }
+        .button {
+            background: #4ecdc4;
+            color: #1e1e2e;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            margin: 10px;
+        }
+        .button:hover {
+            background: #3bb8ad;
+            color: #1e1e2e;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-box">
+            <h1>🧠 NeuronasX System Test</h1>
+            <p class="status">✅ Page Loading: SUCCESS</p>
+            <p class="status">✅ CSS Styling: SUCCESS</p>
+            <p class="status">✅ Server Connection: SUCCESS</p>
+            
+            <p>If you can see this page clearly with blue styling and this text, the basic system is working.</p>
+            
+            <div>
+                <a href="/" class="button">← Back to Main Page</a>
+                <a href="/dashboard" class="button">Go to Dashboard</a>
+            </div>
+            
+            <div style="margin-top: 30px; font-size: 14px; opacity: 0.8;">
+                <p>System Status Check:</p>
+                <p>Server: Running ✓</p>
+                <p>Templates: Loading ✓</p>
+                <p>Routing: Working ✓</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        console.log('NeuronasX Test Page - JavaScript is working');
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Page loaded successfully');
+        });
+    </script>
+</body>
+</html>

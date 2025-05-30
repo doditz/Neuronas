@@ -132,6 +132,11 @@ def register_routes(app):
     def agent_positioning_page():
         """Agent positioning system interface"""
         return render_template('agent_positioning.html')
+    
+    @app.route('/test')
+    def test_page():
+        """Simple test page to verify basic functionality"""
+        return render_template('test.html')
 
     @app.route('/profile/update', methods=['POST'])
     @login_required
