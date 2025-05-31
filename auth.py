@@ -17,6 +17,7 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from oauthlib.oauth2 import WebApplicationClient
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+from urllib.parse import urlparse
 
 # OAuth2 Configuration for Google
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_OAUTH_CLIENT_ID")
@@ -35,6 +36,23 @@ auth_bp = Blueprint('auth', __name__)
 
 # OAuth2 Client
 client = WebApplicationClient(GOOGLE_CLIENT_ID) if GOOGLE_CLIENT_ID else None
+
+def is_safe_url(target):
+    """
+    Check if a URL is safe for redirect (internal to the application).
+    Returns True if the URL is safe, False otherwise.
+    """
+    if not target:
+        return False
+    
+    parsed_url = urlparse(target)
+    
+    # Allow only relative URLs (no scheme or netloc)
+    if parsed_url.netloc or parsed_url.scheme:
+        return False
+    
+    # Must start with '/' to be a valid internal path
+    return target.startswith('/')
 
 @auth_bp.route('/old_login', methods=['GET', 'POST'])
 def old_login():
@@ -58,9 +76,12 @@ def old_login():
             db.session.commit()
             flash(f"Welcome back, {user.username}!", "success")
             
-            # Redirect to next page or dashboard
-            next_page = request.args.get('next', url_for('index'))
-            return redirect(next_page)
+            # Redirect to next page or dashboard (with security validation)
+            next_page = request.args.get('next')
+            if next_page and is_safe_url(next_page):
+                return redirect(next_page)
+            else:
+                return redirect(url_for('index'))
         else:
             flash("Invalid email or password", "error")
     
@@ -230,9 +251,12 @@ def google_callback():
         login_user(user)
         flash(f"Welcome, {user.username}!", "success")
         
-        # Redirect to intended page or home
-        next_page = session.get('next_url', url_for('index'))
-        return redirect(next_page)
+        # Redirect to intended page or home (with security validation)
+        next_page = session.get('next_url')
+        if next_page and is_safe_url(next_page):
+            return redirect(next_page)
+        else:
+            return redirect(url_for('index'))
         
     except Exception as e:
         flash("Authentication error. Please try again.", "error")
