@@ -54,6 +54,7 @@ def is_safe_url(target):
     # Must start with '/' to be a valid internal path
     return target.startswith('/')
 
+@auth_bp.route('/login', methods=['GET', 'POST'])
 @auth_bp.route('/old_login', methods=['GET', 'POST'])
 def old_login():
     if request.method == 'POST':
