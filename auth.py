@@ -42,7 +42,8 @@ def old_login():
         # Handle traditional email/password login
         email = request.form.get('email')
         password = request.form.get('password')
-        remember = bool(request.form.get('remember'))
+        remember_value = request.form.get('remember', '')
+        remember = remember_value.lower() not in ('', 'false', '0', 'nan') and remember_value
         
         if not email or not password:
             flash("Please enter both email and password", "error")
