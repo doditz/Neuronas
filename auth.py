@@ -230,7 +230,6 @@ def google_callback():
         if not user:
             # Create new user
             user = User(
-                id=str(len(User.query.all()) + 1),  # Simple ID generation
                 username=user_name,
                 email=user_email,
                 oauth_provider="google",
