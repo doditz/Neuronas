@@ -41,6 +41,13 @@ class OllamaIntegration:
         self.ace_step_loaded = False
         self.current_model = None
         
+        # Dual model configuration for creative/logical processing
+        self.dual_models = {
+            "logical": "mistral:7b",      # Analytical, factual, structured
+            "creative": "nous-hermes2:7b" # Creative, metaphorical, innovative
+        }
+        self.models_loaded = {"logical": False, "creative": False}
+        
         # Configuration D2 pour le contrôle neuromorphique
         self.d2_params = {
             "activation": 0.5,  # Niveau d'activation D2 (0.0-1.0)
@@ -141,6 +148,29 @@ class OllamaIntegration:
         except Exception as e:
             logger.error(f"Erreur lors du téléchargement du modèle {model_name}: {e}")
             return False
+    
+    def load_dual_models(self) -> Dict[str, bool]:
+        """
+        Load both logical and creative models for dual processing
+        
+        Returns:
+            Dict[str, bool]: Status of each model loading
+        """
+        results = {}
+        
+        for model_type, model_name in self.dual_models.items():
+            logger.info(f"Loading {model_type} model: {model_name}")
+            success = self.download_model(model_name)
+            
+            if success:
+                self.models_loaded[model_type] = True
+                logger.info(f"{model_type.capitalize()} model {model_name} loaded successfully")
+            else:
+                logger.error(f"Failed to load {model_type} model {model_name}")
+                
+            results[model_type] = success
+            
+        return results
     
     def load_ace_step(self) -> bool:
         """
