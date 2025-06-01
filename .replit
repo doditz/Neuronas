@@ -2,7 +2,7 @@ modules = ["python-3.11", "postgresql-16"]
 
 [nix]
 channel = "stable-24_05"
-packages = ["glibcLocales", "openssl", "postgresql"]
+packages = ["glibcLocales", "openssl", "postgresql", "python311Packages.aionanoleaf"]
 
 [deployment]
 deploymentTarget = "autoscale"
@@ -57,3 +57,4 @@ args = "python main.py"
 
 [[ports]]
 localPort = 5000
+externalPort = 5000

@@ -23,6 +23,7 @@ dependencies = [
     "torch>=2.7.0",
     "sympy>=1.14.0",
     "requests-oauthlib>=2.0.0",
+    "ollama-haystack==2.1.0",
 ]
 
 [[tool.uv.index]]
