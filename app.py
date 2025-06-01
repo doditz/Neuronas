@@ -50,6 +50,7 @@ db.init_app(app)
 from routes import register_routes
 from memory_routes import memory_bp
 from llm_routes import llm_bp
+from model_routes import model_bp
 
 # Load configuration
 def load_config():
@@ -91,29 +92,29 @@ def initialize_application():
     from core_modules.core_engine import CognitiveEngine
     from core_modules.gateway_interface import GatewayInterface
     from core_modules.storage_manager import StorageManager
-    
+
     # Load configuration
     config = load_config()
-    
+
     # Initialize core modules
     app.cognitive_engine = CognitiveEngine()
     app.gateway = GatewayInterface()
     app.storage = StorageManager()
-    
+
     # Initialize and attach the tiered memory system
     app.tiered_memory = tiered_memory
     app.tiered_memory.start_maintenance_thread()
-    
+
     # Initialize and attach the dual LLM system
     app.dual_llm = dual_llm_system
-    
+
     # Initialize 100% free open-source innovative hybridization components
     # Local dual system for hemispheric processing without external APIs
     app.local_dual_system = LocalDualSystem()
-    
+
     # Initialize SMAS dispatcher for agent positioning
     app.smas_dispatcher = SMASDispatcher()
-    
+
     # Initialize storage manager with proper configuration
     try:
         from core_modules.storage_manager import StorageManager
@@ -123,16 +124,16 @@ def initialize_application():
         from core_modules.core_engine import CoreStorageManager
         app.storage = CoreStorageManager()
         logger.warning(f"Using fallback storage manager due to error: {e}")
-    
+
     # Initialize agent positioning system
     app.agent_positioning = AgentPositioningSystem(
         dual_llm_system=app.local_dual_system,  # Use our 100% free local system
         smas_dispatcher=app.smas_dispatcher
     )
-    
+
     # Set default agent position to central
     app.agent_positioning.set_position("central", lock_position=False)
-    
+
     logger.info("Neuronas system initialized successfully")
     logger.info("Open-source innovative hybridization initialized")
 
@@ -145,7 +146,7 @@ with app.app_context():
 # Initialize Replit authentication
 with app.app_context():
     from replit_auth import make_replit_blueprint, login_manager
-    
+
     # Register Replit Auth blueprint
     replit_bp = make_replit_blueprint()
     if replit_bp:
@@ -153,13 +154,13 @@ with app.app_context():
         logger.info("Replit Auth initialized successfully")
     else:
         logger.warning("Replit Auth not available - REPL_ID environment variable missing")
-    
+
     # Register Google Auth blueprint
     from google_auth import create_google_blueprint
     google_bp = create_google_blueprint()
     app.register_blueprint(google_bp, url_prefix="/auth")
     logger.info("Google Auth blueprint registered")
-        
+
 # Make session permanent for user sessions
 @app.before_request  
 def make_session_permanent():
@@ -193,6 +194,10 @@ register_model_routes(app)
 # Register music generation routes
 from music_routes import register_music_routes
 register_music_routes(app)
+
+# Register Google AI model routes
+from model_routes import model_bp
+app.register_blueprint(model_bp, url_prefix='/api/model')
 
 # Error handlers
 @app.errorhandler(404)
