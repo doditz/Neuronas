@@ -19,6 +19,9 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Import the Flask app at module level for gunicorn
+from app import app
+
 def main():
     """Main application entry point"""
     try:
