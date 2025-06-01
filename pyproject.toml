@@ -24,6 +24,9 @@ dependencies = [
     "sympy>=1.14.0",
     "requests-oauthlib>=2.0.0",
     "ollama-haystack==2.1.0",
+    "langchain-ollama==0.2.1",
+    "llama-index-llms-ollama==0.4.2",
+    "llama-index-multi-modal-llms-ollama==0.4.0",
 ]
 
 [[tool.uv.index]]

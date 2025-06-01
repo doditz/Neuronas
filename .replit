@@ -6,7 +6,7 @@ packages = ["glibcLocales", "openssl", "postgresql", "python311Packages.aionanol
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
+run = ["sh", "-c", "gunicorn --bind 0.0.0.0:5000 app:app"]
 
 [workflows]
 runButton = "Start fixed application"
