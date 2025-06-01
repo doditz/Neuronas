@@ -218,7 +218,7 @@ def replit_login():
     session['oauth_next'] = request.args.get('next')
     
     # Redirect to Replit's OAuth through the existing blueprint
-    return redirect('/auth/replit_auth/login')
+    return redirect('/auth/replit_auth/signin')
 
 @oauth_callbacks_bp.route('/replit/callback')
 def replit_callback():

@@ -113,13 +113,14 @@ def make_replit_blueprint():
         g.flask_dance_replit = replit_bp.session
 
     @replit_bp.route("/signin")
+    @replit_bp.route("/login")
     def signin():
         """Start Replit OAuth authentication"""
         # Check if user is already authorized
         if replit_bp.session.authorized:
             return redirect(url_for("index"))
         # Start OAuth flow
-        return redirect("/auth/")
+        return redirect(url_for("replit_auth.login"))
 
     @replit_bp.route("/logout")
     def logout():
@@ -189,7 +190,7 @@ def logged_in(blueprint, token):
         
     try:
         if not token:
-            flash("Token d'authentification manquant", "danger")
+            flash("Authentication token missing", "danger")
             return redirect(url_for('index'))
             
         # Decode the JWT token without verification first to get user info
@@ -203,15 +204,15 @@ def logged_in(blueprint, token):
         login_user(user)
         blueprint.token = token
         
-        flash(f"Bienvenue, {user.username}!", "success")
+        flash(f"Welcome, {user.username}!", "success")
         
         next_url = session.pop("next_url", None)
         if next_url is not None:
             return redirect(next_url)
         return redirect(url_for('index'))
     except Exception as e:
-        app.logger.error(f"Erreur lors de l'authentification Replit: {e}")
-        flash("Erreur d'authentification. Veuillez réessayer.", "danger")
+        app.logger.error(f"Replit authentication error: {e}")
+        flash("Authentication error. Please try again.", "danger")
         return redirect(url_for('index'))
 
 @oauth_error.connect

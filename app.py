@@ -160,11 +160,10 @@ with app.app_context():
     oauth_bp = init_oauth_callbacks(app)
     logger.info("OAuth callbacks blueprint registered")
     
-    # Register Google Auth blueprint
-    from google_auth import create_google_blueprint
-    google_bp = create_google_blueprint()
-    app.register_blueprint(google_bp, url_prefix="/auth")
-    logger.info("Google Auth blueprint registered")
+    # Register traditional auth blueprint  
+    from auth import init_auth
+    auth_manager = init_auth(app)
+    logger.info("Traditional auth blueprint registered")
 
 # Make session permanent for user sessions
 @app.before_request  
