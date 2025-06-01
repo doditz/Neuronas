@@ -41,10 +41,19 @@ class OllamaIntegration:
         self.ace_step_loaded = False
         self.current_model = None
         
-        # Dual model configuration for creative/logical processing
+        # Multi-model configuration for specialized processing
+        self.model_categories = {
+            "logical": "deepseek-coder:6.7b",           # Analytical, coding-focused
+            "creative": "dolphin-mixtral:8x7b",         # Creative, uncensored
+            "coding": "codellama:7b",                   # Specialized coding
+            "uncensored": "wizard-vicuna-uncensored:7b", # Unfiltered reasoning
+            "nemotron": "nemotron-mini:4b"              # Compact Nemotron
+        }
+        
+        # Legacy dual models for compatibility
         self.dual_models = {
-            "logical": "mistral:7b",      # Analytical, factual, structured
-            "creative": "nous-hermes2:7b" # Creative, metaphorical, innovative
+            "logical": self.model_categories["logical"],
+            "creative": self.model_categories["creative"]
         }
         self.models_loaded = {"logical": False, "creative": False}
         
@@ -169,6 +178,28 @@ class OllamaIntegration:
                 logger.error(f"Failed to load {model_type} model {model_name}")
                 
             results[model_type] = success
+            
+        return results
+    
+    def load_specialized_models(self) -> Dict[str, bool]:
+        """
+        Load all specialized model categories
+        
+        Returns:
+            Dict[str, bool]: Status of each model category loading
+        """
+        results = {}
+        
+        for category, model_name in self.model_categories.items():
+            logger.info(f"Loading {category} model: {model_name}")
+            success = self.download_model(model_name)
+            
+            if success:
+                logger.info(f"{category.capitalize()} model {model_name} loaded successfully")
+            else:
+                logger.error(f"Failed to load {category} model {model_name}")
+                
+            results[category] = success
             
         return results
     

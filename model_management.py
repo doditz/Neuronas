@@ -131,11 +131,30 @@ class ModelManager:
             
             # Return simulated models when Ollama is not available
             return [
+                # Basic models
                 {"name": "llama3:8b", "source": "ollama", "size": "4.7GB", "modified_at": "2025-05-01T00:00:00Z"},
                 {"name": "mistral:7b", "source": "ollama", "size": "4.1GB", "modified_at": "2025-05-01T00:00:00Z"},
                 {"name": "gemma:7b", "source": "ollama", "size": "4.2GB", "modified_at": "2025-05-01T00:00:00Z"},
                 {"name": "phi3:3b", "source": "ollama", "size": "1.5GB", "modified_at": "2025-05-01T00:00:00Z"},
-                {"name": "nous-hermes2:7b", "source": "ollama", "size": "4.1GB", "modified_at": "2025-05-01T00:00:00Z"}
+                {"name": "nous-hermes2:7b", "source": "ollama", "size": "4.1GB", "modified_at": "2025-05-01T00:00:00Z"},
+                
+                # Coding specialists
+                {"name": "deepseek-coder:6.7b", "source": "ollama", "size": "3.8GB", "modified_at": "2025-05-01T00:00:00Z"},
+                {"name": "codellama:7b", "source": "ollama", "size": "3.8GB", "modified_at": "2025-05-01T00:00:00Z"},
+                {"name": "starcoder2:15b", "source": "ollama", "size": "8.5GB", "modified_at": "2025-05-01T00:00:00Z"},
+                {"name": "magicoder:7b", "source": "ollama", "size": "3.8GB", "modified_at": "2025-05-01T00:00:00Z"},
+                {"name": "codestral:22b", "source": "ollama", "size": "12.4GB", "modified_at": "2025-05-01T00:00:00Z"},
+                
+                # Uncensored models
+                {"name": "dolphin-mixtral:8x7b", "source": "ollama", "size": "26GB", "modified_at": "2025-05-01T00:00:00Z"},
+                {"name": "wizard-vicuna-uncensored:7b", "source": "ollama", "size": "3.8GB", "modified_at": "2025-05-01T00:00:00Z"},
+                {"name": "wizard-vicuna-uncensored:13b", "source": "ollama", "size": "7.4GB", "modified_at": "2025-05-01T00:00:00Z"},
+                {"name": "dolphin-llama3:8b", "source": "ollama", "size": "4.7GB", "modified_at": "2025-05-01T00:00:00Z"},
+                {"name": "nous-capybara:7b", "source": "ollama", "size": "3.8GB", "modified_at": "2025-05-01T00:00:00Z"},
+                {"name": "airoboros:7b", "source": "ollama", "size": "3.8GB", "modified_at": "2025-05-01T00:00:00Z"},
+                
+                # Nemotron
+                {"name": "nemotron-mini:4b", "source": "ollama", "size": "2.2GB", "modified_at": "2025-05-01T00:00:00Z"}
             ]
     
     def _list_huggingface_models(self):
