@@ -27,7 +27,7 @@ import random
 import logging
 import time
 from datetime import datetime
-import numpy as np
+# Using built-in math instead of numpy to avoid dependency issues
 from pathlib import Path
 
 # Set up logging
@@ -316,7 +316,7 @@ class CreativeTechnique(NeuronasTechnique):
         # Combine scores (weighted)
         creativity_score = (metaphor_score * 0.4) + (divergent_score * 0.3) + (domain_score * 0.3)
         
-        # Apply temperature modulation
+        # Apply temperature modulation using built-in math
         creativity_score = creativity_score * 0.7 + self.temperature * 0.3
         
         return {
