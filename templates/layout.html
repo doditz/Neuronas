@@ -13,7 +13,24 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <!-- Feather Icons -->
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-    {% block head %}{% endblock %}
+    {% block head %}
+    {% endblock %}
+
+    {% block styles %}
+    <style>
+        body {
+            background: #1e1e2e;
+            color: white;
+        }
+        .navbar-dark {
+            background-color: #2a2a3e !important;
+        }
+        .hemisphere-container {
+            position: relative;
+            min-height: 300px;
+        }
+    </style>
+    {% endblock %}
 </head>
 <body>
     <header>
@@ -73,7 +90,7 @@
                 <div class="d-flex align-items-center">
                     <span class="badge bg-info d2-indicator me-2" title="D2 Activation">D2: <span id="d2-level">0.5</span></span>
                     <span class="badge bg-secondary hemisphere-indicator me-3" title="Active Hemisphere">H: <span id="active-hemisphere">C</span></span>
-                    
+
                     {% if current_user.is_authenticated %}
                     <div class="dropdown">
                         <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
@@ -99,7 +116,7 @@
         <div id="system-alert" class="alert alert-info d-none" role="alert">
             <i data-feather="info"></i> <span id="alert-message"></span>
         </div>
-        
+
         {% block content %}
         {{ content|safe }}
         {% endblock %}
@@ -108,7 +125,7 @@
     <footer class="footer mt-auto py-3 bg-dark">
         <div class="container text-center">
             <span class="text-muted">NeuronasX v3.0 — Bio-Inspired Cognitive Engine</span>
-            
+
 <!-- 
 This work is licensed under CC BY-NC 4.0 International.
 Commercial use requires prior written consent and compensation.
@@ -133,12 +150,12 @@ All outputs are subject to integrity validation and ethical compliance enforced 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- D3.js for visualizations -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    
+
     <script>
         // Initialize feather icons
         document.addEventListener('DOMContentLoaded', function() {
             feather.replace();
-            
+
             // Set active nav link
             const currentPath = window.location.pathname;
             const navLinks = {
@@ -151,16 +168,16 @@ All outputs are subject to integrity validation and ethical compliance enforced 
                 '/personas': 'nav-personas',
                 '/dual-llm': 'nav-dual-llm'
             };
-            
+
             const activeNavId = navLinks[currentPath];
             if (activeNavId) {
                 document.getElementById(activeNavId).classList.add('active');
             }
-            
+
             // Fetch system status
             fetchSystemStatus();
         });
-        
+
         // Fetch system status periodically
         function fetchSystemStatus() {
             fetch('/api/system/status')
@@ -169,7 +186,7 @@ All outputs are subject to integrity validation and ethical compliance enforced 
                     // Update D2 level
                     const d2Level = data.state.focus.toFixed(2);
                     document.getElementById('d2-level').textContent = d2Level;
-                    
+
                     // Update active hemisphere
                     let activeHemi = 'C'; // Default to central
                     if (data.state.activation.left_hemisphere > data.state.activation.right_hemisphere) {
@@ -178,7 +195,7 @@ All outputs are subject to integrity validation and ethical compliance enforced 
                         activeHemi = 'R';
                     }
                     document.getElementById('active-hemisphere').textContent = activeHemi;
-                    
+
                     // Update system status indicators
                     document.getElementById('core-status').className = 'badge bg-success';
                     document.getElementById('memory-status').className = 'badge bg-success';
@@ -190,20 +207,20 @@ All outputs are subject to integrity validation and ethical compliance enforced 
                     document.getElementById('memory-status').className = 'badge bg-danger';
                     document.getElementById('ethics-status').className = 'badge bg-danger';
                 });
-            
+
             // Schedule next update
             setTimeout(fetchSystemStatus, 5000);
         }
-        
+
         // Show system alert
         function showAlert(message, type = 'info') {
             const alertElement = document.getElementById('system-alert');
             const alertMessage = document.getElementById('alert-message');
-            
+
             alertElement.className = `alert alert-${type}`;
             alertMessage.textContent = message;
             alertElement.classList.remove('d-none');
-            
+
             // Auto-hide after 5 seconds
             setTimeout(() => {
                 alertElement.classList.add('d-none');

@@ -1,3 +1,5 @@
+
+#!/usr/bin/env python3
 """
 This work is licensed under CC BY-NC 4.0 International.
 Commercial use requires prior written consent and compensation.
@@ -9,33 +11,33 @@ Core modules referenced: BRONAS (Ethical Reflex Filter) and QRONAS (Probabilisti
 All outputs are subject to integrity validation and ethical compliance enforced by BRONAS.
 """
 
-from app import app
-from routes import register_routes
-from neuronas_routes import register_routes as register_neuronas_routes
-import logging
 import os
+import sys
+import logging
 
-# Configure logging
+# Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Initialize Neuronas system
-try:
-    from neuronas_api import neuronas
-    from neuronas_architecture_config import neuronas_architecture
+def main():
+    """Main application entry point"""
+    try:
+        # Import the Flask app
+        from app import app
+        
+        # Run the application
+        port = int(os.environ.get('PORT', 5000))
+        host = '0.0.0.0'
+        
+        logger.info(f"Starting Neuronas application on {host}:{port}")
+        app.run(host=host, port=port, debug=False)
+        
+    except ImportError as e:
+        logger.error(f"Failed to import app: {e}")
+        sys.exit(1)
+    except Exception as e:
+        logger.error(f"Failed to start application: {e}")
+        sys.exit(1)
 
-    # Initialize architecture
-    neuronas_architecture.save_config()
-    logger.info("Neuronas architecture configuration loaded")
-except Exception as e:
-    logger.error(f"Error initializing Neuronas system: {e}")
-
-# Register all routes
-register_neuronas_routes(app)
-register_routes(app)
-
-# Log system initialization
-logger.info("Neuronas system initialized successfully")
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+if __name__ == "__main__":
+    main()

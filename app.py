@@ -197,11 +197,17 @@ register_music_routes(app)
 # Error handlers
 @app.errorhandler(404)
 def not_found(error):
-    return render_template('layout.html', content="Page not found"), 404
+    return render_template('layout.html', content="<div class='text-center mt-5'><h2>Page Not Found</h2><p>The requested page could not be found.</p><a href='/' class='btn btn-info'>Return Home</a></div>"), 404
 
 @app.errorhandler(500)
 def server_error(error):
-    return render_template('layout.html', content="Server error occurred"), 500
+    logger.error(f"Server error: {error}")
+    return render_template('layout.html', content="<div class='text-center mt-5'><h2>Server Error</h2><p>An internal server error occurred.</p><a href='/' class='btn btn-info'>Return Home</a></div>"), 500
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    logger.error(f"Unhandled exception: {e}")
+    return render_template('layout.html', content="<div class='text-center mt-5'><h2>An Error Occurred</h2><p>Please try again later.</p><a href='/' class='btn btn-info'>Return Home</a></div>"), 500
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

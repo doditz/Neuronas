@@ -53,7 +53,7 @@ def google_signin():
     if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
         flash("Google authentication is not configured. Please set up your OAuth credentials.", "warning")
         return redirect(url_for('index'))
-    
+
     google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
     authorization_endpoint = google_provider_cfg["authorization_endpoint"]
 
@@ -70,7 +70,7 @@ def google_callback():
     if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
         flash("Google authentication is not configured.", "error")
         return redirect(url_for('index'))
-        
+
     try:
         code = request.args.get("code")
         google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
@@ -82,7 +82,7 @@ def google_callback():
             redirect_url=request.base_url.replace("http://", "https://"),
             code=code,
         )
-        
+
         token_response = requests.post(
             token_url,
             headers=headers,
@@ -97,7 +97,7 @@ def google_callback():
         userinfo_response = requests.get(uri, headers=headers, data=body)
 
         userinfo = userinfo_response.json()
-        
+
         if userinfo.get("email_verified"):
             users_email = userinfo["email"]
             users_name = userinfo.get("given_name", userinfo["email"].split('@')[0])
@@ -111,7 +111,7 @@ def google_callback():
         user = User.query.filter(
             (User.email == users_email) | (User.oauth_id == google_id)
         ).first()
-        
+
         if not user:
             # Create new user with Google ID as primary key
             user = User()
@@ -125,14 +125,14 @@ def google_callback():
             user.profile_image_url = profile_pic
             user.created_at = datetime.utcnow()
             user.last_login = datetime.utcnow()
-            
+
             # Make sure username is unique
             base_username = users_name
             counter = 1
             while User.query.filter_by(username=user.username).first() is not None:
                 user.username = f"{base_username}{counter}"
                 counter += 1
-                
+
             db.session.add(user)
         else:
             # Update existing user info
@@ -140,13 +140,13 @@ def google_callback():
             user.first_name = userinfo.get("given_name", user.first_name)
             user.last_name = userinfo.get("family_name", user.last_name)
             user.profile_image_url = profile_pic or user.profile_image_url
-            
+
         db.session.commit()
         login_user(user)
-        
+
         flash(f"Welcome to NeuronasX, {user.username}!", "success")
         return redirect(url_for('index'))
-        
+
     except Exception as e:
         flash(f"Authentication error: {str(e)}", "error")
         return redirect(url_for('index'))
