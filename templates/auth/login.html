@@ -97,3 +97,55 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+{% extends "layout.html" %}
+
+{% block title %}Login - NeuronasX{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">Login to NeuronasX</h4>
+                </div>
+                <div class="card-body">
+                    <!-- Google Login Button -->
+                    <div class="text-center mb-4">
+                        <a href="{{ url_for('google_auth.google_signin') }}" class="btn btn-danger btn-lg btn-block">
+                            <i class="fab fa-google"></i> Sign in with Google
+                        </a>
+                    </div>
+                    
+                    <hr class="my-4">
+                    <p class="text-center text-muted">Or use traditional login</p>
+                    
+                    <!-- Traditional Login Form -->
+                    <form method="POST">
+                        <div class="form-group mb-3">
+                            <label for="email">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="password">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required>
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                            <label class="form-check-label" for="remember">Remember me</label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-block">Login</button>
+                    </form>
+                    
+                    <div class="text-center mt-3">
+                        <p>Don't have an account? <a href="{{ url_for('auth.signup') }}">Sign up here</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

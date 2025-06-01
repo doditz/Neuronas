@@ -107,3 +107,70 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+{% extends "layout.html" %}
+
+{% block title %}Profile - NeuronasX{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="mb-0">User Profile</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            {% if current_user.profile_image_url %}
+                                <img src="{{ current_user.profile_image_url }}" alt="Profile Picture" class="img-fluid rounded-circle mb-3" style="max-width: 150px;">
+                            {% else %}
+                                <div class="bg-secondary rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 150px; height: 150px;">
+                                    <i class="fas fa-user fa-3x text-white"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-8">
+                            <form method="POST" action="{{ url_for('auth.update_profile') }}">
+                                <div class="form-group mb-3">
+                                    <label for="username">Username</label>
+                                    <input type="text" class="form-control" id="username" name="username" value="{{ current_user.username }}" required>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label for="email">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email" value="{{ current_user.email }}" required>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label>Account Type</label>
+                                    <p class="form-control-plaintext">
+                                        {% if current_user.oauth_provider %}
+                                            {{ current_user.oauth_provider|title }} Account
+                                        {% else %}
+                                            Traditional Account
+                                        {% endif %}
+                                    </p>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label>Member Since</label>
+                                    <p class="form-control-plaintext">{{ current_user.created_at.strftime('%B %d, %Y') if current_user.created_at else 'Unknown' }}</p>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label>Last Login</label>
+                                    <p class="form-control-plaintext">{{ current_user.last_login.strftime('%B %d, %Y at %I:%M %p') if current_user.last_login else 'Unknown' }}</p>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">Update Profile</button>
+                                <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger ms-2">Logout</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
