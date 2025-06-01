@@ -110,11 +110,16 @@
                     <h4 class="mb-0">Login to NeuronasX</h4>
                 </div>
                 <div class="card-body">
-                    <!-- Google Login Button -->
+                    <!-- OAuth Login Buttons -->
                     <div class="text-center mb-4">
-                        <a href="{{ url_for('google_auth.google_signin') }}" class="btn btn-danger btn-lg btn-block">
+                        <a href="/auth/google/login" class="btn btn-danger btn-lg btn-block mb-2">
                             <i class="fab fa-google"></i> Sign in with Google
                         </a>
+                        {% if config.get('REPL_ID') %}
+                        <a href="/auth/replit/login" class="btn btn-dark btn-lg btn-block">
+                            <i class="fab fa-dev"></i> Sign in with Replit
+                        </a>
+                        {% endif %}
                     </div>
                     
                     <hr class="my-4">

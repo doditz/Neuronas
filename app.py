@@ -155,6 +155,11 @@ with app.app_context():
     else:
         logger.warning("Replit Auth not available - REPL_ID environment variable missing")
 
+    # Register OAuth callbacks blueprint
+    from oauth_callbacks import init_oauth_callbacks
+    oauth_bp = init_oauth_callbacks(app)
+    logger.info("OAuth callbacks blueprint registered")
+    
     # Register Google Auth blueprint
     from google_auth import create_google_blueprint
     google_bp = create_google_blueprint()
