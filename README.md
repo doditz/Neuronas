@@ -1,4 +1,4 @@
-# 🧠 NeuronasX v3.0
+# 🧠 Neuronas v4.3
 
 ## Intelligence Artificielle Neuromorphique à Double Hémisphère
 
