@@ -1,0 +1,329 @@
+{
+  "metadata": {
+    "created_date": "2025-06-30",
+    "total_datasets": 10,
+    "categories": [
+      "logical_reasoning",
+      "creative_reasoning",
+      "ethical_scenarios",
+      "pattern_recognition",
+      "language_understanding",
+      "mathematical_reasoning",
+      "causal_inference",
+      "common_sense"
+    ],
+    "neuronas_version": "4.3"
+  },
+  "datasets": [
+    {
+      "name": "CommonsenseQA",
+      "description": "Multiple-choice question answering dataset requiring commonsense reasoning",
+      "category": "common_sense",
+      "url": "https://huggingface.co/datasets/commonsense_qa",
+      "size": "12K questions",
+      "license": "MIT",
+      "format": "JSON",
+      "suitable_for": [
+        "right_hemisphere",
+        "pattern_recognition",
+        "intuitive_reasoning"
+      ]
+    },
+    {
+      "name": "LogiQA",
+      "description": "Logical reasoning dataset with reading comprehension",
+      "category": "logical_reasoning",
+      "url": "https://huggingface.co/datasets/logiqa",
+      "size": "8K questions",
+      "license": "Apache 2.0",
+      "format": "JSON",
+      "suitable_for": [
+        "left_hemisphere",
+        "analytical_processing",
+        "structured_reasoning"
+      ]
+    },
+    {
+      "name": "ETHICS",
+      "description": "Dataset for training models to predict human ethical judgments",
+      "category": "ethical_scenarios",
+      "url": "https://huggingface.co/datasets/hendrycks/ethics",
+      "size": "130K scenarios",
+      "license": "MIT",
+      "format": "JSON",
+      "suitable_for": [
+        "bronas_training",
+        "ethical_validation",
+        "dual_hemisphere"
+      ]
+    },
+    {
+      "name": "GSM8K",
+      "description": "Grade school math word problems requiring multi-step reasoning",
+      "category": "mathematical_reasoning",
+      "url": "https://huggingface.co/datasets/gsm8k",
+      "size": "8.5K problems",
+      "license": "MIT",
+      "format": "JSON",
+      "suitable_for": [
+        "left_hemisphere",
+        "step_by_step_reasoning",
+        "validation"
+      ]
+    },
+    {
+      "name": "ARC-Challenge",
+      "description": "AI2 Reasoning Challenge with science questions",
+      "category": "logical_reasoning",
+      "url": "https://huggingface.co/datasets/ai2_arc",
+      "size": "7K questions",
+      "license": "Apache 2.0",
+      "format": "JSON",
+      "suitable_for": [
+        "dual_hemisphere",
+        "scientific_reasoning",
+        "fact_validation"
+      ]
+    },
+    {
+      "name": "StrategyQA",
+      "description": "Strategy questions requiring implicit multi-step reasoning",
+      "category": "causal_inference",
+      "url": "https://huggingface.co/datasets/strategy_qa",
+      "size": "2.7K questions",
+      "license": "Apache 2.0",
+      "format": "JSON",
+      "suitable_for": [
+        "right_hemisphere",
+        "creative_reasoning",
+        "strategy_planning"
+      ]
+    },
+    {
+      "name": "COPA",
+      "description": "Choice of Plausible Alternatives for causal reasoning",
+      "category": "causal_inference",
+      "url": "https://huggingface.co/datasets/super_glue",
+      "size": "1K questions",
+      "license": "BSD",
+      "format": "JSON",
+      "suitable_for": [
+        "dual_hemisphere",
+        "causal_reasoning",
+        "plausibility_assessment"
+      ]
+    },
+    {
+      "name": "WinoGrande",
+      "description": "Commonsense reasoning benchmark with pronoun resolution",
+      "category": "common_sense",
+      "url": "https://huggingface.co/datasets/winogrande",
+      "size": "44K questions",
+      "license": "Apache 2.0",
+      "format": "JSON",
+      "suitable_for": [
+        "right_hemisphere",
+        "contextual_understanding",
+        "ambiguity_resolution"
+      ]
+    },
+    {
+      "name": "QuALITY",
+      "description": "Question Answering with Long Input Texts for reading comprehension",
+      "category": "language_understanding",
+      "url": "https://huggingface.co/datasets/quality",
+      "size": "6K questions",
+      "license": "Apache 2.0",
+      "format": "JSON",
+      "suitable_for": [
+        "left_hemisphere",
+        "analytical_reading",
+        "long_context_processing"
+      ]
+    },
+    {
+      "name": "Social IQa",
+      "description": "Social interaction reasoning with emotional intelligence",
+      "category": "common_sense",
+      "url": "https://huggingface.co/datasets/social_i_qa",
+      "size": "38K questions",
+      "license": "Apache 2.0",
+      "format": "JSON",
+      "suitable_for": [
+        "right_hemisphere",
+        "social_reasoning",
+        "emotional_processing"
+      ]
+    }
+  ],
+  "integration_plan": {
+    "left_hemisphere_datasets": [
+      "LogiQA",
+      "GSM8K",
+      "ARC-Challenge"
+    ],
+    "right_hemisphere_datasets": [
+      "CommonsenseQA",
+      "WinoGrande",
+      "Social IQa"
+    ],
+    "dual_hemisphere_datasets": [
+      "ETHICS"
+    ],
+    "bronas_training_datasets": [
+      "ETHICS"
+    ],
+    "memory_tier_allocation": {
+      "L2_R2": [
+        "CommonsenseQA",
+        "WinoGrande",
+        "Social IQa"
+      ],
+      "L1_R1": [
+        "LogiQA",
+        "GSM8K",
+        "ARC-Challenge",
+        "StrategyQA",
+        "COPA",
+        "QuALITY"
+      ],
+      "L3_R3": [
+        "ETHICS"
+      ]
+    },
+    "processing_workflow": [
+      "1. Load datasets into appropriate memory tiers",
+      "2. Preprocess for hemisphere-specific formats",
+      "3. Initialize BRONAS ethical validation",
+      "4. Begin dual-hemisphere training/validation",
+      "5. Implement self-validation workflows",
+      "6. Monitor cognitive memory integration"
+    ]
+  },
+  "validation_summary": {
+    "CommonsenseQA": {
+      "hemisphere_compatibility": [
+        "right_hemisphere"
+      ],
+      "processing_type": [],
+      "memory_tier_suitability": [
+        "L2_R2"
+      ],
+      "ethical_considerations": [
+        "open_license"
+      ],
+      "overall_score": 4
+    },
+    "LogiQA": {
+      "hemisphere_compatibility": [
+        "left_hemisphere"
+      ],
+      "processing_type": [],
+      "memory_tier_suitability": [
+        "L1_R1"
+      ],
+      "ethical_considerations": [
+        "open_license"
+      ],
+      "overall_score": 4
+    },
+    "ETHICS": {
+      "hemisphere_compatibility": [
+        "dual_hemisphere"
+      ],
+      "processing_type": [],
+      "memory_tier_suitability": [
+        "L3_R3"
+      ],
+      "ethical_considerations": [
+        "open_license"
+      ],
+      "overall_score": 5
+    },
+    "GSM8K": {
+      "hemisphere_compatibility": [
+        "left_hemisphere"
+      ],
+      "processing_type": [],
+      "memory_tier_suitability": [
+        "L1_R1"
+      ],
+      "ethical_considerations": [
+        "open_license"
+      ],
+      "overall_score": 4
+    },
+    "ARC-Challenge": {
+      "hemisphere_compatibility": [
+        "left_hemisphere"
+      ],
+      "processing_type": [],
+      "memory_tier_suitability": [
+        "L1_R1"
+      ],
+      "ethical_considerations": [
+        "open_license"
+      ],
+      "overall_score": 4
+    },
+    "StrategyQA": {
+      "hemisphere_compatibility": [],
+      "processing_type": [],
+      "memory_tier_suitability": [
+        "L1_R1"
+      ],
+      "ethical_considerations": [
+        "open_license"
+      ],
+      "overall_score": 2
+    },
+    "COPA": {
+      "hemisphere_compatibility": [],
+      "processing_type": [],
+      "memory_tier_suitability": [
+        "L1_R1"
+      ],
+      "ethical_considerations": [
+        "open_license"
+      ],
+      "overall_score": 2
+    },
+    "WinoGrande": {
+      "hemisphere_compatibility": [
+        "right_hemisphere"
+      ],
+      "processing_type": [],
+      "memory_tier_suitability": [
+        "L2_R2"
+      ],
+      "ethical_considerations": [
+        "open_license"
+      ],
+      "overall_score": 4
+    },
+    "QuALITY": {
+      "hemisphere_compatibility": [],
+      "processing_type": [],
+      "memory_tier_suitability": [
+        "L1_R1"
+      ],
+      "ethical_considerations": [
+        "open_license"
+      ],
+      "overall_score": 2
+    },
+    "Social IQa": {
+      "hemisphere_compatibility": [
+        "right_hemisphere"
+      ],
+      "processing_type": [],
+      "memory_tier_suitability": [
+        "L2_R2"
+      ],
+      "ethical_considerations": [
+        "open_license"
+      ],
+      "overall_score": 4
+    }
+  }
+}
