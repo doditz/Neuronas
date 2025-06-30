@@ -199,6 +199,10 @@ register_model_routes(app)
 from music_routes import register_music_routes
 register_music_routes(app)
 
+# Register dataset management routes
+from dataset_routes import init_dataset_routes
+init_dataset_routes(app, cognitive_memory_manager)
+
 # Register Google AI model routes
 from model_routes import model_bp
 app.register_blueprint(model_bp, url_prefix='/api/model')
