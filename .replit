@@ -1,4 +1,4 @@
-modules = ["python-3.11", "postgresql-16"]
+modules = ["python-3.11", "web", "nodejs-20"]
 
 [nix]
 channel = "stable-24_05"
@@ -6,10 +6,10 @@ packages = ["glibcLocales", "openssl", "postgresql", "python311Packages.aionanol
 
 [deployment]
 deploymentTarget = "autoscale"
-run = ["sh", "-c", "gunicorn --bind 0.0.0.0:5000 app:app"]
+run = ["gunicorn", "--bind", "0.0.0.0:5000", "main:app"]
 
 [workflows]
-runButton = "Start fixed application"
+runButton = "Project"
 
 [[workflows.workflow]]
 name = "Project"

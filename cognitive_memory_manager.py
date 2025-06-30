@@ -41,7 +41,7 @@ class CognitiveMemoryManager:
         Args:
             db_url (str, optional): Database connection URL. Defaults to environment variable.
         """
-        self.db_url = db_url or os.environ.get('DATABASE_URL')
+        self.db_url = db_url or os.environ.get('DATABASE_URL', 'sqlite:///neuronas.db')
         self.engine = create_engine(self.db_url)
         self.is_connected = False
         self.last_context_hash = None
