@@ -199,9 +199,11 @@ register_model_routes(app)
 from music_routes import register_music_routes
 register_music_routes(app)
 
-# Register dataset management routes
-from dataset_routes import init_dataset_routes
-init_dataset_routes(app, cognitive_memory_manager)
+# Register dataset management routes (temporarily disabled until cognitive memory manager is properly integrated)
+# from dataset_routes import init_dataset_routes
+# from cognitive_memory_manager import CognitiveMemoryManager
+# cognitive_memory_manager = CognitiveMemoryManager()
+# init_dataset_routes(app, cognitive_memory_manager)
 
 # Register Google AI model routes
 from model_routes import model_bp
