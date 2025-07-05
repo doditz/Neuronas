@@ -42,15 +42,15 @@ def test_database_connection():
     
     try:
         from flask import Flask
-        from flask_sqlalchemy import SQLAlchemy
+        from database import db
         
         # Create a minimal Flask application
         app = Flask(__name__)
-        app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+        app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///neuronas.db")
         app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
         
         # Initialize SQLAlchemy
-        db = SQLAlchemy(app)
+        db.init_app(app)
         
         # Test basic connection
         with app.app_context():
@@ -93,7 +93,7 @@ def test_bronas_ethics():
     try:
         # Import necessary modules
         from flask import Flask
-        from flask_sqlalchemy import SQLAlchemy
+        from database import db
         import sys
         
         # Add the directory to sys.path if needed
@@ -102,46 +102,31 @@ def test_bronas_ethics():
             
         # Create a minimal Flask application
         app = Flask(__name__)
-        app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+        app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///neuronas.db")
         app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
         
         # Initialize SQLAlchemy
-        db = SQLAlchemy(app)
+        db.init_app(app)
         
         # Initialize database tables
         with app.app_context():
-            # Create necessary table
-            db.engine.execute('''
-                CREATE TABLE IF NOT EXISTS reinforced_hypotheses (
-                    id SERIAL PRIMARY KEY,
-                    hypothesis VARCHAR(255) NOT NULL,
-                    confidence FLOAT DEFAULT 0.5,
-                    feedback_count INTEGER DEFAULT 0,
-                    category VARCHAR(50) DEFAULT 'general',
-                    user_id INTEGER,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
-            ''')
+            # Test BRONAS using the existing system
+            from bronas_ethics import BRONASEthicsRepository
             
-            # Add a test principle if the table is empty
-            result = db.engine.execute("SELECT COUNT(*) FROM reinforced_hypotheses")
-            count = result.scalar()
+            # Initialize BRONAS repository
+            bronas = BRONASEthicsRepository(db)
             
-            if count == 0:
-                logger.info("Adding test principle to BRONAS repository")
-                db.engine.execute('''
-                    INSERT INTO reinforced_hypotheses 
-                    (hypothesis, confidence, feedback_count, category)
-                    VALUES 
-                    ('Respect user privacy', 0.9, 1, 'privacy')
-                ''')
+            # Test basic functionality
+            stats = bronas.get_statistics()
+            logger.info(f"BRONAS statistics: {stats}")
             
-            # Query principles
-            result = db.engine.execute("SELECT * FROM reinforced_hypotheses LIMIT 5")
-            principles = [dict(row) for row in result]
+            # Test evaluation
+            evaluation = bronas.evaluate_statement(
+                "Users should have control over their personal data",
+                session_id="test_session"
+            )
+            logger.info(f"BRONAS evaluation: {evaluation}")
             
-            logger.info(f"BRONAS principles: {principles}")
             logger.info("BRONAS ethics test completed successfully")
             return True
             

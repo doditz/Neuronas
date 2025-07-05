@@ -1,0 +1,43 @@
+# Neuronas v4.3 - Neuromorphic Dual-Hemisphere AI System Requirements
+# Generated from pyproject.toml for compatibility
+
+# Core Flask Application
+Flask>=3.1.1
+Flask-SQLAlchemy>=3.1.1
+Flask-Login>=0.6.3
+flask-dance>=7.1.0
+Werkzeug>=3.1.3
+Gunicorn>=23.0.0
+
+# Database
+SQLAlchemy>=2.0.41
+psycopg2-binary>=2.9.10
+
+# Authentication & OAuth
+oauthlib>=3.2.2
+requests-oauthlib>=2.0.0
+PyJWT>=2.10.1
+
+# Email validation
+email-validator>=2.2.0
+
+# AI/ML Core
+torch>=2.7.0
+numpy>=2.2.6
+sympy>=1.14.0
+
+# AI Model APIs
+anthropic>=0.51.0
+ollama>=0.4.8
+
+# Ollama Integration
+ollama-haystack==2.1.0
+langchain-ollama==0.2.1
+llama-index-llms-ollama==0.4.2
+llama-index-multi-modal-llms-ollama==0.4.0
+
+# Communication
+twilio>=9.6.1
+
+# HTTP Requests
+requests>=2.32.3

@@ -13,9 +13,8 @@ import os
 import logging
 import json
 from flask import Flask, render_template, request, jsonify, session, g
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import DeclarativeBase
 from werkzeug.middleware.proxy_fix import ProxyFix
+from database import db
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -30,12 +29,7 @@ from local_llm_hybridizer import LocalDualSystem
 from smas_dispatcher import SMASDispatcher
 from agent_positioning_system import AgentPositioningSystem
 
-# Initialize SQLAlchemy base
-class Base(DeclarativeBase):
-    pass
-
-# Initialize app and database
-db = SQLAlchemy(model_class=Base)
+# Initialize app 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "neuronas_default_secret_key")
 app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)  # Nécessaire pour url_for avec HTTPS

@@ -24,7 +24,8 @@ import time
 from datetime import datetime
 import hashlib
 from sqlalchemy import func
-from models import db, ReinforcedHypotheses, User
+from database import db
+from models import ReinforcedHypotheses, User
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
@@ -44,7 +45,7 @@ class BRONASEthicsRepository:
     def _load_core_principles(self):
         """Load core ethical principles from the database or initialize if empty"""
         # Check if we already have core principles
-        count = ReinforcedHypotheses.query.count()
+        count = db.session.query(ReinforcedHypotheses).count()
         
         if count == 0:
             logger.info("Initializing BRONAS core ethical principles")
@@ -147,7 +148,7 @@ class BRONASEthicsRepository:
         Returns:
             list: Matching ethical principles
         """
-        query = ReinforcedHypotheses.query.filter(
+        query = db.session.query(ReinforcedHypotheses).filter(
             ReinforcedHypotheses.confidence >= min_confidence
         )
         
@@ -174,7 +175,7 @@ class BRONASEthicsRepository:
             dict: The added principle
         """
         # Check if similar principle already exists
-        existing = ReinforcedHypotheses.query.filter(
+        existing = db.session.query(ReinforcedHypotheses).filter(
             func.lower(ReinforcedHypotheses.hypothesis) == func.lower(hypothesis)
         ).first()
         
@@ -212,7 +213,7 @@ class BRONASEthicsRepository:
         Returns:
             dict: Updated principle
         """
-        principle = ReinforcedHypotheses.query.get(principle_id)
+        principle = db.session.query(ReinforcedHypotheses).get(principle_id)
         
         if not principle:
             return None
@@ -263,7 +264,7 @@ class BRONASEthicsRepository:
         eval_hash = self._create_evaluation_hash(statement, session_id, timestamp)
         
         # Get relevant principles (simplified matching for now)
-        principles = ReinforcedHypotheses.query.order_by(
+        principles = db.session.query(ReinforcedHypotheses).order_by(
             ReinforcedHypotheses.confidence.desc()
         ).limit(5).all()
         
@@ -283,7 +284,11 @@ class BRONASEthicsRepository:
             
         # Calculate overall ethical score (weighted by confidence and relevance)
         if evaluations:
-            ethical_score = sum(e["confidence"] * e["relevance"] for e in evaluations) / sum(e["relevance"] for e in evaluations if e["relevance"] > 0)
+            total_relevance = sum(e["relevance"] for e in evaluations if e["relevance"] > 0)
+            if total_relevance > 0:
+                ethical_score = sum(e["confidence"] * e["relevance"] for e in evaluations) / total_relevance
+            else:
+                ethical_score = 0.5  # Neutral if no relevant principles found
         else:
             ethical_score = 0.5  # Neutral if no principles matched
             
@@ -305,7 +310,7 @@ class BRONASEthicsRepository:
     def get_statistics(self):
         """Get statistics about the ethics repository"""
         try:
-            total_principles = ReinforcedHypotheses.query.count()
+            total_principles = db.session.query(ReinforcedHypotheses).count()
             
             # Count by category
             categories = {}
@@ -323,7 +328,7 @@ class BRONASEthicsRepository:
             ).scalar() or 0
             
             # Get principles with most feedback
-            most_feedback = ReinforcedHypotheses.query.order_by(
+            most_feedback = db.session.query(ReinforcedHypotheses).order_by(
                 ReinforcedHypotheses.feedback_count.desc()
             ).limit(5).all()
             

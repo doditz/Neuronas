@@ -42,7 +42,7 @@ def get_principles():
         # Initialize BRONAS if needed
         if not hasattr(current_app, 'bronas'):
             from bronas_ethics import BRONASEthicsRepository
-            from models import db
+            from database import db
             current_app.bronas = BRONASEthicsRepository(db)
             
         # Get parameters
@@ -94,7 +94,7 @@ def add_principle():
         # Initialize BRONAS if needed
         if not hasattr(current_app, 'bronas'):
             from bronas_ethics import BRONASEthicsRepository
-            from models import db
+            from database import db
             current_app.bronas = BRONASEthicsRepository(db)
             
         # Add principle
@@ -137,7 +137,7 @@ def evaluate_statement():
         # Initialize BRONAS if needed
         if not hasattr(current_app, 'bronas'):
             from bronas_ethics import BRONASEthicsRepository
-            from models import db
+            from database import db
             current_app.bronas = BRONASEthicsRepository(db)
             
         # Evaluate statement
@@ -165,7 +165,7 @@ def get_stats():
         # Initialize BRONAS if needed
         if not hasattr(current_app, 'bronas'):
             from bronas_ethics import BRONASEthicsRepository
-            from models import db
+            from database import db
             current_app.bronas = BRONASEthicsRepository(db)
             
         # Get statistics
@@ -266,7 +266,7 @@ def get_session_info():
         # Initialize session transparency if needed
         if not hasattr(current_app, 'session_transparency'):
             from session_transparency import SessionTransparency
-            from models import db
+            from database import db
             current_app.session_transparency = SessionTransparency(db)
             
         # Get or create session ID
@@ -348,7 +348,7 @@ def get_session_interactions():
         # Initialize session transparency if needed
         if not hasattr(current_app, 'session_transparency'):
             from session_transparency import SessionTransparency
-            from models import db
+            from database import db
             current_app.session_transparency = SessionTransparency(db)
             
         # Get session ID
@@ -403,7 +403,7 @@ def record_interaction():
         # Initialize session transparency if needed
         if not hasattr(current_app, 'session_transparency'):
             from session_transparency import SessionTransparency
-            from models import db
+            from database import db
             current_app.session_transparency = SessionTransparency(db)
             
         # Get session ID

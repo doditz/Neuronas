@@ -281,7 +281,8 @@ def register_routes(app):
         processing_time = time.time() - start_time
 
         # Log the query
-        from models import QueryLog, db
+        from database import db
+        from models import QueryLog
         query_log = QueryLog(
             query=query,
             response=response['response'],

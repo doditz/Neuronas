@@ -25,7 +25,8 @@ import time
 from datetime import datetime, timedelta
 import threading
 from sqlalchemy import func, desc, asc
-from models import db, User, QueryLog
+from database import db
+from models import User, QueryLog
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
