@@ -77,6 +77,7 @@ class SystemComponent(Enum):
     SMAS = "smas"
     D2_MECHANISM = "d2_mechanism"
     GEOLOCATION = "geolocation"
+    OPTIMIZATION = "optimization"
     OTHER = "other"
 
 class ProgressTracker:

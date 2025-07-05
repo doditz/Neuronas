@@ -282,7 +282,7 @@ def register_routes(app):
 
         # Log the query
         from database import db
-from models import QueryLog
+        from models import QueryLog
         query_log = QueryLog(
             query=query,
             response=response['response'],

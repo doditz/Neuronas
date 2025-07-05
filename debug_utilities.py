@@ -105,8 +105,8 @@ class DebugUtilities:
             
             for model, name in models_to_check:
                 try:
-                    # Check if model can be queried
-                    count = model.query.count()
+                    # Check if model can be queried using modern SQLAlchemy syntax
+                    count = db.session.query(model).count()
                     logger.info(f"{name} model check successful, count: {count}")
                     
                     # Check columns in ReinforcedHypotheses
