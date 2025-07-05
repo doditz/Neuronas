@@ -17,7 +17,7 @@ from flask_login import login_user
 from oauthlib.oauth2 import WebApplicationClient
 from datetime import datetime
 
-from app import db
+from database import db
 from models import User
 
 # Google OAuth Configuration

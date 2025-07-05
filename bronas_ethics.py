@@ -24,7 +24,8 @@ import time
 from datetime import datetime
 import hashlib
 from sqlalchemy import func
-from models import db, ReinforcedHypotheses, User
+from database import db
+from models import ReinforcedHypotheses, User
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)

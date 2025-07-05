@@ -76,7 +76,7 @@ class DebugUtilities:
         
     def test_database_connection(self):
         """Test database connection and schema"""
-        from models import db
+        from database import db
         
         logger.info("Testing database connection...")
         
@@ -136,7 +136,7 @@ class DebugUtilities:
         
         try:
             from bronas_ethics import BRONASEthicsRepository
-            from models import db
+            from database import db
             
             # Initialize BRONAS repository
             bronas = BRONASEthicsRepository(db)
@@ -200,7 +200,7 @@ class DebugUtilities:
         
         try:
             from session_transparency import SessionTransparency
-            from models import db
+            from database import db
             
             # Initialize session transparency
             session_system = SessionTransparency(db)
@@ -375,10 +375,10 @@ class DebugUtilities:
 if __name__ == "__main__":
     # Create Flask app for testing
     app = Flask(__name__)
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL")
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", "sqlite:///neuronas.db")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     
-    from models import db
+    from database import db
     db.init_app(app)
     
     with app.app_context():

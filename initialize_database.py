@@ -22,7 +22,8 @@ import uuid
 from datetime import datetime, timedelta
 from sqlalchemy.exc import IntegrityError
 from flask import Flask
-from models import db, User, ReinforcedHypotheses, QueryLog, CognitiveMemory
+from database import db
+from models import User, ReinforcedHypotheses, QueryLog, CognitiveMemory
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)

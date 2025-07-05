@@ -26,7 +26,7 @@ import os
 import threading
 from enum import Enum
 from sqlalchemy import func, desc
-from models import db
+from database import db
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)

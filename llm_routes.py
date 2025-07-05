@@ -98,7 +98,8 @@ def process_with_dual_llm():
         if result.get('success'):
             try:
                 # Create a query log
-                from models import QueryLog, db
+                from database import db
+from models import QueryLog
                 
                 # Get hemisphere used
                 hemisphere_used = 'C'  # Central/integrated by default
@@ -188,7 +189,7 @@ def set_llm_parameters():
                 if 'hemisphere_balance' in data:
                     current_user.hemisphere_balance = hemisphere_balance
                     
-                from models import db
+                from database import db
                 db.session.commit()
             except Exception as e:
                 logger.error(f"Error saving user preferences: {e}")

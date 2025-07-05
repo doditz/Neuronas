@@ -132,7 +132,8 @@ def process_with_agent():
         if result.get('success'):
             try:
                 # Create a query log
-                from models import QueryLog, db
+                from database import db
+from models import QueryLog
                 
                 # Get agent position
                 position = result.get('agent_position', 'central')

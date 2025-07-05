@@ -20,7 +20,7 @@ from flask_login import login_user
 from oauthlib.oauth2 import WebApplicationClient
 from urllib.parse import urlparse
 
-from app import db
+from database import db
 from models import User, OAuth
 
 # Create OAuth callbacks blueprint

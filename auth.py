@@ -68,7 +68,8 @@ def old_login():
             flash("Please enter both email and password", "error")
             return render_template('auth/login.html')
         
-        from models import User, db
+        from database import db
+from models import User
         user = User.query.filter_by(email=email).first()
         
         if user and user.check_password(password):
@@ -109,7 +110,8 @@ def signup():
             flash("Password must be at least 6 characters long", "error")
             return render_template('auth/signup.html')
         
-        from models import User, db
+        from database import db
+from models import User
         
         # Check if user already exists
         if User.query.filter_by(email=email).first():
@@ -224,7 +226,8 @@ def google_callback():
         oauth_id = userinfo.get("sub")
 
         # Find or create user
-        from models import User, db
+        from database import db
+from models import User
         user = User.query.filter_by(email=user_email).first()
         
         if not user:
@@ -281,7 +284,8 @@ def update_profile():
     username = request.form.get('username')
     email = request.form.get('email')
     
-    from models import User, db
+    from database import db
+from models import User
     
     # Check if username/email already exists (excluding current user)
     if username != current_user.username:

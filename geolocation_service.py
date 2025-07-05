@@ -24,7 +24,8 @@ import requests
 from datetime import datetime
 from flask import request
 from sqlalchemy import func
-from models import db, User, QueryLog
+from database import db
+from models import User, QueryLog
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)

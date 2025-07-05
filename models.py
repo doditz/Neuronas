@@ -9,7 +9,7 @@ Core modules referenced: BRONAS (Ethical Reflex Filter) and QRONAS (Probabilisti
 All outputs are subject to integrity validation and ethical compliance enforced by BRONAS.
 """
 
-from app import db
+from database import db
 from datetime import datetime
 import json
 from flask_login import UserMixin
