@@ -1,14 +1,34 @@
-# 🧠 Neuronas v4.3
+# 🧠 Neuronas v4.3 - AI Benchmarking Platform
 
-## Intelligence Artificielle Neuromorphique à Double Hémisphère
+## Collaborative, Reproducible AI Benchmarking Repository
 
-NeuronasX est un système d'intelligence artificielle révolutionnaire conçu pour fonctionner comme un cerveau humain, en respectant une limite cognitive naturelle de **10 bits/seconde** (selon les recherches de Zheng & Meister sur les limitations de notre capacité de traitement mental).
+Neuronas is a comprehensive AI benchmarking platform designed for collaborative research and reproducible experiments. Built on top of a revolutionary neuromorphic AI system, it provides tools and frameworks for benchmarking various AI/ML approaches across different domains.
 
-![NeuronasX Architecture](https://raw.githubusercontent.com/doditz/Neuronas/main/docs/img/neuronas_architecture.png)
+This repository supports benchmarking for:
+- **Quantum Computing** with Qiskit
+- **Deep Learning** with PyTorch and TensorFlow  
+- **Natural Language Processing** with Transformers
+- **Traditional Machine Learning** with Scikit-learn
+- **Neuromorphic Computing** with custom modules
 
-## 🔧 Architecture Principale
+![Neuronas Benchmarking Platform](https://raw.githubusercontent.com/doditz/Neuronas/main/docs/img/neuronas_architecture.png)
 
-NeuronasX est structuré autour de plusieurs composants coopératifs innovants :
+## 📁 Repository Structure
+
+```
+/notebooks/     # Jupyter/Colab notebooks for benchmarks and demos
+/src/          # Core Python modules and neuromorphic system
+/datasets/     # Downloaded open datasets and documentation
+/validation/   # Scripts for code/data validation
+/tests/        # Unit and integration tests  
+/logs/         # Audit and execution logs
+/docs/         # Documentation
+/.github/      # CI/CD workflows and contribution guidelines
+```
+
+## 🔧 Core Architecture (Underlying Neuronas System)
+
+The benchmarking platform is built on top of several innovative AI components:
 
 ### 🔍 D²STIB – Dynamic Derivative Semantic Token Information Bottleneck
 
@@ -61,27 +81,58 @@ Nos principes éthiques sont intégrés dans le cœur du système:
 - **Principes Globaux**: Équité, Respect culturel, Accessibilité
 - **Lois Fondamentales**: Bien-être humain, Adaptabilité locale, Durabilité
 
-## 🛠️ Installation
+## 🚀 Quick Start
 
+### Local Setup
 ```bash
-# Cloner le dépôt
+# Clone the repository
 git clone https://github.com/doditz/Neuronas.git
 cd Neuronas
 
-# Installer les dépendances
+# Install dependencies
 pip install -r requirements.txt
 
-# Lancer l'application
-python main.py
+# Validate environment
+python validation/validate_environment.py
+
+# Run example notebook
+jupyter notebook notebooks/example.ipynb
 ```
 
-## 🌐 Routes Principales
+### Google Colab Setup
+1. Open [notebooks/example.ipynb](./notebooks/example.ipynb) in Google Colab
+2. The notebook will automatically install dependencies
+3. Follow the setup validation steps
 
-- `/` - Interface principale
-- `/mobile` - Interface mobile avancée avec contrôles D2
-- `/architecture` - Visualisation de l'architecture NeuronasX
-- `/asimov` - Directives Asimov neuromorphiques
-- `/bronas` - Référentiel d'éthique BRONAS
+### Usage for Benchmarking
+```bash
+# Run tests
+pytest tests/ -v
+
+# Validate data sources
+python validation/validate_environment.py
+
+# Start benchmarking (see notebooks/ for examples)
+jupyter notebook notebooks/
+```
+
+## 🌐 Available Benchmarks
+
+The platform provides benchmarking capabilities for:
+
+- **`/notebooks/quantum_benchmarks/`** - Quantum computing with Qiskit
+- **`/notebooks/nlp_benchmarks/`** - NLP tasks with Transformers
+- **`/notebooks/cv_benchmarks/`** - Computer vision with PyTorch/TensorFlow
+- **`/notebooks/ml_benchmarks/`** - Traditional ML with Scikit-learn
+- **`/notebooks/neuromorphic_benchmarks/`** - Custom neuromorphic modules
+
+## 🧪 Benchmarking Features
+
+- **Reproducible Experiments** - Standardized evaluation protocols
+- **Multi-Framework Support** - PyTorch, TensorFlow, Qiskit, Scikit-learn
+- **Automated Validation** - Built-in environment and data validation
+- **Collaborative Tools** - GitHub Actions CI/CD, standardized formats
+- **Open Source Only** - No paid APIs or premium datasets required
 
 ## 📚 Documentation
 
@@ -91,9 +142,29 @@ Pour plus d'informations sur l'architecture et les concepts, visitez les pages:
 - [Système BRONAS](https://github.com/doditz/Neuronas/wiki/BRONAS-Ethics)
 - [Mémoire Hiérarchique](https://github.com/doditz/Neuronas/wiki/Hierarchical-Memory)
 
-## 🔄 Contribuer
+## 🔄 Contributing to Benchmarks
 
-Les contributions sont bienvenues! Consultez notre [guide de contribution](CONTRIBUTING.md) pour commencer.
+We welcome contributions! Please see:
+
+- [Contributing Guidelines](CONTRIBUTORS.md) for general contribution info
+- [GitHub Copilot Instructions](.github/copilot-instructions.md) for AI-assisted development
+- [Dataset Guidelines](datasets/DATA_SOURCES.md) for adding new datasets
+
+### Contribution Requirements:
+- ✅ Use only open-source, free libraries
+- ✅ Ensure Jupyter/Colab compatibility  
+- ✅ Include type hints and docstrings
+- ✅ Add validation tests for new modules
+- ✅ Follow PEP 8 style guidelines
+- ✅ Document all data sources and licenses
+
+### Development Workflow:
+1. Fork and clone the repository
+2. Create a feature branch
+3. Add your benchmark/improvement
+4. Run validation: `python validation/validate_environment.py`
+5. Run tests: `pytest tests/ -v`
+6. Submit a pull request
 
 ## 📄 Licence
 
