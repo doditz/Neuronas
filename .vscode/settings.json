@@ -1,0 +1,35 @@
+{
+  "extensions": {
+    "recommendations": [
+      "ms-python.python",
+      "ms-python.vscode-pylance",
+      "GitHub.copilot",
+      "ms-toolsai.jupyter",
+      "esbenp.prettier-vscode",
+      "eamodio.gitlens",
+      "anaconda-conda.conda-package-manager",
+      "wholroyd.jinja"
+    ]
+  },
+  "settings": {
+    "python.condaPath": "conda",
+    "python.defaultInterpreterPath": "${env:CONDA_PREFIX}/bin/python",
+    "python.pythonPath": "${env:CONDA_PREFIX}/bin/python",
+    "python.languageServer": "Pylance",
+    "python.analysis.diagnosticSeverityOverrides": {
+      "reportMissingImports": "none",
+      "reportUndefinedVariable": "none"
+    },
+    "python.analysis.extraPaths": ["./src"],
+    "python.formatting.provider": "autopep8",
+    "python.linting.pylintEnabled": true,
+    "python.linting.enabled": true,
+    "files.autoSave": "afterDelay",
+    "editor.fontSize": 12,
+    "editor.renderWhitespace": "boundary",
+    "terminal.integrated.rendererType": "dom",
+    "workbench.colorTheme": "Default Light+",
+    "conda.path": "$HOME/miniconda3/bin/conda",
+    "conda.environmentsPath": "${workspaceFolder}/envs"
+  }
+}
