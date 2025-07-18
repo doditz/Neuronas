@@ -1150,3 +1150,8 @@ yta-general-utils = [{ index = "pytorch-cpu", marker = "platform_system == 'Linu
 zensvi = [{ index = "pytorch-cpu", marker = "platform_system == 'Linux'" }]
 zetascale = [{ index = "pytorch-cpu", marker = "platform_system == 'Linux'" }]
 zuko = [{ index = "pytorch-cpu", marker = "platform_system == 'Linux'" }]
+
+[tool.uv.workspace]
+members = [
+    "requirements.txt",
+]

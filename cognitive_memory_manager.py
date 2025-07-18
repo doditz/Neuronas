@@ -23,6 +23,7 @@ import hashlib
 from datetime import datetime, timedelta
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import SQLAlchemyError
+from sqlite_memory_operations import SQLiteMemoryOperations, execute_memory_operation_with_retry
 
 # Setup logging
 logging.basicConfig(level=logging.DEBUG)
@@ -100,13 +101,13 @@ class CognitiveMemoryManager:
             
             with self.engine.connect() as conn:
                 stmt = text("""
-                    INSERT INTO left_hemisphere.memory_tier_1
+                    INSERT INTO left_hemisphere_memory_tier_1
                     (key, value, importance, expiration, context_hash)
                     VALUES (:key, :value, :importance, :expiration, :context_hash)
                     ON CONFLICT (key) DO UPDATE SET
                     value = :value,
-                    importance = GREATEST(left_hemisphere.memory_tier_1.importance, :importance),
-                    access_count = left_hemisphere.memory_tier_1.access_count + 1,
+                    importance = GREATEST(left_hemisphere_memory_tier_1.importance, :importance),
+                    access_count = left_hemisphere_memory_tier_1.access_count + 1,
                     last_accessed = CURRENT_TIMESTAMP,
                     expiration = :expiration
                 """)
@@ -147,14 +148,14 @@ class CognitiveMemoryManager:
             
             with self.engine.connect() as conn:
                 stmt = text("""
-                    INSERT INTO right_hemisphere.memory_tier_1
+                    INSERT INTO right_hemisphere_memory_tier_1
                     (key, value, novelty_score, d2_activation, context_hash)
                     VALUES (:key, :value, :novelty_score, :d2_activation, :context_hash)
                     ON CONFLICT (key) DO UPDATE SET
                     value = :value,
-                    novelty_score = GREATEST(right_hemisphere.memory_tier_1.novelty_score, :novelty_score),
-                    d2_activation = GREATEST(right_hemisphere.memory_tier_1.d2_activation, :d2_activation),
-                    access_count = right_hemisphere.memory_tier_1.access_count + 1,
+                    novelty_score = GREATEST(right_hemisphere_memory_tier_1.novelty_score, :novelty_score),
+                    d2_activation = GREATEST(right_hemisphere_memory_tier_1.d2_activation, :d2_activation),
+                    access_count = right_hemisphere_memory_tier_1.access_count + 1,
                     last_accessed = CURRENT_TIMESTAMP
                 """)
                 
@@ -408,50 +409,39 @@ class CognitiveMemoryManager:
             self.engine = create_engine(self.db_url, pool_pre_ping=True)
             
             with self.engine.connect() as conn:
+                # Initialize SQLite memory operations
+                memory_ops = SQLiteMemoryOperations(conn)
+                
                 # Push from L1 to L2
-                try:
-                    stmt = text("SELECT left_hemisphere.push_l1_to_l2()")
-                    stats['l1_to_l2'] = execute_with_retry(conn, stmt, "L1 to L2 push")
-                except SQLAlchemyError:
-                    # Already logged in execute_with_retry
-                    pass
+                stats['l1_to_l2'] = execute_memory_operation_with_retry(
+                    conn, "L1 to L2 push", memory_ops.push_l1_to_l2
+                )
                 
                 # Push from L2 to L3
-                try:
-                    stmt = text("SELECT left_hemisphere.push_l2_to_l3()")
-                    stats['l2_to_l3'] = execute_with_retry(conn, stmt, "L2 to L3 push")
-                except SQLAlchemyError:
-                    pass
+                stats['l2_to_l3'] = execute_memory_operation_with_retry(
+                    conn, "L2 to L3 push", memory_ops.push_l2_to_l3
+                )
                 
                 # Push from R1 to R2
-                try:
-                    stmt = text("SELECT right_hemisphere.push_r1_to_r2()")
-                    stats['r1_to_r2'] = execute_with_retry(conn, stmt, "R1 to R2 push")
-                except SQLAlchemyError:
-                    pass
+                stats['r1_to_r2'] = execute_memory_operation_with_retry(
+                    conn, "R1 to R2 push", memory_ops.push_r1_to_r2
+                )
                 
                 # Push from R2 to R3
-                try:
-                    stmt = text("SELECT right_hemisphere.push_r2_to_r3()")
-                    stats['r2_to_r3'] = execute_with_retry(conn, stmt, "R2 to R3 push")
-                except SQLAlchemyError:
-                    pass
+                stats['r2_to_r3'] = execute_memory_operation_with_retry(
+                    conn, "R2 to R3 push", memory_ops.push_r2_to_r3
+                )
                 
                 # Push from R3 to L3 (cross-hemispheric)
-                try:
-                    stmt = text("SELECT right_hemisphere.push_r3_to_l3()")
-                    stats['r3_to_l3'] = execute_with_retry(conn, stmt, "R3 to L3 push")
-                except SQLAlchemyError:
-                    pass
+                stats['r3_to_l3'] = execute_memory_operation_with_retry(
+                    conn, "R3 to L3 push", memory_ops.push_r3_to_l3
+                )
                 
                 # Run central integration
-                try:
-                    # Pass valid parameters to avoid enum type errors (L/R hemisphere types)
-                    stmt = text("SELECT central.integrate_hemispheres(0.5, 0.5, 'balanced')")
-                    stats['integration'] = execute_with_retry(conn, stmt, "central integration")
-                except SQLAlchemyError as e:
-                    logger.warning(f"Central integration skipped: {e}")
-                    stats['integration'] = 0
+                stats['integration'] = execute_memory_operation_with_retry(
+                    conn, "hemispheric integration", 
+                    lambda: memory_ops.integrate_hemispheres(0.5, 0.5, 'balanced')
+                )
                 
                 try:
                     conn.commit()

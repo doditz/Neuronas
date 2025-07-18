@@ -18,7 +18,7 @@ cognitive_processor = CognitiveProcessor()
 
 from flask import render_template, request, jsonify, session, redirect, url_for, flash
 from flask_login import login_required, current_user
-from replit_auth import require_login
+from local_auth import require_login  # Use local authentication
 import uuid
 import time
 from datetime import datetime

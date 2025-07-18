@@ -1,0 +1,4 @@
+#!/bin/bash
+# Neuronas Key Management CLI
+cd "$(dirname "$0")"
+python3 simple_secure_keys.py "$@"

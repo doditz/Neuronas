@@ -1,0 +1,4 @@
+#!/bin/bash
+# Test Secure Key System
+cd "$(dirname "$0")"
+python3 test_secure_popup.py

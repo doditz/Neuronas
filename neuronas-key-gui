@@ -1,0 +1,31 @@
+#!/bin/bash
+# Neuronas Key GUI Launcher
+cd "$(dirname "$0")"
+
+if command -v python3 >/dev/null 2>&1; then
+    if python3 -c "import tkinter" 2>/dev/null; then
+        echo "🖥️ Launching desktop GUI..."
+        python3 secure_key_gui.py manager
+    else
+        echo "🌐 Desktop GUI not available, launching web version..."
+        echo "Opening: http://localhost:5555/api/keys/manager"
+        python3 -c "
+from secure_key_web_gui import *
+from flask import Flask
+
+app = Flask(__name__)
+app.secret_key = 'dev-key'
+integrate_key_gui_routes(app)
+
+@app.route('/')
+def home():
+    return '<h1>Neuronas Key Manager</h1><a href=\"/api/keys/manager\">Manage Keys</a>'
+
+print('🌐 Web GUI started at http://localhost:5555')
+app.run(port=5555, debug=False)
+"
+    fi
+else
+    echo "❌ Python 3 not found"
+    exit 1
+fi

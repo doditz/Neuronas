@@ -48,9 +48,15 @@ db.init_app(app)
 
 # Import routes after app initialization to avoid circular imports
 from routes import register_routes
-from memory_routes import memory_bp
-from llm_routes import llm_bp
-from model_routes import model_bp
+
+# Import secure key GUI integration
+try:
+    from secure_key_web_gui import integrate_key_gui_routes
+    from perplexity_routes import integrate_perplexity_routes
+    SECURE_GUI_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"Secure GUI not available: {e}")
+    SECURE_GUI_AVAILABLE = False
 
 # Load configuration
 def load_config():
@@ -143,26 +149,41 @@ with app.app_context():
     db.create_all()
     initialize_application()
 
-# Initialize Replit authentication
+# Initialize Local Authentication (Replit disabled for local-only version)
 with app.app_context():
-    from replit_auth import make_replit_blueprint, login_manager
+    # Skip Replit authentication for local deployment
+    # from replit_auth import make_replit_blueprint, login_manager
+    logger.info("Local-only mode: Replit Auth disabled")
 
-    # Register Replit Auth blueprint
-    replit_bp = make_replit_blueprint()
-    if replit_bp:
-        app.register_blueprint(replit_bp, url_prefix="/auth")
-        logger.info("Replit Auth initialized successfully")
-    else:
-        logger.warning("Replit Auth not available - REPL_ID environment variable missing")
-
-    # Register OAuth callbacks blueprint
-    from oauth_callbacks import init_oauth_callbacks
-    oauth_bp = init_oauth_callbacks(app)
-    logger.info("OAuth callbacks blueprint registered")
+    # Register OAuth callbacks blueprint (optional for local)
+    try:
+        from oauth_callbacks import init_oauth_callbacks
+        oauth_bp = init_oauth_callbacks(app)
+        logger.info("OAuth callbacks blueprint registered")
+    except ImportError:
+        logger.info("OAuth callbacks not available - running in local mode")
     
     # Register traditional auth blueprint  
-    from auth import init_auth
-    auth_manager = init_auth(app)
+    try:
+        from local_auth import init_local_auth
+        init_local_auth(app)
+        logger.info("Local authentication system initialized")
+    except ImportError:
+        logger.warning("Local auth module not found")
+        
+    # Initialize simple local user session
+    @app.before_request
+    def before_request():
+        """Initialize local user session if not exists"""
+        if 'user_id' not in session:
+            session['user_id'] = 'local_user'
+            session['username'] = 'Local User'
+            session['is_admin'] = True  # Local user has admin privileges
+            g.user_id = 'local_user'
+        else:
+            g.user_id = session.get('user_id')
+
+    logger.info("Local session management initialized")
     logger.info("Traditional auth blueprint registered")
 
 # Make session permanent for user sessions
@@ -177,11 +198,35 @@ register_routes(app)
 # from auth import init_auth
 # login_manager = init_auth(app)
 
-# Register memory routes blueprint
-app.register_blueprint(memory_bp, url_prefix='/api/memory')
+# Register memory routes blueprint (if available)
+try:
+    from memory_routes import memory_bp
+    app.register_blueprint(memory_bp, url_prefix='/api/memory')
+except ImportError as e:
+    logger.warning(f"Memory routes not available: {e}")
 
-# Register dual LLM routes blueprint
-app.register_blueprint(llm_bp, url_prefix='/api/llm')
+# Register dual LLM routes blueprint (if available)
+try:
+    from llm_routes import llm_bp
+    app.register_blueprint(llm_bp, url_prefix='/api/llm')
+except ImportError as e:
+    logger.warning(f"LLM routes not available: {e}")
+
+# Register secure key GUI routes
+if SECURE_GUI_AVAILABLE:
+    try:
+        integrate_key_gui_routes(app)
+        logger.info("✅ Secure key GUI integrated")
+    except Exception as e:
+        logger.error(f"Failed to integrate secure key GUI: {e}")
+
+# Register Perplexity routes
+if SECURE_GUI_AVAILABLE:
+    try:
+        integrate_perplexity_routes(app)
+        logger.info("✅ Perplexity routes integrated")
+    except Exception as e:
+        logger.error(f"Failed to integrate Perplexity routes: {e}")
 
 # Register agent positioning routes blueprint
 from agent_routes import agent_bp

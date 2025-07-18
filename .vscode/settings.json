@@ -12,9 +12,7 @@
     ]
   },
   "settings": {
-    "python.condaPath": "conda",
     "python.defaultInterpreterPath": "${env:CONDA_PREFIX}/bin/python",
-    "python.pythonPath": "${env:CONDA_PREFIX}/bin/python",
     "python.languageServer": "Pylance",
     "python.analysis.diagnosticSeverityOverrides": {
       "reportMissingImports": "none",
@@ -29,7 +27,6 @@
     "editor.renderWhitespace": "boundary",
     "terminal.integrated.rendererType": "dom",
     "workbench.colorTheme": "Default Light+",
-    "conda.path": "$HOME/miniconda3/bin/conda",
-    "conda.environmentsPath": "${workspaceFolder}/envs"
+    "conda.path": "$HOME/miniconda3/bin/conda"
   }
 }

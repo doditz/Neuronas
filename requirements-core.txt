@@ -1,0 +1,35 @@
+# Neuronas AI - Core Requirements
+# ================================
+# Essential dependencies for basic functionality
+
+# Core Web Framework
+flask==2.2.5
+werkzeug==2.3.7
+gunicorn==21.2.0
+
+# Database
+sqlalchemy==2.0.23
+flask-sqlalchemy==3.1.0
+
+# Authentication
+flask-login==0.6.2
+oauthlib==3.2.2
+pyjwt==2.6.0
+
+# Scientific Computing
+numpy==1.23.5
+scipy==1.9.3
+sympy==1.11.1
+
+# Communication
+requests==2.28.2
+
+# Development
+pyyaml==6.0
+
+# AI Integration (Optional)
+anthropic==0.18.1
+ollama==0.1.5
+
+# ML (CPU-only, lightweight)
+scikit-learn==1.1.3
